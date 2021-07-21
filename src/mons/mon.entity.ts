@@ -8,25 +8,37 @@ export class Mon extends TimeRecord {
   id: number;
 
   @Column()
-  seq: number;
+  order: number;
 
   @Column()
   name: string;
 
-  @Column()
-  nameKr?: string;
+  @Column({ nullable: true })
+  nameKo?: string;
+
+  @Column({ nullable: true })
+  nameJa?: string;
+
+  @Column({ nullable: true })
+  nameZh?: string;
 
   @Column()
   description: string;
 
-  @Column()
-  descriptionKr?: string;
+  @Column({ nullable: true })
+  descriptionKo?: string;
+
+  @Column({ nullable: true })
+  descriptionJa?: string;
+
+  @Column({ nullable: true })
+  descriptionZh?: string;
 
   @Column()
   firstType: string;
 
-  @Column()
-  secondType: string;
+  @Column({ nullable: true })
+  secondType?: string;
 
   @Column()
   height: number;
@@ -37,8 +49,8 @@ export class Mon extends TimeRecord {
   @Column()
   tier: 'basic' | 'special' | 'rare' | 's.rare' | 'elite' | 'legend';
 
-  @Column()
-  evolutionLevel: number;
+  @Column({ nullable: true })
+  evolutionLevel?: number;
 
   @Column()
   hp: number;
@@ -58,12 +70,12 @@ export class Mon extends TimeRecord {
   @Column()
   speed: number;
 
-  @Column()
-  previousMonId?: number;
+  @Column({ nullable: true })
+  evolveFromId?: number;
 
-  @OneToMany(() => Mon, (mon) => mon.previousMonId, { nullable: true })
+  @OneToMany(() => Mon, (mon) => mon.evolveFromId, { nullable: true })
   nextMon?: Promise<Mon[]>;
 
   @OneToMany(() => MonImage, (monImage) => monImage.monId)
-  monImages: MonImage[];
+  monImages?: MonImage[];
 }
