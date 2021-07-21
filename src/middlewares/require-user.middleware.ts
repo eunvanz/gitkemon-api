@@ -5,7 +5,7 @@ export class RequireMiddleware implements NestMiddleware {
   async use(req: Request, _res: Response, next: NextFunction) {
     const user = req.headers['x-user'];
     if (!user) {
-      throw new UnauthorizedException('Sign in is required.');
+      throw new UnauthorizedException('Login is required.');
     }
     next();
   }
