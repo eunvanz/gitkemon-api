@@ -13,6 +13,13 @@ export class MonsService {
     private readonly httpService: HttpService,
   ) {}
 
+  async findActiveMons() {
+    return await this.monRepository
+      .createQueryBuilder('mon')
+      .innerJoin('mon.monImages', 'monImage')
+      .getMany();
+  }
+
   async findInactiveMons() {
     return await this.monRepository
       .createQueryBuilder('mon')

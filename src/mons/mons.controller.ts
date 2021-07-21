@@ -16,6 +16,11 @@ export class MonsController {
     return await this.monService.findInactiveMons();
   }
 
+  @Get('active')
+  async findActiveMons() {
+    return await this.monService.findActiveMons();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return await this.monService.findOne(id);
