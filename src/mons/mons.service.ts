@@ -14,7 +14,7 @@ export class MonsService {
   ) {}
 
   async generateMons() {
-    Array.from({ length: 10 }).forEach((_, index) => {
+    Array.from({ length: 898 }).forEach((_, index) => {
       this.httpService
         .get(`https://pokeapi.co/api/v2/pokemon/${index + 1}`)
         .pipe(map((res) => res.data))
