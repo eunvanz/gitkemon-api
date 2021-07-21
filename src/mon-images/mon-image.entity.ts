@@ -8,9 +8,6 @@ export class MonImage extends TimeRecord {
   id: number;
 
   @Column()
-  monId: number;
-
-  @Column()
   designerId?: string;
 
   @Column()

@@ -76,6 +76,6 @@ export class Mon extends TimeRecord {
   @OneToMany(() => Mon, (mon) => mon.evolveFromId, { nullable: true })
   nextMon?: Promise<Mon[]>;
 
-  @OneToMany(() => MonImage, (monImage) => monImage.monId)
+  @OneToMany(() => MonImage, (monImage) => monImage.mon)
   monImages?: Promise<MonImage[]>;
 }
