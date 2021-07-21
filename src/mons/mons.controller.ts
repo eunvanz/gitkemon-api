@@ -7,6 +7,6 @@ export class MonsController {
 
   @Post('/generate')
   async generateMons() {
-    return await this.monService.generateMons();
+    return await this.monService.initializeMons();
   }
 }

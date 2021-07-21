@@ -20,5 +20,5 @@ export class MonImage extends TimeRecord {
   imageUrl: string;
 
   @ManyToOne(() => Mon, (mon) => mon.monImages)
-  mon: Mon;
+  mon: Promise<Mon>;
 }

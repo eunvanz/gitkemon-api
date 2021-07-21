@@ -13,7 +13,7 @@ export class MonsService {
     private readonly httpService: HttpService,
   ) {}
 
-  async generateMons() {
+  async initializeMons() {
     Array.from({ length: 898 }).forEach((_, index) => {
       this.httpService
         .get(`https://pokeapi.co/api/v2/pokemon/${index + 1}`)
