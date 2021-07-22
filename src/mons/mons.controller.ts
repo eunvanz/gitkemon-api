@@ -6,7 +6,10 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateMonDto } from './dto/create-mon.dto';
 import { RegisterMonImageDto } from './dto/register-mon-image.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
@@ -47,9 +50,13 @@ export class MonsController {
     return await this.monService.save(createMonDto);
   }
 
-  @Post()
-  async registerMonImage(@Body() registerMonImageDto: RegisterMonImageDto) {
-    return await this.monService.registerMonImage(registerMonImageDto);
+  @Post('images')
+  @UseInterceptors(FileInterceptor('file'))
+  async registerMonImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() registerMonImageDto: RegisterMonImageDto,
+  ) {
+    return await this.monService.registerMonImage(file, registerMonImageDto);
   }
 
   @Delete(':id')

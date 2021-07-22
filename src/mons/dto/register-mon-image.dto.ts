@@ -5,14 +5,16 @@ export class RegisterMonImageDto {
   @IsString()
   monId: number;
 
+  @IsOptional()
   @IsString()
   designerId?: string;
 
   @IsString()
   designerName: string;
 
+  @IsOptional()
   @IsString()
-  imageUrl: string;
+  imageUrl?: string;
 
   @IsOptional()
   @IsString()

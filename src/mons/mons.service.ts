@@ -8,6 +8,8 @@ import { CreateMonDto } from './dto/create-mon.dto';
 import { RegisterMonImageDto } from './dto/register-mon-image.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
 import { Mon } from './mon.entity';
+import * as admin from 'firebase-admin';
+import { uploadFile } from 'src/lib/file-uploader';
 
 @Injectable()
 export class MonsService {
@@ -65,24 +67,33 @@ export class MonsService {
     return await this.monRepository.delete(id);
   }
 
-  async registerMonImage({
-    monId,
-    designerId,
-    designerName,
-    imageUrl,
-    tier,
-  }: RegisterMonImageDto) {
-    const monToUpdate = this.monRepository.findOne(monId);
-    this.monRepository.update(monId, {
-      ...monToUpdate,
-      tier,
-    });
-    return await this.monImageRepository.save({
-      mon: monToUpdate,
+  async registerMonImage(
+    file: Express.Multer.File,
+    { monId, designerId, designerName, imageUrl, tier }: RegisterMonImageDto,
+  ) {
+    let uploadedImageUrl: string;
+    if (!imageUrl) {
+      uploadedImageUrl = await uploadFile(file);
+    }
+
+    const monToUpdatePromise = this.monRepository.findOne(monId);
+    const savedResult = await this.monImageRepository.save({
+      mon: monToUpdatePromise,
       designerId,
       designerName,
-      imageUrl,
+      imageUrl: imageUrl || uploadedImageUrl,
     });
+
+    const monToUpdate = await monToUpdatePromise;
+
+    if (tier) {
+      this.monRepository.update(monId, {
+        ...monToUpdate,
+        tier,
+      });
+    }
+
+    return savedResult;
   }
 
   async initializeMons() {
