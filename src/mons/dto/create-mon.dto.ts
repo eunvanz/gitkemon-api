@@ -1,4 +1,79 @@
 import { OmitType } from '@nestjs/mapped-types';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { Mon } from '../mon.entity';
 
-export class CreateMonDto extends OmitType(Mon, ['id']) {}
+export class CreateMonDto {
+  @IsNumber()
+  order: number;
+
+  @IsString()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  nameKo?: string;
+
+  @IsOptional()
+  @IsString()
+  nameJa?: string;
+
+  @IsOptional()
+  @IsString()
+  nameZh?: string;
+
+  @IsString()
+  description: string;
+
+  @IsOptional()
+  @IsString()
+  descriptionKo?: string;
+
+  @IsOptional()
+  @IsString()
+  descriptionJa?: string;
+
+  @IsOptional()
+  @IsString()
+  descriptionZh?: string;
+
+  @IsString()
+  firstType: string;
+
+  @IsOptional()
+  @IsString()
+  secondType?: string;
+
+  @IsNumber()
+  height: number;
+
+  @IsNumber()
+  weight: number;
+
+  @IsString()
+  tier: 'basic' | 'special' | 'rare' | 's.rare' | 'elite' | 'legend';
+
+  @IsNumber()
+  evolutionLevel?: number;
+
+  @IsNumber()
+  hp: number;
+
+  @IsNumber()
+  attack: number;
+
+  @IsNumber()
+  defense: number;
+
+  @IsNumber()
+  specialAttack: number;
+
+  @IsNumber()
+  specialDefense: number;
+
+  @IsNumber()
+  speed: number;
+
+  @IsOptional()
+  @IsNumber()
+  evolveFromId?: number;
+}

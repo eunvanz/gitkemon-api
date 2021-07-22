@@ -47,6 +47,7 @@ export class MonsService {
       throw new NotFoundException();
     }
 
+    console.log('===== updateMonDto', updateMonDto);
     return await this.monRepository.update(id, {
       ...oldMon,
       ...updateMonDto,

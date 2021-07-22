@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
 } from '@nestjs/common';
 import { CreateMonDto } from './dto/create-mon.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
@@ -36,7 +36,7 @@ export class MonsController {
     return await this.monService.findOne(id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   async update(@Param('id') id: number, @Body() updateMonDto: UpdateMonDto) {
     return await this.monService.update(id, updateMonDto);
   }
