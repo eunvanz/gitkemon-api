@@ -1,4 +1,6 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { CreateMonDto } from './dto/create-mon.dto';
+import { UpdateMonDto } from './dto/update-mon.dto';
 import { MonsService } from './mons.service';
 
 @Controller('mons')
@@ -24,5 +26,15 @@ export class MonsController {
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return await this.monService.findOne(id);
+  }
+
+  @Put(':id')
+  async update(@Param('id') id: number, @Body() updateMonDto: UpdateMonDto) {
+    return await this.monService.update(id, updateMonDto);
+  }
+
+  @Post()
+  async save(@Body() createMonDto: CreateMonDto) {
+    return await this.monService.save(createMonDto);
   }
 }

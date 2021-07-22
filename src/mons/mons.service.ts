@@ -1,8 +1,10 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { map } from 'rxjs';
 import { Repository } from 'typeorm';
+import { CreateMonDto } from './dto/create-mon.dto';
+import { UpdateMonDto } from './dto/update-mon.dto';
 import { Mon } from './mon.entity';
 
 @Injectable()
@@ -29,7 +31,30 @@ export class MonsService {
   }
 
   async findOne(id: number) {
-    return await this.monRepository.findOne(id);
+    const mon = await this.monRepository.findOne(id);
+
+    if (!mon) {
+      throw new NotFoundException();
+    }
+
+    return mon;
+  }
+
+  async update(id: number, updateMonDto: UpdateMonDto) {
+    const oldMon = await this.monRepository.findOne(id);
+
+    if (!oldMon) {
+      throw new NotFoundException();
+    }
+
+    return await this.monRepository.update(id, {
+      ...oldMon,
+      ...updateMonDto,
+    });
+  }
+
+  async save(createMonDto: CreateMonDto) {
+    return await this.monRepository.save(createMonDto);
   }
 
   async initializeMons() {
