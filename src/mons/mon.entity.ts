@@ -1,5 +1,6 @@
 import { TimeRecord } from 'src/entities/time-record.entity';
 import { MonImage } from 'src/mon-images/mon-image.entity';
+import { MonTier } from 'src/types';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
 @Entity()
@@ -47,7 +48,7 @@ export class Mon extends TimeRecord {
   weight: number;
 
   @Column()
-  tier: 'basic' | 'special' | 'rare' | 's.rare' | 'elite' | 'legend';
+  tier: MonTier;
 
   @Column({ nullable: true })
   evolutionLevel?: number;

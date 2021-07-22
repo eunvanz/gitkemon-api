@@ -2,8 +2,10 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { map } from 'rxjs';
+import { MonImage } from 'src/mon-images/mon-image.entity';
 import { Repository } from 'typeorm';
 import { CreateMonDto } from './dto/create-mon.dto';
+import { RegisterMonImageDto } from './dto/register-mon-image.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
 import { Mon } from './mon.entity';
 
@@ -12,6 +14,8 @@ export class MonsService {
   constructor(
     @InjectRepository(Mon)
     private readonly monRepository: Repository<Mon>,
+    @InjectRepository(MonImage)
+    private readonly monImageRepository: Repository<MonImage>,
     private readonly httpService: HttpService,
   ) {}
 
@@ -59,6 +63,26 @@ export class MonsService {
 
   async delete(id: number) {
     return await this.monRepository.delete(id);
+  }
+
+  async registerMonImage({
+    monId,
+    designerId,
+    designerName,
+    imageUrl,
+    tier,
+  }: RegisterMonImageDto) {
+    const monToUpdate = this.monRepository.findOne(monId);
+    this.monRepository.update(monId, {
+      ...monToUpdate,
+      tier,
+    });
+    return await this.monImageRepository.save({
+      mon: monToUpdate,
+      designerId,
+      designerName,
+      imageUrl,
+    });
   }
 
   async initializeMons() {

@@ -8,6 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { CreateMonDto } from './dto/create-mon.dto';
+import { RegisterMonImageDto } from './dto/register-mon-image.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
 import { MonsService } from './mons.service';
 
@@ -44,6 +45,11 @@ export class MonsController {
   @Post()
   async save(@Body() createMonDto: CreateMonDto) {
     return await this.monService.save(createMonDto);
+  }
+
+  @Post()
+  async registerMonImage(@Body() registerMonImageDto: RegisterMonImageDto) {
+    return await this.monService.registerMonImage(registerMonImageDto);
   }
 
   @Delete(':id')
