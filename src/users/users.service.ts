@@ -82,53 +82,61 @@ export class UsersService {
     }
 
     let result = 0;
-    await Promise.all(
-      Array.from({ length: iteration }).map(async (_, index) => {
-        const isLastIteration = index === iteration - 1;
+    try {
+      await Promise.all(
+        Array.from({ length: iteration }).map(async (_, index) => {
+          const isLastIteration = index === iteration - 1;
 
-        const from = isLastIteration
-          ? fromDate.toISOString()
-          : dayjs(now)
-              .subtract(365 * (index + 1), 'days')
-              .toISOString();
-
-        const to =
-          index === 0
-            ? now.toISOString()
+          const from = isLastIteration
+            ? fromDate.toISOString()
             : dayjs(now)
-                .subtract(365 * index, 'days')
+                .subtract(365 * (index + 1), 'days')
                 .toISOString();
 
-        const { data } = await this.httpService
-          .post(
-            'https://api.github.com/graphql',
-            {
-              query: `
-              query {
-                user(login: "${githubUsername}") {
-                  name
-                  contributionsCollection(from: "${from}", to: "${to}") {
-                    contributionCalendar {
-                      totalContributions
+          const to =
+            index === 0
+              ? now.toISOString()
+              : dayjs(now)
+                  .subtract(365 * index, 'days')
+                  .toISOString();
+
+          const { data } = await this.httpService
+            .post(
+              'https://api.github.com/graphql',
+              {
+                query: `
+                query {
+                  user(login: "${githubUsername}") {
+                    name
+                    contributionsCollection(from: "${from}", to: "${to}") {
+                      contributionCalendar {
+                        totalContributions
+                      }
                     }
                   }
                 }
-              }
-              `,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`,
+                `,
               },
-            },
-          )
-          .toPromise();
+              {
+                headers: {
+                  Authorization: `Bearer ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`,
+                },
+              },
+            )
+            .toPromise();
 
-        result +=
-          data.data.user.contributionsCollection.contributionCalendar
-            .totalContributions;
-      }),
-    );
+          if (!data.data.user.name) {
+            throw new Error();
+          }
+
+          result +=
+            data.data.user.contributionsCollection.contributionCalendar
+              .totalContributions;
+        }),
+      );
+    } catch (error) {
+      throw new NotFoundException('Github user is not found.');
+    }
 
     return result;
   }
