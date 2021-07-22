@@ -73,7 +73,10 @@ export class MonsService {
   ) {
     let uploadedImageUrl: string;
     if (!imageUrl) {
-      uploadedImageUrl = await uploadFile(file);
+      uploadedImageUrl = await uploadFile(file, {
+        fileName: `mon_${monId}_${designerName}`,
+        path: 'mon-images',
+      });
     }
 
     const monToUpdatePromise = this.monRepository.findOne(monId);

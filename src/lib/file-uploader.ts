@@ -10,7 +10,7 @@ export const uploadFile: (
   options?: UploadFileOptions,
 ) => Promise<string> = (file, options) => {
   return new Promise((resolve, reject) => {
-    const fileName = `${options?.path || ''}${
+    const fileName = `${`${options?.path}/` || ''}${
       options?.fileName || file.originalname
     }_${Date.now()}`;
     const bucket = admin.storage().bucket();
