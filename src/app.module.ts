@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { typeOrmConfigAsync } from './config/typeorm.config';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { MonsModule } from './mons/mons.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { MonsModule } from './mons/mons.module';
     }),
     TypeOrmModule.forRootAsync(typeOrmConfigAsync),
     MonsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
