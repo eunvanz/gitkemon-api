@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
+import { lastValueFrom, map } from 'rxjs';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -100,7 +101,7 @@ export class UsersService {
                   .subtract(365 * index, 'days')
                   .toISOString();
 
-          const { data } = await this.httpService
+          const observer$ = this.httpService
             .post(
               'https://api.github.com/graphql',
               {
@@ -123,14 +124,16 @@ export class UsersService {
                 },
               },
             )
-            .toPromise();
+            .pipe(map((res) => res.data.data));
 
-          if (!data.data.user.name) {
+          const { user } = await lastValueFrom(observer$);
+
+          if (!user.name) {
             throw new Error();
           }
 
           result +=
-            data.data.user.contributionsCollection.contributionCalendar
+            user.contributionsCollection.contributionCalendar
               .totalContributions;
         }),
       );
