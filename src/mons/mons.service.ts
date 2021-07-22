@@ -57,6 +57,10 @@ export class MonsService {
     return await this.monRepository.save(createMonDto);
   }
 
+  async delete(id: number) {
+    return await this.monRepository.delete(id);
+  }
+
   async initializeMons() {
     Array.from({ length: 898 }).forEach((_, index) => {
       this.httpService

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { CreateMonDto } from './dto/create-mon.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
 import { MonsService } from './mons.service';
@@ -36,5 +44,10 @@ export class MonsController {
   @Post()
   async save(@Body() createMonDto: CreateMonDto) {
     return await this.monService.save(createMonDto);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: number) {
+    return await this.monService.delete(id);
   }
 }
