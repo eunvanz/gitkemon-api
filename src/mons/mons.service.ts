@@ -3,12 +3,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { map } from 'rxjs';
 import { MonImage } from 'src/mon-images/mon-image.entity';
-import { Repository } from 'typeorm';
+import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { CreateMonDto } from './dto/create-mon.dto';
 import { RegisterMonImageDto } from './dto/register-mon-image.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
 import { Mon } from './mon.entity';
-import * as admin from 'firebase-admin';
 import { uploadFile } from 'src/lib/file-uploader';
 
 @Injectable()
@@ -67,9 +66,12 @@ export class MonsService {
     return await this.monRepository.delete(id);
   }
 
+  @Transaction()
   async registerMonImage(
     file: Express.Multer.File,
     { monId, designerId, designerName, imageUrl, tier }: RegisterMonImageDto,
+    @TransactionRepository(Mon) monRepository?: Repository<Mon>,
+    @TransactionRepository(MonImage) monImageRepository?: Repository<MonImage>,
   ) {
     let uploadedImageUrl: string;
     if (!imageUrl) {
@@ -80,7 +82,8 @@ export class MonsService {
     }
 
     const monToUpdatePromise = this.monRepository.findOne(monId);
-    const savedResult = await this.monImageRepository.save({
+
+    const savedResult = await monImageRepository.save({
       mon: monToUpdatePromise,
       designerId,
       designerName,
@@ -90,7 +93,7 @@ export class MonsService {
     const monToUpdate = await monToUpdatePromise;
 
     if (tier) {
-      this.monRepository.update(monId, {
+      monRepository.update(monId, {
         ...monToUpdate,
         tier,
       });

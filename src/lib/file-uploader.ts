@@ -10,15 +10,17 @@ export const uploadFile: (
   options?: UploadFileOptions,
 ) => Promise<string> = (file, options) => {
   return new Promise((resolve, reject) => {
+    const { originalname, mimetype } = file;
+    const fileExtension = originalname.split('.').pop();
     const fileName = `${`${options?.path}/` || ''}${
-      options?.fileName || file.originalname
-    }_${Date.now()}`;
+      options?.fileName || originalname
+    }_${Date.now()}.${fileExtension}`;
     const bucket = admin.storage().bucket();
     const fileUpload = bucket.file(fileName);
 
     const blobStream = fileUpload.createWriteStream({
       metadata: {
-        contentType: file.mimetype,
+        contentType: mimetype,
       },
     });
 
