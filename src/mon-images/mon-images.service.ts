@@ -1,6 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { uploadFile } from 'src/lib/file-uploader';
+import { getCleanObject } from 'src/lib/utils';
 import { Mon } from 'src/mons/mon.entity';
 import { Repository } from 'typeorm';
 import { CreateMonImageDto } from './dto/create-mon-image.dto';
@@ -25,32 +30,37 @@ export class MonImagesService {
       uploadedImageUrl = await this.uploadMonImage(file, monId, designerName);
     }
 
-    const monToUpdatePromise = this.monRepository.findOne(monId);
+    const mon = await this.monRepository.findOne(monId);
 
-    return await this.monImageRepository.save({
-      mon: monToUpdatePromise,
-      designerId,
-      designerName,
-      imageUrl: imageUrl || uploadedImageUrl,
-    });
+    if (!mon) {
+      throw new BadRequestException('"monId" is not valid.');
+    }
+
+    const monImage = new MonImage();
+
+    monImage.mon = Promise.resolve(mon);
+    monImage.designerId = designerId;
+    monImage.designerName = designerName;
+    monImage.imageUrl = imageUrl || uploadedImageUrl;
+
+    return await this.monImageRepository.save(monImage);
   }
 
   async update(
     id: number,
     file: Express.Multer.File,
-    { monId, designerId, designerName, imageUrl }: UpdateMonImageDto,
+    updateMonImageDto: UpdateMonImageDto,
   ) {
+    const { monId, designerId, designerName, imageUrl } = updateMonImageDto;
     let uploadedImageUrl: string;
-    if (!imageUrl) {
+    if (!imageUrl && file) {
       uploadedImageUrl = await this.uploadMonImage(file, monId, designerName);
     }
 
-    const monPromise = this.monRepository.findOne(monId);
-
-    const mon = await monPromise;
+    const mon = await this.monRepository.findOne(monId);
 
     if (!mon) {
-      throw new NotFoundException('"monId" is not valid.');
+      throw new BadRequestException('"monId" is not valid.');
     }
 
     const oldMonImage = await this.monImageRepository.findOne(id);
@@ -59,12 +69,15 @@ export class MonImagesService {
       throw new NotFoundException();
     }
 
-    return await this.monImageRepository.update(id, {
-      mon: monPromise,
-      designerId,
-      designerName,
-      imageUrl: imageUrl || uploadedImageUrl,
-    });
+    return await this.monImageRepository.update(
+      id,
+      getCleanObject({
+        mon,
+        designerId,
+        designerName,
+        imageUrl: imageUrl || uploadedImageUrl,
+      }),
+    );
   }
 
   async uploadMonImage(
