@@ -1,29 +1,26 @@
 import {
-  ForbiddenException,
-  InternalServerErrorException,
+  Injectable,
   NestMiddleware,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { NextFunction } from 'express';
-import * as admin from 'firebase-admin';
+import axios from 'axios';
+import { NextFunction, Request } from 'express';
+import { ACCESS_TOKEN_COOKIE_NAME } from 'src/constants/cookies';
+import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 
+@Injectable()
 export class AuthMiddleware implements NestMiddleware {
   async use(req: Request, _res: Response, next: NextFunction) {
-    const token = req.headers['x-authorization'];
+    const token = req.signedCookies[ACCESS_TOKEN_COOKIE_NAME];
     if (token) {
       try {
-        const decodedToken = await admin.auth().verifyIdToken(token);
-        const { uid } = decodedToken;
-        req.headers['x-uid'] = uid;
-        req.headers['x-user'] = decodedToken;
+        await axios.get(`${process.env.GITHUB_API_BASE_URL}/user`, {
+          headers: { Authorization: `token ${token}` },
+        });
       } catch (error) {
-        if (error.code === 'auth/argument-error') {
-          throw new ForbiddenException('Token is invalid.');
-        } else if (error.code === 'auth/id-token-expired') {
-          throw new ForbiddenException('Token has expired.');
-        } else {
-          throw new InternalServerErrorException();
-        }
+        throw new UnauthorizedException('Token is invalid.');
       }
+      req.headers[ACCESS_TOKEN_HEADER_NAME] = token;
     }
     next();
   }

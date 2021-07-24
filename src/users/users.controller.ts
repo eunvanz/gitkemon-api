@@ -7,8 +7,11 @@ import {
   Patch,
   Post,
   Query,
+  Res,
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
+import { Response } from 'express';
+import { ACCESS_TOKEN_COOKIE_NAME } from 'src/constants/cookies';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
@@ -55,8 +58,17 @@ export class UsersController {
     return await this.userService.update(id, updateUserDto);
   }
 
-  @Post('access-token')
-  async getAccessToken(@Body() { code }: { code: string }) {
-    return await this.userService.getAccessToken(code);
+  @Post('login')
+  async getAccessToken(
+    @Body() { code }: { code: string },
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const user = await this.userService.getAccessToken(code);
+    response.cookie(ACCESS_TOKEN_COOKIE_NAME, user.accessToken, {
+      expires: dayjs().add(30, 'days').toDate(),
+      httpOnly: true,
+      signed: true,
+    });
+    response.send(user);
   }
 }

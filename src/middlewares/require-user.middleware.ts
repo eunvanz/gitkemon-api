@@ -1,11 +1,13 @@
-import { NestMiddleware, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction } from 'express';
+import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 
+@Injectable()
 export class RequireMiddleware implements NestMiddleware {
   async use(req: Request, _res: Response, next: NextFunction) {
-    const user = req.headers['x-user'];
-    if (!user) {
-      throw new UnauthorizedException('Login is required.');
+    const token = req.headers[ACCESS_TOKEN_HEADER_NAME];
+    if (!token) {
+      throw new ForbiddenException('Login is required.');
     }
     next();
   }

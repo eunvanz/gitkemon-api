@@ -4,8 +4,9 @@ import {
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
 import { join } from 'path';
-import { isDev } from 'src/constants/environment';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+
+const isDev = process.env.NODE_ENV === 'development';
 
 export default class TypeOrmConfig {
   static getOrmConfig(configService: ConfigService): TypeOrmModuleOptions {
