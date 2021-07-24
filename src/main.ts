@@ -2,10 +2,11 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as admin from 'firebase-admin';
+import { GOOGLE_FIREBASE_STORAGE_BUCKET } from './constants/environment';
 
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
-  storageBucket: 'gitkemon.appspot.com',
+  storageBucket: GOOGLE_FIREBASE_STORAGE_BUCKET,
 });
 
 async function bootstrap() {

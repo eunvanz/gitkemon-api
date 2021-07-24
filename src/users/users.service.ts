@@ -7,6 +7,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 import { lastValueFrom, map } from 'rxjs';
+import Rules from 'src/config/rules.config';
+import {
+  GITHUB_API_BASE_URL,
+  GITHUB_PERSONAL_ACCESS_TOKEN,
+} from 'src/constants/environment';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -29,7 +34,9 @@ export class UsersService {
       throw new InternalServerErrorException('User is already exist.');
     }
 
-    const contributionBaseDate = dayjs().subtract(30, 'day').toDate();
+    const contributionBaseDate = dayjs()
+      .subtract(Rules.contributionBaseDays, 'day')
+      .toDate();
 
     const lastContributions = await this.getUserContributions(
       createUserDto.githubUsername,
@@ -103,7 +110,7 @@ export class UsersService {
 
           const observer$ = this.httpService
             .post(
-              'https://api.github.com/graphql',
+              `${GITHUB_API_BASE_URL}/graphql`,
               {
                 query: `
                 query {
@@ -120,7 +127,7 @@ export class UsersService {
               },
               {
                 headers: {
-                  Authorization: `Bearer ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`,
+                  Authorization: `Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}`,
                 },
               },
             )
