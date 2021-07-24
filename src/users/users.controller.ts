@@ -60,4 +60,9 @@ export class UsersController {
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return await this.userService.update(id, updateUserDto);
   }
+
+  @Post('access-token')
+  async getAccessToken(@Body() { code }: { code: string }) {
+    return await this.userService.getAccessToken(code);
+  }
 }

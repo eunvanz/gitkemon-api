@@ -10,7 +10,7 @@ export class User extends TimeRecord {
   nickname: string;
 
   @Column()
-  githubUsername: string;
+  githubId: string;
 
   @Column({ nullable: true, length: 200 })
   introduce: string;
@@ -23,4 +23,7 @@ export class User extends TimeRecord {
 
   @Column()
   contributionBaseDate: Date;
+
+  @Column()
+  githubAccessToken: string;
 }

@@ -69,6 +69,24 @@ export class UsersService {
     return user;
   }
 
+  async getAccessToken(code: string) {
+    const observer$ = this.httpService
+      .post(`${process.env.GITHUB_URL}/login/oauth/access_token`, null, {
+        params: {
+          client_id: process.env.GITHUB_CLIENT_ID,
+          client_secret: process.env.GITHUB_CLIENT_SECRET,
+          code,
+        },
+        headers: {
+          accept: 'application/json',
+        },
+      })
+      .pipe(map((res) => res.data));
+
+    const data = await lastValueFrom(observer$);
+    return data;
+  }
+
   /**
    * get githubUsername's contributions during fromDate to now
    * @param githubUsername github user name
@@ -141,7 +159,6 @@ export class UsersService {
         }),
       );
     } catch (error) {
-      console.log('===== error', error);
       throw new NotFoundException('Github user is not found.');
     }
 
