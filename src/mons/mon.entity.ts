@@ -1,5 +1,5 @@
 import { TimeRecord } from 'src/entities/time-record.entity';
-import { MonImage } from 'src/mons/mon-image.entity';
+import { MonImage } from 'src/mon-images/mon-image.entity';
 import { MonTier } from 'src/types';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 

@@ -1,6 +1,4 @@
-import { OmitType } from '@nestjs/mapped-types';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { Mon } from '../mon.entity';
 
 export class CreateMonDto {
   @IsNumber()
