@@ -9,18 +9,12 @@ import {
   Query,
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
-
-  @Post()
-  async save(@Body() createUserDto: CreateUserDto) {
-    return await this.userService.save(createUserDto);
-  }
 
   @Get('contributions')
   async getUserContributions(

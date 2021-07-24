@@ -1,50 +1,22 @@
 import { HttpService } from '@nestjs/axios';
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 import { lastValueFrom, map } from 'rxjs';
 import Rules from 'src/config/rules.config';
-import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
+import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './user.entity';
+import { GithubUser, User } from './user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(GithubUser)
+    private readonly githubUserRepository: Repository<GithubUser>,
     private readonly httpService: HttpService,
   ) {}
-
-  async save(createUserDto: CreateUserDto) {
-    const existingUser = await this.userRepository.findOne({
-      email: createUserDto.email,
-    });
-
-    if (existingUser) {
-      throw new InternalServerErrorException('User is already exist.');
-    }
-
-    const contributionBaseDate = dayjs()
-      .subtract(Rules.contributionBaseDays, 'day')
-      .toDate();
-
-    const lastContributions = await this.getUserContributions(
-      createUserDto.githubUsername,
-      contributionBaseDate,
-    );
-
-    return await this.userRepository.save({
-      ...createUserDto,
-      lastContributions,
-      contributionBaseDate,
-    });
-  }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     const oldUser = await this.userRepository.findOne(id);
@@ -69,8 +41,14 @@ export class UsersService {
     return user;
   }
 
-  async getAccessToken(code: string) {
-    const observer$ = this.httpService
+  @Transaction()
+  async getAccessToken(
+    code: string,
+    @TransactionRepository(User) trxUserRepository?: Repository<User>,
+    @TransactionRepository(GithubUser)
+    trxGithubUserRepository?: Repository<GithubUser>,
+  ) {
+    const tokenObserver$ = this.httpService
       .post(`${process.env.GITHUB_URL}/login/oauth/access_token`, null, {
         params: {
           client_id: process.env.GITHUB_CLIENT_ID,
@@ -83,8 +61,51 @@ export class UsersService {
       })
       .pipe(map((res) => res.data));
 
-    const data = await lastValueFrom(observer$);
-    return data;
+    const { access_token } = await lastValueFrom(tokenObserver$);
+
+    const userObserver$ = this.httpService.get<GithubUser>(
+      `${process.env.GITHUB_API_BASE_URL}/user`,
+      {
+        headers: {
+          Authorization: `token ${access_token}`,
+        },
+      },
+    );
+
+    const { data: githubUser } = await lastValueFrom(userObserver$);
+
+    let user: User = await this.userRepository.findOne({
+      githubUser,
+    });
+
+    if (!user) {
+      // generate user
+      const contributionBaseDate = dayjs()
+        .subtract(Rules.contributionBaseDays, 'day')
+        .toDate();
+
+      await trxGithubUserRepository.save(githubUser);
+
+      trxUserRepository.save({
+        nickname: githubUser.name,
+        contributionBaseDate,
+        lastRewardedDate: contributionBaseDate,
+        lastContributions: 0,
+        githubUser,
+        accessToken: access_token,
+      });
+
+      user = await this.userRepository.findOne({ githubUser });
+    } else {
+      // update user
+      await trxGithubUserRepository.update(githubUser.id, githubUser);
+      await trxUserRepository.update(user.id, {
+        githubUser,
+        accessToken: access_token,
+      });
+    }
+
+    return user;
   }
 
   /**
