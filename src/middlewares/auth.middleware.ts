@@ -6,6 +6,7 @@ import {
 import axios from 'axios';
 import { NextFunction, Request, Response } from 'express';
 import { ACCESS_TOKEN_COOKIE_NAME } from 'src/constants/cookies';
+import { ERROR_CODE } from 'src/constants/errors';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 
 @Injectable()
@@ -19,7 +20,10 @@ export class AuthMiddleware implements NestMiddleware {
         });
       } catch (error) {
         res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
-        throw new UnauthorizedException('Token is invalid.');
+        throw new UnauthorizedException({
+          errorCode: ERROR_CODE.INVALID_TOKEN,
+          errorMessage: 'Token is invalid.',
+        });
       }
       req.headers[ACCESS_TOKEN_HEADER_NAME] = token;
     }

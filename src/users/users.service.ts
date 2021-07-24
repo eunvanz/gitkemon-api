@@ -1,9 +1,14 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 import { lastValueFrom, map } from 'rxjs';
 import Rules from 'src/config/rules.config';
+import { ERROR_CODE } from 'src/constants/errors';
 import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GithubUser, User } from './user.entity';
@@ -48,31 +53,47 @@ export class UsersService {
     @TransactionRepository(GithubUser)
     trxGithubUserRepository?: Repository<GithubUser>,
   ) {
-    const tokenObserver$ = this.httpService
-      .post(`${process.env.GITHUB_URL}/login/oauth/access_token`, null, {
-        params: {
-          client_id: process.env.GITHUB_CLIENT_ID,
-          client_secret: process.env.GITHUB_CLIENT_SECRET,
-          code,
-        },
-        headers: {
-          accept: 'application/json',
-        },
-      })
-      .pipe(map((res) => res.data));
+    let accessToken: string;
+    try {
+      const tokenObserver$ = this.httpService
+        .post(`${process.env.GITHUB_URL}/login/oauth/access_token`, null, {
+          params: {
+            client_id: process.env.GITHUB_CLIENT_ID,
+            client_secret: process.env.GITHUB_CLIENT_SECRET,
+            code,
+          },
+          headers: {
+            accept: 'application/json',
+          },
+        })
+        .pipe(map((res) => res.data));
 
-    const { access_token } = await lastValueFrom(tokenObserver$);
+      accessToken = (await lastValueFrom(tokenObserver$)).access_token;
+    } catch (error) {
+      throw new InternalServerErrorException({
+        errorCode: ERROR_CODE.FAILURE_TO_GET_GITHUB_ACCESS_TOKEN,
+        errorMessage: 'Failed to get github access token.',
+      });
+    }
 
-    const userObserver$ = this.httpService.get<GithubUser>(
-      `${process.env.GITHUB_API_BASE_URL}/user`,
-      {
-        headers: {
-          Authorization: `token ${access_token}`,
+    let githubUser: GithubUser;
+    try {
+      const userObserver$ = this.httpService.get<GithubUser>(
+        `${process.env.GITHUB_API_BASE_URL}/user`,
+        {
+          headers: {
+            Authorization: `token ${accessToken}`,
+          },
         },
-      },
-    );
+      );
 
-    const { data: githubUser } = await lastValueFrom(userObserver$);
+      githubUser = (await lastValueFrom(userObserver$)).data;
+    } catch (error) {
+      throw new InternalServerErrorException({
+        errorCode: ERROR_CODE.FAILURE_TO_GET_GITHUB_USER,
+        errorMessage: 'Failed to get github user from access token.',
+      });
+    }
 
     let user: User = await this.userRepository.findOne({
       githubUser,
@@ -92,7 +113,7 @@ export class UsersService {
         lastRewardedDate: contributionBaseDate,
         lastContributions: 0,
         githubUser,
-        accessToken: access_token,
+        accessToken,
       });
 
       user = await this.userRepository.findOne({ githubUser });
@@ -101,7 +122,7 @@ export class UsersService {
       await trxGithubUserRepository.update(githubUser.id, githubUser);
       await trxUserRepository.update(user.id, {
         githubUser,
-        accessToken: access_token,
+        accessToken,
       });
     }
 
