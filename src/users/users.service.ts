@@ -8,10 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 import { lastValueFrom, map } from 'rxjs';
 import Rules from 'src/config/rules.config';
-import {
-  GITHUB_API_BASE_URL,
-  GITHUB_PERSONAL_ACCESS_TOKEN,
-} from 'src/constants/environment';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -110,7 +106,7 @@ export class UsersService {
 
           const observer$ = this.httpService
             .post(
-              `${GITHUB_API_BASE_URL}/graphql`,
+              `${process.env.GITHUB_API_BASE_URL}/graphql`,
               {
                 query: `
                 query {
@@ -127,7 +123,7 @@ export class UsersService {
               },
               {
                 headers: {
-                  Authorization: `Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}`,
+                  Authorization: `Bearer ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`,
                 },
               },
             )
@@ -145,6 +141,7 @@ export class UsersService {
         }),
       );
     } catch (error) {
+      console.log('===== error', error);
       throw new NotFoundException('Github user is not found.');
     }
 
