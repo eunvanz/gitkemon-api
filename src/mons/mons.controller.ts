@@ -11,9 +11,10 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateMonDto } from './dto/create-mon.dto';
-import { RegisterMonImageDto } from './dto/register-mon-image.dto';
+import { CreateMonImageDto } from './dto/create-mon-image.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
 import { MonsService } from './mons.service';
+import { UpdateMonImageDto } from './dto/update-mon-image.dto';
 
 @Controller('mons')
 export class MonsController {
@@ -50,13 +51,30 @@ export class MonsController {
     return await this.monService.save(createMonDto);
   }
 
-  @Post('images')
+  @Post(':monId/images')
   @UseInterceptors(FileInterceptor('file'))
-  async registerMonImage(
+  async saveMonImage(
+    @Param('monId') monId: number,
     @UploadedFile() file: Express.Multer.File,
-    @Body() registerMonImageDto: RegisterMonImageDto,
+    @Body() createMonImageDto: CreateMonImageDto,
   ) {
-    return await this.monService.registerMonImage(file, registerMonImageDto);
+    return await this.monService.saveMonImage(monId, file, createMonImageDto);
+  }
+
+  @Patch(':monId/images/:monImageId')
+  @UseInterceptors(FileInterceptor('file'))
+  async updateMonImage(
+    @Param('monId') monId: number,
+    @Param('monImageId') monImageId: number,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() updateMonImageDto: UpdateMonImageDto,
+  ) {
+    return await this.monService.updateMonImage(
+      monId,
+      monImageId,
+      file,
+      updateMonImageDto,
+    );
   }
 
   @Delete(':id')

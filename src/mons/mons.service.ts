@@ -2,13 +2,14 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { map } from 'rxjs';
-import { MonImage } from 'src/mon-images/mon-image.entity';
+import { MonImage } from 'src/mons/mon-image.entity';
 import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { CreateMonDto } from './dto/create-mon.dto';
-import { RegisterMonImageDto } from './dto/register-mon-image.dto';
+import { CreateMonImageDto } from './dto/create-mon-image.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
 import { Mon } from './mon.entity';
 import { uploadFile } from 'src/lib/file-uploader';
+import { UpdateMonImageDto } from './dto/update-mon-image.dto';
 
 @Injectable()
 export class MonsService {
@@ -66,40 +67,61 @@ export class MonsService {
     return await this.monRepository.delete(id);
   }
 
-  @Transaction()
-  async registerMonImage(
+  async saveMonImage(
+    monId: number,
     file: Express.Multer.File,
-    { monId, designerId, designerName, imageUrl, tier }: RegisterMonImageDto,
-    @TransactionRepository(Mon) monRepository?: Repository<Mon>,
-    @TransactionRepository(MonImage) monImageRepository?: Repository<MonImage>,
+    { designerId, designerName, imageUrl }: CreateMonImageDto,
   ) {
     let uploadedImageUrl: string;
     if (!imageUrl) {
-      uploadedImageUrl = await uploadFile(file, {
-        fileName: `mon_${monId}_${designerName}`,
-        path: 'mon-images',
-      });
+      uploadedImageUrl = await this.uploadMonImage(file, monId, designerName);
     }
 
     const monToUpdatePromise = this.monRepository.findOne(monId);
 
-    const savedResult = await monImageRepository.save({
+    return await this.monImageRepository.save({
       mon: monToUpdatePromise,
       designerId,
       designerName,
       imageUrl: imageUrl || uploadedImageUrl,
     });
+  }
 
-    const monToUpdate = await monToUpdatePromise;
-
-    if (tier) {
-      monRepository.update(monId, {
-        ...monToUpdate,
-        tier,
-      });
+  async updateMonImage(
+    monId: number,
+    monImageId: number,
+    file: Express.Multer.File,
+    { designerId, designerName, imageUrl }: UpdateMonImageDto,
+  ) {
+    let uploadedImageUrl: string;
+    if (!imageUrl) {
+      uploadedImageUrl = await this.uploadMonImage(file, monId, designerName);
     }
 
-    return savedResult;
+    const mon = await this.monRepository.findOne(monId);
+    const oldMonImage = await this.monImageRepository.findOne(monImageId);
+    const oldMonImageMon = await oldMonImage.mon;
+
+    if (!mon || oldMonImage || oldMonImageMon.id !== mon.id) {
+      throw new NotFoundException();
+    }
+
+    return await this.monImageRepository.update(monImageId, {
+      designerId,
+      designerName,
+      imageUrl: imageUrl || uploadedImageUrl,
+    });
+  }
+
+  async uploadMonImage(
+    file: Express.Multer.File,
+    monId: number,
+    designerName: string,
+  ) {
+    return await uploadFile(file, {
+      fileName: `mon_${monId}_${designerName}`,
+      path: 'mon-images',
+    });
   }
 
   async initializeMons() {

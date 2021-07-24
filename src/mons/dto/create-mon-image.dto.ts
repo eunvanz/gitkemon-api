@@ -1,10 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
-import { MonTier } from 'src/types';
 
-export class RegisterMonImageDto {
-  @IsString()
-  monId: number;
-
+export class CreateMonImageDto {
   @IsOptional()
   @IsString()
   designerId?: string;
@@ -15,8 +11,4 @@ export class RegisterMonImageDto {
   @IsOptional()
   @IsString()
   imageUrl?: string;
-
-  @IsOptional()
-  @IsString()
-  tier?: MonTier;
 }
