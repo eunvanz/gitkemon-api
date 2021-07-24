@@ -4,13 +4,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import axios from 'axios';
-import { NextFunction, Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { ACCESS_TOKEN_COOKIE_NAME } from 'src/constants/cookies';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-  async use(req: Request, _res: Response, next: NextFunction) {
+  async use(req: Request, res: Response, next: NextFunction) {
     const token = req.signedCookies[ACCESS_TOKEN_COOKIE_NAME];
     if (token) {
       try {
@@ -18,6 +18,7 @@ export class AuthMiddleware implements NestMiddleware {
           headers: { Authorization: `token ${token}` },
         });
       } catch (error) {
+        res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
         throw new UnauthorizedException('Token is invalid.');
       }
       req.headers[ACCESS_TOKEN_HEADER_NAME] = token;
