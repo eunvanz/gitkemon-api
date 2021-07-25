@@ -130,6 +130,9 @@ export class User extends TimeRecord {
   @Column()
   accessToken: string;
 
+  @Column({ default: true })
+  isActive: boolean;
+
   @OneToOne(() => GithubUser)
   @JoinColumn()
   githubUser: GithubUser;

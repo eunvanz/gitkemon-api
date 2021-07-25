@@ -71,6 +71,9 @@ export class Mon extends TimeRecord {
   @Column()
   speed: number;
 
+  @Column()
+  colPoint: number;
+
   @Column({ nullable: true })
   evolveFromId?: number;
 
