@@ -76,24 +76,7 @@ export class UsersService {
       });
     }
 
-    let githubUser: GithubUser;
-    try {
-      const userObserver$ = this.httpService.get<GithubUser>(
-        `${process.env.GITHUB_API_BASE_URL}/user`,
-        {
-          headers: {
-            Authorization: `token ${accessToken}`,
-          },
-        },
-      );
-
-      githubUser = (await lastValueFrom(userObserver$)).data;
-    } catch (error) {
-      throw new InternalServerErrorException({
-        errorCode: ERROR_CODE.FAILURE_TO_GET_GITHUB_USER,
-        errorMessage: 'Failed to get github user from access token.',
-      });
-    }
+    const githubUser = await this.getGithubUserWithAccessToken(accessToken);
 
     let user: User = await this.userRepository.findOne({
       githubUser,
@@ -127,6 +110,49 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  async loginWithToken(accessToken: string) {
+    const githubUser = await this.getGithubUserWithAccessToken(accessToken);
+    const user = await this.userRepository.findOne({ githubUser });
+
+    if (!user) {
+      throw new InternalServerErrorException({
+        errorCode: ERROR_CODE.INVALID_TOKEN,
+        errorMessage: 'Token is invalid.',
+      });
+    }
+
+    await this.userRepository.update(user.id, {
+      githubUser,
+    });
+
+    return {
+      ...user,
+      githubUser,
+    };
+  }
+
+  async getGithubUserWithAccessToken(accessToken: string) {
+    let githubUser: GithubUser;
+    try {
+      const userObserver$ = this.httpService.get<GithubUser>(
+        `${process.env.GITHUB_API_BASE_URL}/user`,
+        {
+          headers: {
+            Authorization: `token ${accessToken}`,
+          },
+        },
+      );
+
+      githubUser = (await lastValueFrom(userObserver$)).data;
+    } catch (error) {
+      throw new InternalServerErrorException({
+        errorCode: ERROR_CODE.FAILURE_TO_GET_GITHUB_USER,
+        errorMessage: 'Failed to get github user from access token.',
+      });
+    }
+    return githubUser;
   }
 
   /**

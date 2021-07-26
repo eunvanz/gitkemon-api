@@ -7,10 +7,11 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   Res,
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { ACCESS_TOKEN_COOKIE_NAME } from 'src/constants/cookies';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
@@ -70,5 +71,17 @@ export class UsersController {
       signed: true,
     });
     response.send(user);
+  }
+
+  @Post('login-with-token')
+  async loginWithToken(@Req() request: Request, @Res() response: Response) {
+    const token = request.cookies[ACCESS_TOKEN_COOKIE_NAME];
+    try {
+      const user = await this.userService.loginWithToken(token);
+      return user;
+    } catch (error) {
+      response.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
+      response.send();
+    }
   }
 }
