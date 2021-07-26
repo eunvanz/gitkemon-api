@@ -74,14 +74,23 @@ export class UsersController {
   }
 
   @Post('login-with-token')
-  async loginWithToken(@Req() request: Request, @Res() response: Response) {
-    const token = request.cookies[ACCESS_TOKEN_COOKIE_NAME];
+  async loginWithToken(@Req() req: Request, @Res() res: Response) {
+    const token = req.signedCookies[ACCESS_TOKEN_COOKIE_NAME];
+    if (!token) {
+      return res.send();
+    }
     try {
       const user = await this.userService.loginWithToken(token);
-      return user;
+      return res.send(user);
     } catch (error) {
-      response.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
-      response.send();
+      res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
+      return res.send();
     }
+  }
+
+  @Post('logout')
+  async logout(@Res() res: Response) {
+    res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
+    res.send();
   }
 }
