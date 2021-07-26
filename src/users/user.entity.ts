@@ -133,7 +133,7 @@ export class User extends TimeRecord {
   @Column({ default: true })
   isActive: boolean;
 
-  @OneToOne(() => GithubUser)
+  @OneToOne(() => GithubUser, { eager: true })
   @JoinColumn()
   githubUser: GithubUser;
 }
