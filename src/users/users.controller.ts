@@ -75,14 +75,13 @@ export class UsersController {
   @Post('login-with-token')
   async loginWithToken(@Req() req: Request, @Res() res: Response) {
     console.log('req.body', req.body);
-    const accessToken = req.body.token || req.cookies[ACCESS_TOKEN_COOKIE_NAME];
-    console.log('===== accessToken', accessToken);
+    const accessToken =
+      req.body.token || req.cookies?.[ACCESS_TOKEN_COOKIE_NAME];
     if (!accessToken) {
       return res.send();
     }
     try {
       const user = await this.userService.loginWithToken(accessToken);
-      console.log('===== user', user);
       return res.send(user);
     } catch (error) {
       res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
