@@ -2,7 +2,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as admin from 'firebase-admin';
-import * as cookieParser from 'cookie-parser';
 
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
@@ -23,7 +22,6 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  app.use(cookieParser(process.env.COOKIE_SECRET));
   await app.listen(3000);
 }
 bootstrap();

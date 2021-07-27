@@ -68,19 +68,21 @@ export class UsersController {
     response.cookie(ACCESS_TOKEN_COOKIE_NAME, user.accessToken, {
       expires: dayjs().add(30, 'days').toDate(),
       httpOnly: true,
-      signed: true,
     });
     response.send(user);
   }
 
   @Post('login-with-token')
   async loginWithToken(@Req() req: Request, @Res() res: Response) {
-    const token = req.signedCookies[ACCESS_TOKEN_COOKIE_NAME];
-    if (!token) {
+    console.log('req.body', req.body);
+    const accessToken = req.body.token || req.cookies[ACCESS_TOKEN_COOKIE_NAME];
+    console.log('===== accessToken', accessToken);
+    if (!accessToken) {
       return res.send();
     }
     try {
-      const user = await this.userService.loginWithToken(token);
+      const user = await this.userService.loginWithToken(accessToken);
+      console.log('===== user', user);
       return res.send(user);
     } catch (error) {
       res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
