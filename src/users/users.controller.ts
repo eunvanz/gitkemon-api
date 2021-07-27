@@ -74,7 +74,6 @@ export class UsersController {
 
   @Post('login-with-token')
   async loginWithToken(@Req() req: Request, @Res() res: Response) {
-    console.log('req.body', req.body);
     const accessToken =
       req.body.token || req.cookies?.[ACCESS_TOKEN_COOKIE_NAME];
     if (!accessToken) {
