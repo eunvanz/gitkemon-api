@@ -88,6 +88,29 @@ export class MonsService {
                   )
                 : undefined;
 
+              const attack: number = mon.stats.find(
+                (stat) => stat.stat.name === 'attack',
+              ).base_stat;
+              const defense: number = mon.stats.find(
+                (stat) => stat.stat.name === 'defense',
+              ).base_stat;
+              const specialAttack: number = mon.stats.find(
+                (stat) => stat.stat.name === 'special-attack',
+              ).base_stat;
+              const specialDefense: number = mon.stats.find(
+                (stat) => stat.stat.name === 'special-defense',
+              ).base_stat;
+              const hp: number = mon.stats.find(
+                (stat) => stat.stat.name === 'hp',
+              ).base_stat;
+              const speed: number = mon.stats.find(
+                (stat) => stat.stat.name === 'speed',
+              ).base_stat;
+              const total: number =
+                attack + defense + specialAttack + specialDefense + hp + speed;
+
+              const stars = Math.min(Math.ceil((total - 185) / 50), 10);
+
               this.monRepository.save({
                 id: mon.id,
                 order: mon.order,
@@ -118,20 +141,15 @@ export class MonsService {
                 height: mon.height,
                 weight: mon.weight,
                 tier: is_legendary ? 'elite' : is_mythical ? 'legend' : 'basic',
-                hp: mon.stats.find((stat) => stat.stat.name === 'hp').base_stat,
-                attack: mon.stats.find((stat) => stat.stat.name === 'attack')
-                  .base_stat,
-                defense: mon.stats.find((stat) => stat.stat.name === 'defense')
-                  .base_stat,
-                specialAttack: mon.stats.find(
-                  (stat) => stat.stat.name === 'special-attack',
-                ).base_stat,
-                specialDefense: mon.stats.find(
-                  (stat) => stat.stat.name === 'special-defense',
-                ).base_stat,
-                speed: mon.stats.find((stat) => stat.stat.name === 'speed')
-                  .base_stat,
+                hp,
+                attack,
+                defense,
+                specialAttack,
+                specialDefense,
+                speed,
+                total,
                 evolveFromId,
+                stars,
               });
             });
         });
