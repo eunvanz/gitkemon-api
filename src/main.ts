@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import * as admin from 'firebase-admin';
+import { AppModule } from './app.module';
 
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),

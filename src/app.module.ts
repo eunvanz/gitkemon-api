@@ -5,9 +5,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { typeOrmConfigAsync } from './config/typeorm.config';
 import { AuthMiddleware } from './middlewares/auth.middleware';
+import { MonImagesModule } from './mon-images/mon-images.module';
 import { MonsModule } from './mons/mons.module';
 import { UsersModule } from './users/users.module';
-import { MonImagesModule } from './mon-images/mon-images.module';
 
 @Module({
   imports: [
