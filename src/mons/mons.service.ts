@@ -61,6 +61,11 @@ export class MonsService {
     return await this.monRepository.delete(id);
   }
 
+  async findAll() {
+    const mons = await this.monRepository.find();
+    await Promise.all(mons.map((mon) => mon.monImages));
+  }
+
   async initializeMons() {
     Array.from({ length: 898 }).forEach((_, index) => {
       this.httpService
