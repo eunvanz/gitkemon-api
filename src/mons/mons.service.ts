@@ -64,6 +64,7 @@ export class MonsService {
   async findAll() {
     const mons = await this.monRepository.find();
     await Promise.all(mons.map((mon) => mon.monImages));
+    return mons;
   }
 
   async initializeMons() {

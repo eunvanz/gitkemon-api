@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -24,6 +25,11 @@ export class MonImagesController {
     @Body() createMonImageDto: CreateMonImageDto,
   ) {
     return await this.monImageService.save(file, createMonImageDto);
+  }
+
+  @Get()
+  async findAll() {
+    return await this.monImageService.findAll();
   }
 
   @Patch(':id')

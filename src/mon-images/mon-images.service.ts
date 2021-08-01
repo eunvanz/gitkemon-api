@@ -46,6 +46,12 @@ export class MonImagesService {
     return await this.monImageRepository.save(monImage);
   }
 
+  async findAll() {
+    const monImages = await this.monImageRepository.find();
+    await Promise.all(monImages.map((monImage) => monImage.mon));
+    return monImages;
+  }
+
   async update(
     id: number,
     file: Express.Multer.File,
