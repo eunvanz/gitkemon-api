@@ -54,6 +54,11 @@ export class MonImagesService {
 
   async findOne(id: number) {
     const monImage = await this.monImageRepository.findOne(id);
+
+    if (!monImage) {
+      throw new NotFoundException();
+    }
+
     await monImage.mon;
     return monImage;
   }
