@@ -77,14 +77,14 @@ export class UsersController {
     const accessToken =
       req.body.token || req.cookies?.[ACCESS_TOKEN_COOKIE_NAME];
     if (!accessToken) {
-      return res.send();
+      return res.send(undefined);
     }
     try {
       const user = await this.userService.loginWithToken(accessToken);
       return res.send(user);
     } catch (error) {
       res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
-      return res.send();
+      return res.send(undefined);
     }
   }
 

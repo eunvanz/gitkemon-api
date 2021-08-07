@@ -50,6 +50,7 @@ export class CreateMonDto {
   @IsString()
   tier: 'basic' | 'special' | 'rare' | 's.rare' | 'elite' | 'legend';
 
+  @IsOptional()
   @IsNumber()
   evolutionLevel?: number;
 
@@ -74,4 +75,11 @@ export class CreateMonDto {
   @IsOptional()
   @IsNumber()
   evolveFromId?: number;
+
+  @IsOptional()
+  @IsNumber()
+  colPoint: number;
+
+  @IsNumber()
+  stars: number;
 }
