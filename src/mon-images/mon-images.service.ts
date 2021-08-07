@@ -52,6 +52,12 @@ export class MonImagesService {
     return monImages;
   }
 
+  async findOne(id: number) {
+    const monImage = await this.monImageRepository.findOne(id);
+    await monImage.mon;
+    return monImage;
+  }
+
   async update(
     id: number,
     file: Express.Multer.File,

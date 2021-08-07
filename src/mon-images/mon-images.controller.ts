@@ -32,6 +32,11 @@ export class MonImagesController {
     return await this.monImageService.findAll();
   }
 
+  @Get(':id')
+  async findOne(@Param('id') id: number) {
+    return await this.monImageService.findOne(id);
+  }
+
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
   async update(
