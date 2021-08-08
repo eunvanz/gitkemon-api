@@ -138,8 +138,8 @@ export class User extends TimeRecord {
   @JoinColumn()
   githubUser: GithubUser;
 
-  @OneToOne(() => PokeBall)
-  @JoinColumn({ name: 'pokeBallId' })
+  @OneToOne(() => PokeBall, { lazy: true })
+  @JoinColumn({ name: 'poke_ball_id' })
   pokeBall: Promise<PokeBall>;
 
   @Column({ nullable: true })
