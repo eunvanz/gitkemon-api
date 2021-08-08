@@ -30,9 +30,12 @@ export class DonationsService {
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
 
-    const contributions = await this.userService.getAvailableContributions(
-      accessToken,
+    const currentContributions = await this.userService.getUserContributions(
+      user.githubUser.login,
+      user.contributionBaseDate,
     );
+
+    const contributions = currentContributions - user.lastContributions;
 
     const totalContributions = user.lastContributions + contributions;
 
