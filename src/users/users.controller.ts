@@ -9,10 +9,13 @@ import {
   Query,
   Req,
   Res,
+  Headers,
+  ForbiddenException,
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { Request, Response } from 'express';
 import { ACCESS_TOKEN_COOKIE_NAME } from 'src/constants/cookies';
+import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
@@ -92,5 +95,15 @@ export class UsersController {
   async logout(@Res() res: Response) {
     res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
     res.send();
+  }
+
+  @Get('available-contributions')
+  async getAvailableContributions(
+    @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
+  ) {
+    if (!accessToken) {
+      throw new ForbiddenException();
+    }
+    return await this.userService.getAvailableContributions(accessToken);
   }
 }

@@ -165,6 +165,17 @@ export class UsersService {
   }
 
   /**
+   * 현재 기부 가능한 컨트리뷰션을 리턴
+   * @param accessToken user access token
+   * @returns contributions
+   */
+  async getAvailableContributions(accessToken: string) {
+    const now = new Date();
+    const user = await this.userRepository.findOne({ accessToken });
+    return await this.getUserContributions(user.githubUser.login, now);
+  }
+
+  /**
    * get githubUsername's contributions during fromDate to now
    * @param githubUsername github user name
    * @param fromDate from date

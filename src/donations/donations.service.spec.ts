@@ -12,6 +12,10 @@ import { DonationsService } from './donations.service';
 
 describe('DonationsService', () => {
   let service: DonationsService;
+  let userService: UsersService;
+  // let userRepository: Repository<User>;
+  // let donationRepository: Repository<Donation>;
+  // let pokeBallRepository: Repository<PokeBall>;
 
   const mockUserRepository = new Repository<User>();
 
@@ -41,6 +45,14 @@ describe('DonationsService', () => {
     }).compile();
 
     service = module.get<DonationsService>(DonationsService);
+    userService = module.get<UsersService>(UsersService);
+    // userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    // donationRepository = module.get<Repository<Donation>>(
+    //   getRepositoryToken(Donation),
+    // );
+    // pokeBallRepository = module.get<Repository<PokeBall>>(
+    //   getRepositoryToken(PokeBall),
+    // );
   });
 
   it('should be defined', () => {
@@ -59,6 +71,8 @@ describe('DonationsService', () => {
         ];
 
         const todayDonations = { length: 1 };
+
+        jest.spyOn(userService, 'getUserContributions').mockResolvedValue(2);
 
         jest
           .spyOn(mockUserRepository, 'findOne')
