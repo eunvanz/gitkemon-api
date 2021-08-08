@@ -10,8 +10,7 @@ export class DonationsController {
   async save(@Headers(ACCESS_TOKEN_HEADER_NAME) accessToken?: string) {
     if (!accessToken) {
       throw new ForbiddenException();
-    } else {
-      await this.donationService.save(accessToken as string);
     }
+    return await this.donationService.save(accessToken as string);
   }
 }

@@ -70,6 +70,14 @@ export class DonationsService {
 
     const pokeBall = await user.pokeBall;
 
+    const result = {
+      basicPokeBalls: contributions,
+      basicRarePokeBalls: 0,
+      rarePokeBalls: 0,
+      elitePokeBalls: 0,
+      legendPokeBalls: 0,
+    };
+
     const basicPokeBalls = pokeBall.basicPokeBalls + contributions;
     let basicRarePokeBalls = pokeBall.basicRarePokeBalls;
     let rarePokeBalls = pokeBall.rarePokeBalls;
@@ -81,23 +89,36 @@ export class DonationsService {
       switch (daysInARow) {
         case 3:
           rarePokeBalls++;
+          result.rarePokeBalls++;
         case 10:
           elitePokeBalls++;
+          result.elitePokeBalls++;
         case 30:
           legendPokeBalls++;
+          result.legendPokeBalls++;
       }
     }
 
     // 기부횟수 보상 처리
-    switch (0) {
-      case totalContributions % 3:
-        basicRarePokeBalls += 1 + Math.floor((contributions - 0.1) / 3);
-      case totalContributions % 10:
-        rarePokeBalls += 1 + Math.floor((contributions - 0.1) / 10);
-      case totalContributions % 200:
-        elitePokeBalls += 1 + Math.floor((contributions - 0.1) / 200);
-      case totalContributions % 500:
-        elitePokeBalls += 1 + Math.floor((contributions - 0.1) / 500);
+    if (totalContributions % 3 === 0) {
+      const amount = 1 + Math.floor((contributions - 0.1) / 3);
+      basicRarePokeBalls += amount;
+      result.basicPokeBalls += amount;
+    }
+    if (totalContributions % 10 === 0) {
+      const amount = 1 + Math.floor((contributions - 0.1) / 10);
+      rarePokeBalls += amount;
+      result.rarePokeBalls += amount;
+    }
+    if (totalContributions % 200 === 0) {
+      const amount = 1 + Math.floor((contributions - 0.1) / 200);
+      elitePokeBalls += amount;
+      result.elitePokeBalls += amount;
+    }
+    if (totalContributions % 500 === 0) {
+      const amount = 1 + Math.floor((contributions - 0.1) / 500);
+      legendPokeBalls += amount;
+      result.legendPokeBalls += amount;
     }
 
     await trxPokeBallRepository.update(pokeBall.id, {
@@ -108,17 +129,13 @@ export class DonationsService {
       legendPokeBalls,
     });
 
-    await trxDonationRepository.save({
+    return await trxDonationRepository.save({
       userId: user.id,
       contributions,
       totalContributions,
       daysInARow,
       donationDateString: dayjs(donationDate).format('YYYY-MM-DD'),
-      basicPokeBalls,
-      basicRarePokeBalls,
-      rarePokeBalls,
-      elitePokeBalls,
-      legendPokeBalls,
+      ...result,
     });
   }
 }
