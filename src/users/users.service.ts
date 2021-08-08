@@ -170,9 +170,12 @@ export class UsersService {
    * @returns contributions
    */
   async getAvailableContributions(accessToken: string) {
-    const now = new Date();
     const user = await this.userRepository.findOne({ accessToken });
-    return await this.getUserContributions(user.githubUser.login, now);
+    const currentContributions = await this.getUserContributions(
+      user.githubUser.login,
+      user.contributionBaseDate,
+    );
+    return currentContributions - user.lastContributions;
   }
 
   /**
