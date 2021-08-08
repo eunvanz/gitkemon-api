@@ -134,6 +134,7 @@ export class UsersService {
 
     await this.userRepository.update(user.id, {
       githubUser,
+      accessToken,
     });
 
     return {
