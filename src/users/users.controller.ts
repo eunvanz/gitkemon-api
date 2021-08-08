@@ -52,6 +52,16 @@ export class UsersController {
     );
   }
 
+  @Get('available-contributions')
+  async getAvailableContributions(
+    @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
+  ) {
+    if (!accessToken) {
+      throw new ForbiddenException();
+    }
+    return await this.userService.getAvailableContributions(accessToken);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.userService.findOne(id);
@@ -95,15 +105,5 @@ export class UsersController {
   async logout(@Res() res: Response) {
     res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
     res.send();
-  }
-
-  @Get('available-contributions')
-  async getAvailableContributions(
-    @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
-  ) {
-    if (!accessToken) {
-      throw new ForbiddenException();
-    }
-    return await this.userService.getAvailableContributions(accessToken);
   }
 }
