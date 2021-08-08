@@ -33,4 +33,7 @@ export class Donation extends TimeRecord {
 
   @Column()
   legendPokeBalls: number;
+
+  @Column()
+  donationDateString: string; // yyyy-MM-dd
 }

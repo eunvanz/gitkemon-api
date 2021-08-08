@@ -9,6 +9,7 @@ import * as dayjs from 'dayjs';
 import { lastValueFrom, map } from 'rxjs';
 import Rules from 'src/config/rules.config';
 import { ERROR_CODE } from 'src/constants/errors';
+import { PokeBall } from 'src/poke-balls/poke-ball.entity';
 import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GithubUser, User } from './user.entity';
@@ -18,8 +19,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(GithubUser)
-    private readonly githubUserRepository: Repository<GithubUser>,
+    @InjectRepository(PokeBall)
+    private readonly pokeBallRepository: Repository<PokeBall>,
     private readonly httpService: HttpService,
   ) {}
 
@@ -115,6 +116,14 @@ export class UsersService {
   async loginWithToken(accessToken: string) {
     const githubUser = await this.getGithubUserWithAccessToken(accessToken);
     const user = await this.userRepository.findOne({ githubUser });
+
+    const pokeBall = await user.pokeBall;
+
+    if (!pokeBall) {
+      await this.pokeBallRepository.save({
+        userId: user.id,
+      });
+    }
 
     if (!user) {
       throw new InternalServerErrorException({

@@ -1,4 +1,5 @@
 import { TimeRecord } from 'src/entities/time-record.entity';
+import { PokeBall } from 'src/poke-balls/poke-ball.entity';
 import {
   Column,
   Entity,
@@ -136,4 +137,8 @@ export class User extends TimeRecord {
   @OneToOne(() => GithubUser, { eager: true })
   @JoinColumn()
   githubUser: GithubUser;
+
+  @OneToOne(() => PokeBall, (pokeBall) => pokeBall.userId)
+  @JoinColumn()
+  pokeBall: Promise<PokeBall>;
 }

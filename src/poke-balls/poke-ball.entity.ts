@@ -1,5 +1,4 @@
 import { TimeRecord } from 'src/entities/time-record.entity';
-import { PokeBallType } from 'src/types';
 import { Column, Entity, Generated, PrimaryColumn } from 'typeorm';
 
 @Entity()
@@ -11,9 +10,18 @@ export class PokeBall extends TimeRecord {
   @Column()
   userId: string;
 
-  @Column()
-  type: PokeBallType;
+  @Column({ default: 0 })
+  basicPokeBalls: number;
 
-  @Column()
-  count: number;
+  @Column({ default: 0 })
+  basicRarePokeBalls: number;
+
+  @Column({ default: 0 })
+  rarePokeBalls: number;
+
+  @Column({ default: 0 })
+  elitePokeBalls: number;
+
+  @Column({ default: 0 })
+  legendPokeBalls: number;
 }
