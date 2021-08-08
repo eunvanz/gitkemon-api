@@ -6,13 +6,13 @@ import { PokeBall } from 'src/poke-balls/poke-ball.entity';
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { Repository, Transaction, TransactionRepository } from 'typeorm';
-import { Donation } from './donation.entity';
+import { Payback } from './payback.entity';
 
 @Injectable()
-export class DonationsService {
+export class PaybacksService {
   constructor(
-    @InjectRepository(Donation)
-    private readonly donationRepository: Repository<Donation>,
+    @InjectRepository(Payback)
+    private readonly paybackRepository: Repository<Payback>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(PokeBall)
@@ -24,8 +24,8 @@ export class DonationsService {
   async save(
     accessToken: string,
     @TransactionRepository(User) trxUserRepository?: Repository<User>,
-    @TransactionRepository(Donation)
-    trxDonationRepository?: Repository<Donation>,
+    @TransactionRepository(Payback)
+    trxPaybackRepository?: Repository<Payback>,
     @TransactionRepository(PokeBall)
     trxPokeBallRepository?: Repository<PokeBall>,
   ) {
@@ -44,18 +44,18 @@ export class DonationsService {
 
     const totalContributions = user.lastContributions + contributions;
 
-    const donationDate = new Date();
+    const paybackDate = new Date();
 
     await trxUserRepository.update(user.id, {
       lastContributions: totalContributions,
-      lastDonationDate: donationDate,
+      lastPaybackDate: paybackDate,
     });
 
-    const yesterdayDonation = (
-      await trxDonationRepository.find({
+    const yesterdayPayback = (
+      await trxPaybackRepository.find({
         where: {
           userId: user.id,
-          donationDateString: dayjs(donationDate)
+          paybackDateString: dayjs(paybackDate)
             .subtract(1, 'day')
             .format('YYYY-MM-DD'),
         },
@@ -63,16 +63,16 @@ export class DonationsService {
       })
     )[0];
 
-    const todayDonations = await trxDonationRepository.find({
+    const todayPaybacks = await trxPaybackRepository.find({
       where: {
         userId: user.id,
-        donationDateString: dayjs(donationDate).format('YYYY-MM-DD'),
+        paybackDateString: dayjs(paybackDate).format('YYYY-MM-DD'),
       },
     });
 
     let daysInARow = 1;
-    if (yesterdayDonation) {
-      daysInARow = yesterdayDonation.daysInARow + 1;
+    if (yesterdayPayback) {
+      daysInARow = yesterdayPayback.daysInARow + 1;
     }
 
     const pokeBall = await user.pokeBall;
@@ -91,7 +91,7 @@ export class DonationsService {
     let elitePokeBalls = pokeBall.elitePokeBalls;
     let legendPokeBalls = pokeBall.legendPokeBalls;
     // 연속기부 보상 처리
-    if (!todayDonations.length) {
+    if (!todayPaybacks.length) {
       // 첫번째 연속 기부인 경우
       switch (daysInARow) {
         case 3:
@@ -147,12 +147,12 @@ export class DonationsService {
       legendPokeBalls,
     });
 
-    return await trxDonationRepository.save({
+    return await trxPaybackRepository.save({
       userId: user.id,
       contributions,
       totalContributions,
       daysInARow,
-      donationDateString: dayjs(donationDate).format('YYYY-MM-DD'),
+      paybackDateString: dayjs(paybackDate).format('YYYY-MM-DD'),
       ...result,
     });
   }

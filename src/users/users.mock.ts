@@ -6,7 +6,7 @@ const baseUser: User = {
   nickname: 'Benjamin',
   introduce: null,
   lastContributions: 0,
-  lastDonationDate: null,
+  lastPaybackDate: null,
   accessToken: 'mockAccessToken',
   isActive: true,
   createdAt: new Date('2021-07-01'),

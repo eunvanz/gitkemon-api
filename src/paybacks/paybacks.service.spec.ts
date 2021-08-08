@@ -6,32 +6,38 @@ import mockPokeBall from 'src/poke-balls/poke-ball.mock';
 import { User } from 'src/users/user.entity';
 import mockUser from 'src/users/users.mock';
 import { UsersService } from 'src/users/users.service';
-import { Repository } from 'typeorm';
-import { Donation } from './donation.entity';
-import { DonationsService } from './donations.service';
+import { Payback } from './payback.entity';
+import { PaybacksService } from './paybacks.service';
 
-describe('DonationsService', () => {
-  let service: DonationsService;
+describe('PaybacksService', () => {
+  let service: PaybacksService;
   let userService: UsersService;
   // let userRepository: Repository<User>;
-  // let donationRepository: Repository<Donation>;
+  // let paybackRepository: Repository<Payback>;
   // let pokeBallRepository: Repository<PokeBall>;
 
-  const mockUserRepository = new Repository<User>();
+  const mockUserRepository = {
+    findOne: jest.fn(),
+  };
 
-  const mockDonationRepository = new Repository<Donation>();
+  const mockPaybackRepository = {
+    find: jest.fn(),
+    save: jest.fn(),
+  };
 
-  const mockPokeBallRepository = new Repository<PokeBall>();
+  const mockPokeBallRepository = {
+    update: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [TypeOrmModule.forFeature([Donation, User, PokeBall])],
+      imports: [TypeOrmModule.forFeature([Payback, User, PokeBall])],
       providers: [
-        DonationsService,
+        PaybacksService,
         UsersService,
         {
-          provide: getRepositoryToken(Donation),
-          useValue: mockDonationRepository,
+          provide: getRepositoryToken(Payback),
+          useValue: mockPaybackRepository,
         },
         {
           provide: getRepositoryToken(User),
@@ -44,11 +50,11 @@ describe('DonationsService', () => {
       ],
     }).compile();
 
-    service = module.get<DonationsService>(DonationsService);
+    service = module.get<PaybacksService>(PaybacksService);
     userService = module.get<UsersService>(UsersService);
     // userRepository = module.get<Repository<User>>(getRepositoryToken(User));
-    // donationRepository = module.get<Repository<Donation>>(
-    //   getRepositoryToken(Donation),
+    // paybackRepository = module.get<Repository<Payback>>(
+    //   getRepositoryToken(Payback),
     // );
     // pokeBallRepository = module.get<Repository<PokeBall>>(
     //   getRepositoryToken(PokeBall),
@@ -64,13 +70,13 @@ describe('DonationsService', () => {
 
     describe('일반적인 경우', () => {
       it('basic 포키볼을 contribution 수 만큼 보상한다.', async () => {
-        const yesterdayDonation = [
+        const yesterdayPayback = [
           {
             daysInARow: 1,
           },
         ];
 
-        const todayDonations = { length: 1 };
+        const todayPaybacks = { length: 1 };
 
         jest.spyOn(userService, 'getUserContributions').mockResolvedValue(2);
 
@@ -79,9 +85,9 @@ describe('DonationsService', () => {
           .mockResolvedValueOnce(mockUser.baseUser);
 
         jest
-          .spyOn(mockDonationRepository, 'find')
-          .mockResolvedValueOnce(yesterdayDonation as Donation[])
-          .mockResolvedValueOnce(todayDonations as Donation[]);
+          .spyOn(mockPaybackRepository, 'find')
+          .mockResolvedValueOnce(yesterdayPayback as Payback[])
+          .mockResolvedValueOnce(todayPaybacks as Payback[]);
 
         jest.spyOn(mockPokeBallRepository, 'update');
 
@@ -89,16 +95,16 @@ describe('DonationsService', () => {
           mockPokeBallRepository,
           'update',
         );
-        const mockDonationRepositorySave = jest.spyOn(
-          mockDonationRepository,
+        const mockPaybackRepositorySave = jest.spyOn(
+          mockPaybackRepository,
           'save',
         );
 
         await service.save(
           accessToken,
-          mockUserRepository,
-          mockDonationRepository,
-          mockPokeBallRepository,
+          // mockUserRepository,
+          // mockPaybackRepository,
+          // mockPokeBallRepository,
         );
 
         expect(mockPokeBallRepositoryUpdate).toBeCalledWith(
@@ -112,12 +118,12 @@ describe('DonationsService', () => {
           },
         );
 
-        expect(mockDonationRepositorySave).toBeCalledWith({
+        expect(mockPaybackRepositorySave).toBeCalledWith({
           userId: 'mockId',
           contributions: 2,
           totalContributions: 2,
           daysInARow: 2,
-          donationDateString: dayjs(new Date()).format('YYYY-MM-DD'),
+          paybackDateString: dayjs(new Date()).format('YYYY-MM-DD'),
           basicPokeBalls: 2,
           basicRarePokeBalls: 0,
           rarePokeBalls: 0,

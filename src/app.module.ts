@@ -4,10 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { typeOrmConfigAsync } from './config/typeorm.config';
-import { DonationsModule } from './donations/donations.module';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { MonImagesModule } from './mon-images/mon-images.module';
 import { MonsModule } from './mons/mons.module';
+import { PaybacksModule } from './paybacks/paybacks.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -20,7 +20,7 @@ import { UsersModule } from './users/users.module';
     MonsModule,
     UsersModule,
     MonImagesModule,
-    DonationsModule,
+    PaybacksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

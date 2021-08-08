@@ -2,7 +2,7 @@ import { TimeRecord } from 'src/entities/time-record.entity';
 import { Column, Entity, Generated, PrimaryColumn } from 'typeorm';
 
 @Entity()
-export class Donation extends TimeRecord {
+export class Payback extends TimeRecord {
   @PrimaryColumn()
   @Generated()
   id: number;
@@ -35,5 +35,5 @@ export class Donation extends TimeRecord {
   legendPokeBalls: number;
 
   @Column()
-  donationDateString: string; // yyyy-MM-dd
+  paybackDateString: string; // yyyy-MM-dd
 }

@@ -1,16 +1,16 @@
 import { Controller, ForbiddenException, Headers, Post } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
-import { DonationsService } from './donations.service';
+import { PaybacksService } from './paybacks.service';
 
-@Controller('donations')
-export class DonationsController {
-  constructor(private readonly donationService: DonationsService) {}
+@Controller('paybacks')
+export class PaybacksController {
+  constructor(private readonly paybackService: PaybacksService) {}
 
   @Post()
   async save(@Headers(ACCESS_TOKEN_HEADER_NAME) accessToken?: string) {
     if (!accessToken) {
       throw new ForbiddenException();
     }
-    return await this.donationService.save(accessToken as string);
+    return await this.paybackService.save(accessToken as string);
   }
 }
