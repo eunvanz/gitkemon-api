@@ -10,5 +10,6 @@ import { UsersService } from './users.service';
   imports: [TypeOrmModule.forFeature([User, GithubUser, PokeBall]), HttpModule],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [UsersService],
 })
 export class UsersModule {}

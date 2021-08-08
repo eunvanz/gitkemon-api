@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import dayjs from 'dayjs';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
 import { User } from 'src/users/user.entity';
+import { UsersService } from 'src/users/users.service';
 import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { Donation } from './donation.entity';
 
@@ -13,29 +14,37 @@ export class DonationsService {
     private readonly donationRepository: Repository<Donation>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(PokeBall)
+    private readonly pokeBallRepository: Repository<PokeBall>,
+    private readonly userService: UsersService,
   ) {}
 
   @Transaction()
   async save(
     accessToken: string,
-    contributions: number,
-    @TransactionRepository(User) trxUserRepository: Repository<User>,
+    @TransactionRepository(User) trxUserRepository?: Repository<User>,
     @TransactionRepository(Donation)
-    trxDonationRepository: Repository<Donation>,
+    trxDonationRepository?: Repository<Donation>,
     @TransactionRepository(PokeBall)
-    trxPokeBallRepository: Repository<PokeBall>,
+    trxPokeBallRepository?: Repository<PokeBall>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
 
-    const totalContributions = user.lastContributions + contributions;
+    const contributions = await this.userService.getUserContributions(
+      user.githubUser.login,
+      user.lastDonationDate,
+    );
 
-    await trxUserRepository.update(user.id, {
-      lastContributions: totalContributions,
-    });
+    const totalContributions = user.lastContributions + contributions;
 
     const donationDate = new Date();
 
-    const lastDayDonation = (
+    await trxUserRepository.update(user.id, {
+      lastContributions: totalContributions,
+      lastDonationDate: donationDate,
+    });
+
+    const yesterdayDonation = (
       await trxDonationRepository.find({
         where: {
           userId: user.id,
@@ -55,12 +64,8 @@ export class DonationsService {
     });
 
     let daysInARow = 1;
-    if (lastDayDonation) {
-      const lastDonationDate = new Date(lastDayDonation.donationDateString);
-      const dayDiff = dayjs(lastDonationDate).diff(donationDate, 'day');
-      if (dayDiff === 1) {
-        daysInARow = lastDayDonation.daysInARow + 1;
-      }
+    if (yesterdayDonation) {
+      daysInARow = yesterdayDonation.daysInARow + 1;
     }
 
     const pokeBall = await user.pokeBall;

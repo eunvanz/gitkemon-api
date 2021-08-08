@@ -123,9 +123,9 @@ export class User extends TimeRecord {
   lastContributions: number;
 
   @Column()
-  lastRewardedDate: Date;
+  lastDonationDate: Date;
 
-  @Column()
+  @Column({ nullable: true })
   contributionBaseDate: Date;
 
   @Column()
