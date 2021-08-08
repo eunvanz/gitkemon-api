@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
+import { getMultiplesCountBetween } from 'src/lib/utils';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -36,6 +37,10 @@ export class DonationsService {
     );
 
     const contributions = currentContributions - user.lastContributions;
+
+    if (!contributions) {
+      throw new BadRequestException();
+    }
 
     const totalContributions = user.lastContributions + contributions;
 
@@ -102,26 +107,37 @@ export class DonationsService {
     }
 
     // 기부횟수 보상 처리
-    if (totalContributions % 3 === 0) {
-      const amount = 1 + Math.floor((contributions - 0.1) / 3);
-      basicRarePokeBalls += amount;
-      result.basicPokeBalls += amount;
-    }
-    if (totalContributions % 10 === 0) {
-      const amount = 1 + Math.floor((contributions - 0.1) / 10);
-      rarePokeBalls += amount;
-      result.rarePokeBalls += amount;
-    }
-    if (totalContributions % 200 === 0) {
-      const amount = 1 + Math.floor((contributions - 0.1) / 200);
-      elitePokeBalls += amount;
-      result.elitePokeBalls += amount;
-    }
-    if (totalContributions % 500 === 0) {
-      const amount = 1 + Math.floor((contributions - 0.1) / 500);
-      legendPokeBalls += amount;
-      result.legendPokeBalls += amount;
-    }
+    const basicRareAmount = getMultiplesCountBetween(
+      3,
+      user.lastContributions + 1,
+      totalContributions,
+    );
+    basicRarePokeBalls += basicRareAmount;
+    result.basicPokeBalls += basicRareAmount;
+
+    const rareAmount = getMultiplesCountBetween(
+      10,
+      user.lastContributions + 1,
+      totalContributions,
+    );
+    rarePokeBalls += rareAmount;
+    result.rarePokeBalls += rareAmount;
+
+    const eliteAmount = getMultiplesCountBetween(
+      200,
+      user.lastContributions + 1,
+      totalContributions,
+    );
+    elitePokeBalls += eliteAmount;
+    result.elitePokeBalls += eliteAmount;
+
+    const legendAmount = getMultiplesCountBetween(
+      500,
+      user.lastContributions + 1,
+      totalContributions,
+    );
+    legendPokeBalls += legendAmount;
+    result.legendPokeBalls += legendAmount;
 
     await trxPokeBallRepository.update(pokeBall.id, {
       basicPokeBalls,
