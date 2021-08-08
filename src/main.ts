@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
 import * as admin from 'firebase-admin';
 import { AppModule } from './app.module';
 
@@ -22,6 +23,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.use(cookieParser());
   await app.listen(3000);
 }
 bootstrap();
