@@ -63,6 +63,42 @@ export class MonImagesService {
     return monImage;
   }
 
+  async findByQuery(condition: 'monName' | 'designerName', value: string) {
+    let monImages: MonImage[];
+    if (condition === 'monName') {
+      const mon = await this.monRepository.findOne({
+        where: [
+          {
+            name: value,
+          },
+          {
+            nameKo: value,
+          },
+          {
+            nameJa: value,
+          },
+          {
+            nameZh: value,
+          },
+        ],
+      });
+      monImages = await this.monImageRepository.find({
+        where: {
+          mon,
+        },
+      });
+    } else {
+      monImages = await this.monImageRepository.find({
+        where: {
+          designerName: value,
+        },
+      });
+    }
+    await Promise.all(monImages.map((monImage) => monImage.mon));
+
+    return monImages;
+  }
+
   async update(
     id: number,
     file: Express.Multer.File,

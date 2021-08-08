@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -28,7 +29,13 @@ export class MonImagesController {
   }
 
   @Get()
-  async findAll() {
+  async findAll(
+    @Query('condition') condition: 'monName' | 'designerName',
+    @Query('value') value: string,
+  ) {
+    if (condition && value) {
+      return await this.monImageService.findByQuery(condition, value);
+    }
     return await this.monImageService.findAll();
   }
 
