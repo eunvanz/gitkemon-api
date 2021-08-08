@@ -40,3 +40,5 @@ export interface GithubUser {
   created_at: string;
   updated_at: string;
 }
+
+export type PokeBallType = 'basic' | 'basicRare' | 'rare' | 'elite' | 'legend';
