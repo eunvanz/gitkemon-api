@@ -7,9 +7,6 @@ export class PokeBall extends TimeRecord {
   @Generated()
   id: number;
 
-  @Column()
-  userId: string;
-
   @Column({ default: 0 })
   basicPokeBalls: number;
 

@@ -7,7 +7,6 @@ const basePokeBall: PokeBall = {
   elitePokeBalls: 0,
   legendPokeBalls: 0,
   id: 1,
-  userId: 'mockUserId',
   createdAt: new Date('2021-07-01'),
   updatedAt: new Date('2021-07-01'),
 };

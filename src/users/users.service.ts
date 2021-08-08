@@ -120,8 +120,10 @@ export class UsersService {
     const pokeBall = await user.pokeBall;
 
     if (!pokeBall) {
-      await this.pokeBallRepository.save({
-        userId: user.id,
+      const newPokeBall = new PokeBall();
+      const { id } = await this.pokeBallRepository.save(newPokeBall);
+      await this.userRepository.update(user.id, {
+        pokeBallId: id,
       });
     }
 

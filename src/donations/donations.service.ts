@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';

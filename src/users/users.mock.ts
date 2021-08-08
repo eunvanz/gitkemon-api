@@ -13,6 +13,7 @@ const baseUser: User = {
   updatedAt: new Date('2021-07-01'),
   contributionBaseDate: new Date('2021-07-01'),
   pokeBall: Promise.resolve(mockPokeBall.basePokeBall),
+  pokeBallId: 1,
   githubUser: {
     login: 'eunvanz',
     id: 17351661,
