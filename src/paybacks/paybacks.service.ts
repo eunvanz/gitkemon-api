@@ -113,7 +113,7 @@ export class PaybacksService {
       totalContributions,
     );
     basicRarePokeBalls += basicRareAmount;
-    result.basicPokeBalls += basicRareAmount;
+    result.basicRarePokeBalls += basicRareAmount;
 
     const rareAmount = getMultiplesCountBetween(
       10,
