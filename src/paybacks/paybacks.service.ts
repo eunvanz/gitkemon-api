@@ -156,4 +156,20 @@ export class PaybacksService {
       ...result,
     });
   }
+
+  async reset(userId: string) {
+    const user = await this.userRepository.findOne(userId);
+    await this.userRepository.update(user.id, {
+      lastContributions: 0,
+      lastPaybackDate: user.createdAt,
+    });
+    await this.pokeBallRepository.update(user.pokeBallId, {
+      basicPokeBalls: 0,
+      basicRarePokeBalls: 0,
+      rarePokeBalls: 0,
+      elitePokeBalls: 0,
+      legendPokeBalls: 0,
+    });
+    await this.paybackRepository.delete({ userId: user.id });
+  }
 }
