@@ -36,4 +36,10 @@ export class Payback extends TimeRecord {
 
   @Column()
   paybackDateString: string; // yyyy-MM-dd
+
+  @Column()
+  hasDaysInARowReward: boolean;
+
+  @Column()
+  hasContributionsCountReward: boolean;
 }

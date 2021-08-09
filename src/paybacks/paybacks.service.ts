@@ -83,6 +83,8 @@ export class PaybacksService {
       rarePokeBalls: 0,
       elitePokeBalls: 0,
       legendPokeBalls: 0,
+      hasDaysInARowReward: false,
+      hasContributionsCountReward: false,
     };
 
     const basicPokeBalls = pokeBall.basicPokeBalls + contributions;
@@ -90,23 +92,26 @@ export class PaybacksService {
     let rarePokeBalls = pokeBall.rarePokeBalls;
     let elitePokeBalls = pokeBall.elitePokeBalls;
     let legendPokeBalls = pokeBall.legendPokeBalls;
-    // 연속기부 보상 처리
+    // 출석체크 보상 처리
     if (!todayPaybacks.length) {
-      // 첫번째 연속 기부인 경우
+      // 오늘 첫번째 출석 보상인 경우
       switch (daysInARow) {
         case 3:
           rarePokeBalls++;
           result.rarePokeBalls++;
+          result.hasDaysInARowReward = true;
         case 10:
           elitePokeBalls++;
           result.elitePokeBalls++;
+          result.hasDaysInARowReward = true;
         case 30:
           legendPokeBalls++;
           result.legendPokeBalls++;
+          result.hasDaysInARowReward = true;
       }
     }
 
-    // 기부횟수 보상 처리
+    // 컨트리뷰션횟수 보상 처리
     const basicRareAmount = getMultiplesCountBetween(
       3,
       user.lastContributions + 1,
@@ -138,6 +143,10 @@ export class PaybacksService {
     );
     legendPokeBalls += legendAmount;
     result.legendPokeBalls += legendAmount;
+
+    if (basicRareAmount + rareAmount + eliteAmount + legendAmount > 0) {
+      result.hasContributionsCountReward = true;
+    }
 
     await trxPokeBallRepository.update(pokeBall.id, {
       basicPokeBalls,
