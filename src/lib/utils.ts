@@ -24,7 +24,9 @@ export const getMidnightDate = (date: Date) => {
 export const getMultiplesCountBetween = (x: number, n: number, m: number) => {
   let cnt = 0;
   for (let i = n; i <= m; i++) {
-    if (i % x === 0) {
+    if (i === 0) {
+      continue;
+    } else if (i % x === 0) {
       cnt++;
     }
   }
