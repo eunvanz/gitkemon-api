@@ -100,11 +100,11 @@ export class PaybacksService {
           rarePokeBalls++;
           result.rarePokeBalls++;
           result.hasDaysInARowReward = true;
-        case 10:
+        case 15:
           elitePokeBalls++;
           result.elitePokeBalls++;
           result.hasDaysInARowReward = true;
-        case 30:
+        case 50:
           legendPokeBalls++;
           result.legendPokeBalls++;
           result.hasDaysInARowReward = true;
@@ -121,7 +121,7 @@ export class PaybacksService {
     result.basicRarePokeBalls += basicRareAmount;
 
     const rareAmount = getMultiplesCountBetween(
-      10,
+      20,
       user.lastContributions + 1,
       totalContributions,
     );
@@ -129,7 +129,7 @@ export class PaybacksService {
     result.rarePokeBalls += rareAmount;
 
     const eliteAmount = getMultiplesCountBetween(
-      200,
+      500,
       user.lastContributions + 1,
       totalContributions,
     );
@@ -137,7 +137,7 @@ export class PaybacksService {
     result.elitePokeBalls += eliteAmount;
 
     const legendAmount = getMultiplesCountBetween(
-      500,
+      1000,
       user.lastContributions + 1,
       totalContributions,
     );
