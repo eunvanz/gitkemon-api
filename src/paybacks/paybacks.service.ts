@@ -100,14 +100,17 @@ export class PaybacksService {
           rarePokeBalls++;
           result.rarePokeBalls++;
           result.hasDaysInARowReward = true;
+          break;
         case 15:
           elitePokeBalls++;
           result.elitePokeBalls++;
           result.hasDaysInARowReward = true;
+          break;
         case 50:
           legendPokeBalls++;
           result.legendPokeBalls++;
           result.hasDaysInARowReward = true;
+          break;
       }
     }
 
