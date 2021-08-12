@@ -9,6 +9,7 @@ import { MonImagesModule } from './mon-images/mon-images.module';
 import { MonsModule } from './mons/mons.module';
 import { PaybacksModule } from './paybacks/paybacks.module';
 import { UsersModule } from './users/users.module';
+import { CollectionModule } from './collection/collection.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     MonImagesModule,
     PaybacksModule,
+    CollectionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

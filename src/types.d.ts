@@ -40,3 +40,5 @@ export interface GithubUser {
   created_at: string;
   updated_at: string;
 }
+
+export type MonPotential = 'SS' | 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
