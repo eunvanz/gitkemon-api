@@ -139,6 +139,8 @@ export class UsersService {
       accessToken,
     });
 
+    await user.pokeBall;
+
     return {
       ...user,
       githubUser,
