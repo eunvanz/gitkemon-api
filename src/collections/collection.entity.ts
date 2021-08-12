@@ -2,6 +2,7 @@ import { TimeRecord } from 'src/entities/time-record.entity';
 import { MonImage } from 'src/mon-images/mon-image.entity';
 import { Mon } from 'src/mons/mon.entity';
 import { MonPotential } from 'src/types';
+import { User } from 'src/users/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
 @Entity()
@@ -73,4 +74,11 @@ export class Collection extends TimeRecord {
 
   @Column()
   level: number;
+
+  @Column()
+  userId: string;
+
+  @ManyToOne(() => User, { lazy: true })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }
