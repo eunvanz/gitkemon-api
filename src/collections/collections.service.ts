@@ -96,28 +96,34 @@ export class CollectionsService {
     const adoptedMon = candidateMons[adoptedMonIndex];
     const monImages = await adoptedMon.monImages;
 
-    // 콜렉션
-    const existCollection = await trxCollectionRepository.findOne({
-      where: [{ userId: user.id }, { monId: adoptedMon.id }],
-    });
+    const result = await Promise.all(
+      Array.from({ length: amount }).map(async () => {
+        // 콜렉션
+        const existCollection = await trxCollectionRepository.findOne({
+          where: [{ userId: user.id }, { monId: adoptedMon.id }],
+        });
 
-    if (existCollection) {
-      // 콜렉션 레벨업
-      const updatedCollection = getLevelUpCollection(existCollection);
-      await trxCollectionRepository.update(
-        updatedCollection.id,
-        updatedCollection,
-      );
-      return updatedCollection;
-    } else {
-      // 콜렉션 생성
-      const newCollection = getCollectionFromMon({
-        mon: adoptedMon,
-        monImages,
-        userId: user.id,
-      });
-      const result = await trxCollectionRepository.save(newCollection);
-      return result;
-    }
+        if (existCollection) {
+          // 콜렉션 레벨업
+          const updatedCollection = getLevelUpCollection(existCollection);
+          await trxCollectionRepository.update(
+            updatedCollection.id,
+            updatedCollection,
+          );
+          return updatedCollection;
+        } else {
+          // 콜렉션 생성
+          const newCollection = getCollectionFromMon({
+            mon: adoptedMon,
+            monImages,
+            userId: user.id,
+          });
+          const result = await trxCollectionRepository.save(newCollection);
+          return result;
+        }
+      }),
+    );
+
+    return result;
   }
 }
