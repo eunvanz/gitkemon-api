@@ -5,7 +5,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { random } from 'lodash';
-import { getLevelUpCollection, statNames } from 'src/lib/project-utils';
+import {
+  getCollectionFromMon,
+  getLevelUpCollection,
+} from 'src/lib/project-utils';
 import { Mon } from 'src/mons/mon.entity';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
 import { MonTier, PokeBallType } from 'src/types';
@@ -91,6 +94,7 @@ export class CollectionsService {
 
     const adoptedMonIndex = random(0, candidateMons.length - 1);
     const adoptedMon = candidateMons[adoptedMonIndex];
+    const monImages = await adoptedMon.monImages;
 
     // 콜렉션
     const existCollection = await trxCollectionRepository.findOne({
@@ -106,6 +110,12 @@ export class CollectionsService {
       );
     } else {
       // 콜렉션 생성
+      const newCollection = getCollectionFromMon({
+        mon: adoptedMon,
+        monImages,
+        userId,
+      });
+      await trxCollectionRepository.save(newCollection);
     }
   }
 }
