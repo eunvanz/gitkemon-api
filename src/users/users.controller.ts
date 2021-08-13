@@ -63,10 +63,10 @@ export class UsersController {
     return await this.userService.findOne(id);
   }
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return await this.userService.update(id, updateUserDto);
-  }
+  // @Patch(':id')
+  // async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  //   return await this.userService.update(id, updateUserDto);
+  // }
 
   @Post('login')
   async getAccessToken(
