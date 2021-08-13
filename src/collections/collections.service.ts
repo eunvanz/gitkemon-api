@@ -30,7 +30,7 @@ export class CollectionsService {
   ) {}
 
   async hunt(
-    userId: string,
+    accessToken: string,
     pokeBallType: PokeBallType,
     amount: number,
     @TransactionRepository(User) trxUserRepository?: Repository<User>,
@@ -39,7 +39,7 @@ export class CollectionsService {
     @TransactionRepository(Collection)
     trxCollectionRepository?: Repository<Collection>,
   ) {
-    const user = await trxUserRepository.findOne(userId);
+    const user = await trxUserRepository.findOne({ accessToken });
     const pokeBall = await user.pokeBall;
 
     // user pokeBall 차감
@@ -98,24 +98,26 @@ export class CollectionsService {
 
     // 콜렉션
     const existCollection = await trxCollectionRepository.findOne({
-      where: [{ userId }, { monId: adoptedMon.id }],
+      where: [{ userId: user.id }, { monId: adoptedMon.id }],
     });
 
     if (existCollection) {
       // 콜렉션 레벨업
       const updatedCollection = getLevelUpCollection(existCollection);
-      await trxCollectionRepository.update(
+      const result = await trxCollectionRepository.update(
         updatedCollection.id,
         updatedCollection,
       );
+      return updatedCollection;
     } else {
       // 콜렉션 생성
       const newCollection = getCollectionFromMon({
         mon: adoptedMon,
         monImages,
-        userId,
+        userId: user.id,
       });
-      await trxCollectionRepository.save(newCollection);
+      const result = await trxCollectionRepository.save(newCollection);
+      return result;
     }
   }
 }
