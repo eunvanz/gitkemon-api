@@ -10,7 +10,6 @@ import {
   Req,
   Res,
   Headers,
-  ForbiddenException,
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { Request, Response } from 'express';
@@ -56,9 +55,6 @@ export class UsersController {
   async getAvailableContributions(
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
   ) {
-    if (!accessToken) {
-      throw new ForbiddenException();
-    }
     return await this.userService.getAvailableContributions(accessToken);
   }
 

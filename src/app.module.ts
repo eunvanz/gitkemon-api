@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { CollectionModule } from './collections/collections.module';
 import { typeOrmConfigAsync } from './config/typeorm.config';
 import { AuthMiddleware } from './middlewares/auth.middleware';
+import { RequireMiddleware } from './middlewares/require-user.middleware';
 import { MonImagesModule } from './mon-images/mon-images.module';
 import { MonsModule } from './mons/mons.module';
 import { PaybacksModule } from './paybacks/paybacks.module';
@@ -30,5 +31,8 @@ import { UsersModule } from './users/users.module';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleware).forRoutes('*');
+    consumer
+      .apply(RequireMiddleware)
+      .forRoutes('users/available-contributions', 'collections/hunt');
   }
 }
