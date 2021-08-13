@@ -32,6 +32,9 @@ export class Collection extends TimeRecord {
   specialDefense: number;
 
   @Column()
+  speed: number;
+
+  @Column()
   total: number;
 
   @Column()
