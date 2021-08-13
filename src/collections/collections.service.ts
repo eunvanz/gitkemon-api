@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { random } from 'lodash';
+import { getLevelUpCollection, statNames } from 'src/lib/project-utils';
 import { Mon } from 'src/mons/mon.entity';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
 import { MonTier, PokeBallType } from 'src/types';
@@ -98,6 +99,11 @@ export class CollectionsService {
 
     if (existCollection) {
       // 콜렉션 레벨업
+      const updatedCollection = getLevelUpCollection(existCollection);
+      await trxCollectionRepository.update(
+        updatedCollection.id,
+        updatedCollection,
+      );
     } else {
       // 콜렉션 생성
     }
