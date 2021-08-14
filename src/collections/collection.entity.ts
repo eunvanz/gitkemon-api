@@ -1,7 +1,7 @@
 import { TimeRecord } from 'src/entities/time-record.entity';
 import { MonImage } from 'src/mon-images/mon-image.entity';
 import { Mon } from 'src/mons/mon.entity';
-import { MonPotential } from 'src/types';
+import { MonPotential, MonTier } from 'src/types';
 import { User } from 'src/users/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
@@ -61,6 +61,9 @@ export class Collection extends TimeRecord {
   @Column()
   monImageId: number;
 
+  @Column()
+  monImageUrl: string;
+
   @ManyToOne(() => MonImage, { eager: true })
   @JoinColumn({ name: 'mon_image_id' })
   monImage: MonImage;
@@ -84,4 +87,16 @@ export class Collection extends TimeRecord {
   @ManyToOne(() => User, { lazy: true })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @Column()
+  stars: number;
+
+  @Column()
+  tier: MonTier;
+
+  @Column()
+  firstType: string;
+
+  @Column({ nullable: true })
+  secondType?: string;
 }

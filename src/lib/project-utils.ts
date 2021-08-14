@@ -48,7 +48,7 @@ export const getCollectionFromMon = ({
   const specialDefense = getRandomStat(mon.specialDefense);
   const speed = getRandomStat(mon.speed);
   const total = hp + attack + defense + specialAttack + specialDefense + speed;
-  const monImageId = monImages[random(0, monImages.length - 1)].id;
+  const monImage = monImages[random(0, monImages.length - 1)];
   const potential = getPotentialFromTotal(total, mon.total);
   const collection: Partial<Collection> = {
     monId: mon.id,
@@ -69,9 +69,14 @@ export const getCollectionFromMon = ({
     baseSpecialDefense: specialDefense,
     baseSpeed: speed,
     baseTotal: total,
-    monImageId,
+    monImageId: monImage.id,
+    monImageUrl: monImage.imageUrl,
     potential,
     userId,
+    stars: mon.stars,
+    tier: mon.tier,
+    firstType: mon.firstType,
+    secondType: mon.secondType,
   };
   return collection;
 };
