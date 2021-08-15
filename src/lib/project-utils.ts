@@ -14,9 +14,7 @@ export const statNames = [
   'speed',
 ];
 
-export const getLevelUpCollection = (collection: Collection) => {
-  const mon = collection.mon;
-
+export const getLevelUpCollection = (collection: Collection, mon: Mon) => {
   const { colPoint } = mon;
   const updatedCollection: Partial<Collection> = {
     level: collection.level + 1,

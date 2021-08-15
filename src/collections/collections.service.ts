@@ -99,7 +99,10 @@ export class CollectionsService {
 
         if (existCollection) {
           // 콜렉션 레벨업
-          const updatedCollection = getLevelUpCollection(existCollection);
+          const updatedCollection = getLevelUpCollection(
+            existCollection,
+            adoptedMon,
+          );
           await trxCollectionRepository.update(
             existCollection.id,
             updatedCollection,
