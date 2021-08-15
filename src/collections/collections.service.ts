@@ -13,7 +13,7 @@ import { Mon } from 'src/mons/mon.entity';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
 import { MonTier, PokeBallType } from 'src/types';
 import { User } from 'src/users/user.entity';
-import { Repository, TransactionRepository } from 'typeorm';
+import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { Collection } from './collection.entity';
 
 @Injectable()
@@ -29,6 +29,7 @@ export class CollectionsService {
     private readonly pokeBallRepository: Repository<PokeBall>,
   ) {}
 
+  @Transaction()
   async hunt(
     accessToken: string,
     pokeBallType: PokeBallType,
