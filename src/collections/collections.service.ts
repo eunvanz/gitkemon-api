@@ -10,6 +10,7 @@ import {
   getLevelUpCollection,
 } from 'src/lib/project-utils';
 import { Mon } from 'src/mons/mon.entity';
+import { MonsService } from 'src/mons/mons.service';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
 import { MonTier, PokeBallType } from 'src/types';
 import { User } from 'src/users/user.entity';
@@ -56,36 +57,28 @@ export class CollectionsService {
     });
 
     // 포켓몬 선정
-    const tierOption: { tier: MonTier }[] = [];
+    const tiers: MonTier[] = [];
     switch (pokeBallType) {
       case 'basicRare':
-        tierOption.push({
-          tier: 'rare',
-        });
+        tiers.push('rare');
       case 'basic':
-        tierOption.push({
-          tier: 'basic',
-        });
+        tiers.push('basic');
         break;
       case 'rare':
-        tierOption.push({
-          tier: 'rare',
-        });
+        tiers.push('rare');
         break;
       case 'elite':
-        tierOption.push({
-          tier: 'elite',
-        });
+        tiers.push('elite');
         break;
       case 'legend':
-        tierOption.push({
-          tier: 'legend',
-        });
+        tiers.push('legend');
         break;
     }
-    const candidateMons = await this.monRepository.find({
-      where: tierOption,
-    });
+    const candidateMons = await this.monRepository
+      .createQueryBuilder('mon')
+      .innerJoin('mon.monImages', 'monImage')
+      .where('mon.tier IN (:...tiers)', { tiers })
+      .getMany();
 
     if (!candidateMons.length) {
       throw new InternalServerErrorException({
