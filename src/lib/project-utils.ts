@@ -18,14 +18,16 @@ export const getLevelUpCollection = (collection: Collection) => {
   const mon = collection.mon;
 
   const { colPoint } = mon;
-  const updatedCollection: Collection = {
-    ...collection,
+  const updatedCollection: Partial<Collection> = {
     level: collection.level + 1,
     total: collection.total + colPoint,
   };
   Array.from({ length: colPoint }).forEach(() => {
     const statIndex = random(0, 5);
     const statName = statNames[statIndex];
+    if (!updatedCollection[statName]) {
+      updatedCollection[statName] = collection[statName];
+    }
     updatedCollection[statName]++;
   });
 

@@ -101,10 +101,10 @@ export class CollectionsService {
           // 콜렉션 레벨업
           const updatedCollection = getLevelUpCollection(existCollection);
           await trxCollectionRepository.update(
-            updatedCollection.id,
+            existCollection.id,
             updatedCollection,
           );
-          return updatedCollection;
+          return { ...existCollection, ...updatedCollection };
         } else {
           // 콜렉션 생성
           const newCollection = getCollectionFromMon({
