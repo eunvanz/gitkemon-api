@@ -70,16 +70,16 @@ export class Collection extends TimeRecord {
   @Column()
   monImageUrl: string;
 
-  @ManyToOne(() => MonImage, { eager: true })
+  @ManyToOne(() => MonImage, { lazy: true })
   @JoinColumn({ name: 'mon_image_id' })
-  monImage: MonImage;
+  monImage: Promise<MonImage>;
 
   @Column()
   monId: number;
 
-  @ManyToOne(() => Mon, { eager: true })
+  @ManyToOne(() => Mon, { lazy: true })
   @JoinColumn({ name: 'mon_id' })
-  mon: Mon;
+  mon: Promise<Mon>;
 
   @Column()
   potential: MonPotential;
@@ -92,7 +92,7 @@ export class Collection extends TimeRecord {
 
   @ManyToOne(() => User, { lazy: true })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: Promise<User>;
 
   @Column()
   stars: number;
