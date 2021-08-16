@@ -90,44 +90,50 @@ export class CollectionsService {
     const adoptedMon = candidateMons[adoptedMonIndex];
     const monImages = await adoptedMon.monImages;
 
-    const result = await Promise.all(
-      Array.from({ length: amount }).map(async () => {
-        // 콜렉션
-        const existCollection = await trxCollectionRepository.findOne({
-          where: [{ userId: user.id, monId: adoptedMon.id }],
-        });
+    const result: {
+      oldCollection: Collection | null;
+      newCollection: Collection;
+    }[] = [];
 
-        if (existCollection) {
-          // 콜렉션 레벨업
-          const updatedCollection = getLevelUpCollection(
-            existCollection,
-            adoptedMon,
-          );
-          await trxCollectionRepository.update(
-            existCollection.id,
-            updatedCollection,
-          );
-          await existCollection.mon;
-          await existCollection.monImage;
-          const newCollection = {
-            ...existCollection,
-            ...updatedCollection,
-          };
-          return { oldCollection: existCollection, newCollection };
-        } else {
-          // 콜렉션 생성
-          const newCollection = getCollectionFromMon({
-            mon: adoptedMon,
-            monImages,
-            userId: user.id,
-          });
-          const result = await trxCollectionRepository.save(newCollection);
-          await result.mon;
-          await result.monImage;
-          return { oldCollection: null, newCollection: result };
-        }
-      }),
-    );
+    await Array.from({ length: amount }).reduce(async (prev: Promise<void>) => {
+      await prev;
+      // 콜렉션
+      const existCollection = await trxCollectionRepository.findOne({
+        where: [{ userId: user.id, monId: adoptedMon.id }],
+      });
+
+      if (existCollection) {
+        // 콜렉션 레벨업
+        const updatedCollection = getLevelUpCollection(
+          existCollection,
+          adoptedMon,
+        );
+        await trxCollectionRepository.update(
+          existCollection.id,
+          updatedCollection,
+        );
+        await existCollection.mon;
+        await existCollection.monImage;
+        const newCollection = {
+          ...existCollection,
+          ...updatedCollection,
+        };
+        result.push({ oldCollection: existCollection, newCollection });
+      } else {
+        // 콜렉션 생성
+        const newCollection = getCollectionFromMon({
+          mon: adoptedMon,
+          monImages,
+          userId: user.id,
+        });
+        const createCollection = await trxCollectionRepository.save(
+          newCollection,
+        );
+        await createCollection.mon;
+        await createCollection.monImage;
+        result.push({ oldCollection: null, newCollection: createCollection });
+      }
+    }, Promise.resolve());
 
     return result;
   }
