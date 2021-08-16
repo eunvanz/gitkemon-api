@@ -86,10 +86,6 @@ export class CollectionsService {
       });
     }
 
-    const adoptedMonIndex = random(0, candidateMons.length - 1);
-    const adoptedMon = candidateMons[adoptedMonIndex];
-    const monImages = await adoptedMon.monImages;
-
     const result: {
       oldCollection: Collection | null;
       newCollection: Collection;
@@ -97,6 +93,11 @@ export class CollectionsService {
 
     await Array.from({ length: amount }).reduce(async (prev: Promise<void>) => {
       await prev;
+
+      const adoptedMonIndex = random(0, candidateMons.length - 1);
+      const adoptedMon = candidateMons[adoptedMonIndex];
+      const monImages = await adoptedMon.monImages;
+
       // 콜렉션
       const existCollection = await trxCollectionRepository.findOne({
         where: [{ userId: user.id, monId: adoptedMon.id }],
