@@ -46,9 +46,9 @@ export class MonsService {
   async update(
     id: number,
     updateMonDto: UpdateMonDto,
-    @TransactionRepository(Mon) trxMonRepository: Repository<Mon>,
+    @TransactionRepository(Mon) trxMonRepository?: Repository<Mon>,
     @TransactionRepository(Collection)
-    trxCollectionRepository: Repository<Collection>,
+    trxCollectionRepository?: Repository<Collection>,
   ) {
     const oldMon = await trxMonRepository.findOne(id);
 
