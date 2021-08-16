@@ -105,4 +105,7 @@ export class Collection extends TimeRecord {
 
   @Column({ nullable: true })
   secondType?: string;
+
+  @Column({ nullable: true })
+  evolutionLevel?: number;
 }
