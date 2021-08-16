@@ -2,7 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { map } from 'rxjs';
-import { Repository } from 'typeorm';
+import { Collection } from 'src/collections/collection.entity';
+import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { CreateMonDto } from './dto/create-mon.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
 import { Mon } from './mon.entity';
@@ -40,17 +41,37 @@ export class MonsService {
     return mon;
   }
 
-  async update(id: number, updateMonDto: UpdateMonDto) {
-    const oldMon = await this.monRepository.findOne(id);
+  @Transaction()
+  async update(
+    id: number,
+    updateMonDto: UpdateMonDto,
+    @TransactionRepository(Mon) trxMonRepository: Repository<Mon>,
+    @TransactionRepository(Collection)
+    trxCollectionRepository: Repository<Collection>,
+  ) {
+    const oldMon = await trxMonRepository.findOne(id);
 
     if (!oldMon) {
       throw new NotFoundException();
     }
 
-    return await this.monRepository.update(id, {
+    await trxMonRepository.update(id, {
       ...oldMon,
       ...updateMonDto,
     });
+
+    await trxCollectionRepository.update(
+      {
+        monId: id,
+      },
+      {
+        stars: updateMonDto.stars,
+        tier: updateMonDto.tier,
+        firstType: updateMonDto.firstType,
+        secondType: updateMonDto.secondType,
+        evolutionLevel: updateMonDto.evolutionLevel,
+      },
+    );
   }
 
   async save(createMonDto: CreateMonDto) {
