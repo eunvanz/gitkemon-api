@@ -94,7 +94,7 @@ export class CollectionsService {
       Array.from({ length: amount }).map(async () => {
         // 콜렉션
         const existCollection = await trxCollectionRepository.findOne({
-          where: [{ userId: user.id }, { monId: adoptedMon.id }],
+          where: [{ userId: user.id, monId: adoptedMon.id }],
         });
 
         if (existCollection) {
