@@ -127,6 +127,8 @@ export class CollectionsService {
 
   async findOne(id: number) {
     const collection = await this.collectionRepository.findOne(id);
+    await collection.mon;
+    await collection.monImage;
     if (!collection) {
       throw new NotFoundException();
     }
