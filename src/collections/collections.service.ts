@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { random } from 'lodash';
@@ -122,5 +123,13 @@ export class CollectionsService {
     );
 
     return result;
+  }
+
+  async findOne(id: number) {
+    const collection = await this.collectionRepository.findOne(id);
+    if (!collection) {
+      throw new NotFoundException();
+    }
+    return collection;
   }
 }

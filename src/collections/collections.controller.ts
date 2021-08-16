@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Headers } from '@nestjs/common';
+import { Body, Controller, Post, Headers, Get, Param } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { CollectionsService } from './collections.service';
 import { HuntDto } from './dto/hunt.dto';
@@ -17,5 +17,10 @@ export class CollectionsController {
       huntDto.pokeBallType,
       huntDto.amount,
     );
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: number) {
+    return await this.collectionService.findOne(id);
   }
 }
