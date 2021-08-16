@@ -107,6 +107,8 @@ export class CollectionsService {
             existCollection.id,
             updatedCollection,
           );
+          await existCollection.mon;
+          await existCollection.monImage;
           const newCollection = {
             ...existCollection,
             ...updatedCollection,
@@ -120,6 +122,8 @@ export class CollectionsService {
             userId: user.id,
           });
           const result = await trxCollectionRepository.save(newCollection);
+          await result.mon;
+          await result.monImage;
           return { oldCollection: null, newCollection: result };
         }
       }),
