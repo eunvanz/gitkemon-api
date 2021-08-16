@@ -4,10 +4,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Collection } from 'src/collections/collection.entity';
 import { uploadFile } from 'src/lib/file-uploader';
 import { getCleanObject } from 'src/lib/utils';
 import { Mon } from 'src/mons/mon.entity';
-import { Repository } from 'typeorm';
+import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { CreateMonImageDto } from './dto/create-mon-image.dto';
 import { UpdateMonImageDto } from './dto/update-mon-image.dto';
 import { MonImage } from './mon-image.entity';
@@ -99,10 +100,16 @@ export class MonImagesService {
     return monImages;
   }
 
+  @Transaction()
   async update(
     id: number,
     file: Express.Multer.File,
     updateMonImageDto: UpdateMonImageDto,
+    @TransactionRepository(MonImage)
+    trxMonImageRepository?: Repository<MonImage>,
+    @TransactionRepository(Mon) trxMonRepository?: Repository<Mon>,
+    @TransactionRepository(Collection)
+    trxCollectionRepository?: Repository<Collection>,
   ) {
     const { monId, designerId, designerName, imageUrl } = updateMonImageDto;
     let uploadedImageUrl: string;
@@ -110,24 +117,33 @@ export class MonImagesService {
       uploadedImageUrl = await this.uploadMonImage(file, monId, designerName);
     }
 
-    const mon = await this.monRepository.findOne(monId);
+    const mon = await trxMonRepository.findOne(monId);
 
     if (!mon) {
       throw new BadRequestException('"monId" is not valid.');
     }
 
-    const oldMonImage = await this.monImageRepository.findOne(id);
+    const oldMonImage = await trxMonImageRepository.findOne(id);
 
     if (!oldMonImage) {
       throw new NotFoundException();
     }
 
-    return await this.monImageRepository.update(
+    await trxMonImageRepository.update(
       id,
       getCleanObject({
         mon,
         designerId,
         designerName,
+        imageUrl: imageUrl || uploadedImageUrl,
+      }),
+    );
+
+    await trxCollectionRepository.update(
+      {
+        monImageId: id,
+      },
+      getCleanObject({
         imageUrl: imageUrl || uploadedImageUrl,
       }),
     );

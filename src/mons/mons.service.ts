@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { map } from 'rxjs';
 import { Collection } from 'src/collections/collection.entity';
+import { getCleanObject } from 'src/lib/utils';
 import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { CreateMonDto } from './dto/create-mon.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
@@ -64,13 +65,13 @@ export class MonsService {
       {
         monId: id,
       },
-      {
+      getCleanObject({
         stars: updateMonDto.stars,
         tier: updateMonDto.tier,
         firstType: updateMonDto.firstType,
         secondType: updateMonDto.secondType,
         evolutionLevel: updateMonDto.evolutionLevel,
-      },
+      }),
     );
   }
 
