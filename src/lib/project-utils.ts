@@ -77,6 +77,7 @@ export const getCollectionFromMon = ({
     tier: mon.tier,
     firstType: mon.firstType,
     secondType: mon.secondType,
+    evolutionLevel: mon.evolutionLevel,
   };
   return collection;
 };
