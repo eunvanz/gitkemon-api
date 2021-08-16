@@ -11,7 +11,6 @@ import {
   getLevelUpCollection,
 } from 'src/lib/project-utils';
 import { Mon } from 'src/mons/mon.entity';
-import { MonsService } from 'src/mons/mons.service';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
 import { MonTier, PokeBallType } from 'src/types';
 import { User } from 'src/users/user.entity';
@@ -108,7 +107,11 @@ export class CollectionsService {
             existCollection.id,
             updatedCollection,
           );
-          return { ...existCollection, ...updatedCollection };
+          const newCollection = {
+            ...existCollection,
+            ...updatedCollection,
+          };
+          return { oldCollection: existCollection, newCollection };
         } else {
           // 콜렉션 생성
           const newCollection = getCollectionFromMon({
@@ -117,7 +120,7 @@ export class CollectionsService {
             userId: user.id,
           });
           const result = await trxCollectionRepository.save(newCollection);
-          return result;
+          return { oldCollection: null, newCollection: result };
         }
       }),
     );
