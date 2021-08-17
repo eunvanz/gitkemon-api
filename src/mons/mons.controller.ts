@@ -16,10 +16,10 @@ export class MonsController {
   constructor(private readonly monService: MonsService) {}
 
   // CAUTION: do not activate usually
-  @Post('initialize')
-  async initializeMons() {
-    return await this.monService.initializeMons();
-  }
+  // @Post('initialize')
+  // async initializeMons() {
+  //   return await this.monService.initializeMons();
+  // }
 
   @Get('inactive')
   async findInactiveMons() {
@@ -34,6 +34,11 @@ export class MonsController {
   @Get()
   async findAll() {
     return await this.monService.findAll();
+  }
+
+  @Get('with-images')
+  async findAllWithImages() {
+    return await this.monService.findAll({ isWithImages: true });
   }
 
   @Get(':id')
