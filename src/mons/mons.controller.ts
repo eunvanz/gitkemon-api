@@ -31,14 +31,14 @@ export class MonsController {
     return await this.monService.findActiveMons();
   }
 
-  @Get()
-  async findAll() {
-    return await this.monService.findAll();
-  }
-
   @Get('with-images')
   async findAllWithImages() {
     return await this.monService.findAll({ isWithImages: true });
+  }
+
+  @Get()
+  async findAll() {
+    return await this.monService.findAll();
   }
 
   @Get(':id')
