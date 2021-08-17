@@ -83,8 +83,11 @@ export class MonsService {
     return await this.monRepository.delete(id);
   }
 
-  async findAll() {
+  async findAll(options?: { isWithImages: boolean }) {
     const mons = await this.monRepository.find();
+    if (options?.isWithImages) {
+      await Promise.all(mons.map((mon) => mon.monImages));
+    }
     return mons;
   }
 
