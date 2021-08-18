@@ -34,7 +34,8 @@ export class MonsService {
 
   async findOne(id: number) {
     const mon = await this.monRepository.findOne(id);
-
+    await mon.monImages;
+    await mon.nextMon;
     if (!mon) {
       throw new NotFoundException();
     }
