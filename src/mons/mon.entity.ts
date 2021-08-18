@@ -1,7 +1,14 @@
 import { TimeRecord } from 'src/entities/time-record.entity';
 import { MonImage } from 'src/mon-images/mon-image.entity';
 import { MonTier } from 'src/types';
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+} from 'typeorm';
 
 @Entity()
 export class Mon extends TimeRecord {
@@ -83,8 +90,12 @@ export class Mon extends TimeRecord {
   @Column({ nullable: true })
   evolveFromId?: number;
 
-  @OneToMany(() => Mon, (mon) => mon.evolveFromId, { nullable: true })
-  nextMon?: Promise<Mon[]>;
+  @ManyToOne(() => Mon, (mon) => mon.nextMons, { nullable: true })
+  @JoinColumn({ name: 'evolve_from_id' })
+  prevMon?: Promise<Mon>;
+
+  @OneToMany(() => Mon, (mon) => mon.prevMon, { nullable: true })
+  nextMons?: Promise<Mon[]>;
 
   @OneToMany(() => MonImage, (monImage) => monImage.mon)
   monImages?: Promise<MonImage[]>;
