@@ -81,7 +81,7 @@ export class UsersController {
     response.send(user);
   }
 
-  @Post('login-with-token')
+  @Post('refresh')
   async loginWithToken(@Req() req: Request, @Res() res: Response) {
     const accessToken =
       req.body.token || req.cookies?.[ACCESS_TOKEN_COOKIE_NAME];
