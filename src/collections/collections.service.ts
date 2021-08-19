@@ -130,12 +130,12 @@ export class CollectionsService {
         const savedCollection = await trxCollectionRepository.save(
           newCollection,
         );
-        const createdCollection = await trxCollectionRepository.findOne(
+        const foundCollection = await trxCollectionRepository.findOne(
           savedCollection.id,
         );
-        await createdCollection.mon;
-        await createdCollection.monImage;
-        result.push({ oldCollection: null, newCollection: createdCollection });
+        await foundCollection.mon;
+        await foundCollection.monImage;
+        result.push({ oldCollection: null, newCollection: foundCollection });
       }
     }, Promise.resolve());
 
