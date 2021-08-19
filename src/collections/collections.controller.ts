@@ -19,6 +19,11 @@ export class CollectionsController {
     );
   }
 
+  @Get('user/:userId')
+  async findAllByUser(@Param('userId') userId: string) {
+    return await this.collectionService.findAllByUser(userId);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return await this.collectionService.findOne(id);

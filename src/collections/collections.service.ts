@@ -148,4 +148,12 @@ export class CollectionsService {
     }
     return collection;
   }
+
+  async findAllByUser(userId: string) {
+    const collections = await this.collectionRepository.find({ userId });
+    if (!collections) {
+      throw new NotFoundException();
+    }
+    return collections;
+  }
 }
