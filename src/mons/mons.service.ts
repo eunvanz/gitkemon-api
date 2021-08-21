@@ -57,10 +57,12 @@ export class MonsService {
       throw new NotFoundException();
     }
 
-    await trxMonRepository.update(id, {
+    const updatedMon = {
       ...oldMon,
       ...updateMonDto,
-    });
+    };
+
+    await trxMonRepository.update(id, updatedMon);
 
     await trxCollectionRepository.update(
       {
@@ -74,6 +76,14 @@ export class MonsService {
         evolutionLevel: updateMonDto.evolutionLevel,
       }),
     );
+
+    if (oldMon.evolutionLevel !== updatedMon.evolutionLevel) {
+      const evolveToMon = await trxMonRepository.findOne({ evolveFromId: id });
+      const revisedColPoint = updatedMon.evolutionLevel * updatedMon.colPoint;
+      await trxMonRepository.update(evolveToMon.id, {
+        colPoint: revisedColPoint,
+      });
+    }
   }
 
   async save(createMonDto: CreateMonDto) {
