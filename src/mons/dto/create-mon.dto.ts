@@ -2,6 +2,9 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateMonDto {
   @IsNumber()
+  id: number;
+
+  @IsNumber()
   order: number;
 
   @IsString()
