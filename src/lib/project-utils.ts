@@ -1,4 +1,4 @@
-import { random, round } from 'lodash';
+import { capitalize, random, round } from 'lodash';
 import { Collection } from 'src/collections/collection.entity';
 import { RANK_RULE } from 'src/constants/rules';
 import { MonImage } from 'src/mon-images/mon-image.entity';
@@ -27,6 +27,34 @@ export const getLevelUpCollection = (collection: Collection, mon: Mon) => {
       updatedCollection[statName] = collection[statName];
     }
     updatedCollection[statName]++;
+  });
+
+  return updatedCollection;
+};
+
+export const getLevelDownCollection = (collection: Collection, mon: Mon) => {
+  const { colPoint } = mon;
+  const updatedCollection: Partial<Collection> = {
+    level: collection.level - 1,
+    total: collection.total - colPoint,
+  };
+  const getStatName = () => {
+    const statIndex = random(0, 5);
+    const statName = statNames[statIndex];
+    if (
+      collection[statName] - 1 <
+      collection[`base${capitalize(statName)}` as keyof Collection]
+    ) {
+      return getStatName();
+    }
+    return statName;
+  };
+  Array.from({ length: colPoint }).forEach(() => {
+    const statName = getStatName();
+    if (!updatedCollection[statName]) {
+      updatedCollection[statName] = collection[statName];
+    }
+    updatedCollection[statName]--;
   });
 
   return updatedCollection;

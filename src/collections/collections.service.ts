@@ -159,4 +159,11 @@ export class CollectionsService {
     }
     return collections;
   }
+
+  @Transaction()
+  async evolute(
+    id: number,
+    @TransactionRepository(Collection)
+    trxCollectionRepository: Repository<Collection>,
+  ) {}
 }

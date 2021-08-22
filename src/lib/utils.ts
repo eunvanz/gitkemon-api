@@ -32,3 +32,7 @@ export const getMultiplesCountBetween = (x: number, n: number, m: number) => {
   }
   return cnt;
 };
+
+export const capitalize = (s: string) => {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
