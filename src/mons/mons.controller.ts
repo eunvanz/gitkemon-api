@@ -41,6 +41,11 @@ export class MonsController {
     return await this.monService.findAll();
   }
 
+  @Get(':id/next')
+  async findNextMons(@Param('id') id: number) {
+    return await this.monService.findNextMons(id);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return await this.monService.findOne(id);

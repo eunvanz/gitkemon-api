@@ -102,6 +102,10 @@ export class MonsService {
     return mons;
   }
 
+  async findNextMons(id: number) {
+    return await this.monRepository.find({ evolveFromId: id });
+  }
+
   async initializeMons() {
     Array.from({ length: 898 }).forEach((_, index) => {
       this.httpService

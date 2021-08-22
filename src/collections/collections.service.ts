@@ -177,7 +177,7 @@ export class CollectionsService {
     const user = await trxUserRepository.findOne({ accessToken });
     const collection = await trxCollectionRepository.findOne(collectionId);
 
-    if (collection.evolutionLevel < collection.level) {
+    if (collection.evolutionLevel > collection.level) {
       throw new BadRequestException(
         'Collection is not required level to evolve.',
       );
