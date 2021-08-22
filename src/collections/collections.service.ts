@@ -193,8 +193,12 @@ export class CollectionsService {
     }
 
     if (collection.level > collection.evolutionLevel) {
-      // 기존 콜렉션의 레벨 -1
-      const updatedCollection = getLevelDownCollection(collection, mon);
+      // 기존 콜렉션의 레벨 하락
+      const updatedCollection = getLevelDownCollection(
+        collection,
+        mon,
+        mon.evolutionLevel,
+      );
       await trxCollectionRepository.update(collection.id, updatedCollection);
     } else {
       // 기존 콜렉션 삭제

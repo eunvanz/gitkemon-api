@@ -32,11 +32,15 @@ export const getLevelUpCollection = (collection: Collection, mon: Mon) => {
   return updatedCollection;
 };
 
-export const getLevelDownCollection = (collection: Collection, mon: Mon) => {
+export const getLevelDownCollection = (
+  collection: Collection,
+  mon: Mon,
+  amount: number,
+) => {
   const { colPoint } = mon;
   const updatedCollection: Partial<Collection> = {
-    level: collection.level - 1,
-    total: collection.total - colPoint,
+    level: collection.level - amount,
+    total: collection.total - colPoint * amount,
   };
   const getStatName = () => {
     const statIndex = random(0, 5);
@@ -49,7 +53,7 @@ export const getLevelDownCollection = (collection: Collection, mon: Mon) => {
     }
     return statName;
   };
-  Array.from({ length: colPoint }).forEach(() => {
+  Array.from({ length: colPoint * amount }).forEach(() => {
     const statName = getStatName();
     if (!updatedCollection[statName]) {
       updatedCollection[statName] = collection[statName];
