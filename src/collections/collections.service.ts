@@ -128,6 +128,9 @@ export class CollectionsService {
           monImages,
           userId: user.id,
         });
+        await trxUserRepository.update(user.id, {
+          colPoint: user.colPoint + adoptedMon.colPoint,
+        });
         const savedCollection = await trxCollectionRepository.save(
           newCollection,
         );
@@ -165,9 +168,13 @@ export class CollectionsService {
   async evolve(
     collectionId: number,
     monId: number, // 진화할 포켓몬 아이디
+    accessToken: string,
     @TransactionRepository(Collection)
     trxCollectionRepository?: Repository<Collection>,
+    @TransactionRepository(User)
+    trxUserRepository?: Repository<User>,
   ) {
+    const user = await trxUserRepository.findOne({ accessToken });
     const collection = await trxCollectionRepository.findOne(collectionId);
 
     if (collection.evolutionLevel < collection.level) {
@@ -192,6 +199,10 @@ export class CollectionsService {
     } else {
       // 기존 콜렉션 삭제
       trxCollectionRepository.delete(collection.id);
+      const mon = await collection.mon;
+      await trxUserRepository.update(user.id, {
+        colPoint: user.colPoint - mon.colPoint,
+      });
     }
     const monEvolveTo = monsEvolveTo.find((mon) => mon.id === monId);
 
@@ -238,6 +249,9 @@ export class CollectionsService {
         mon: monEvolveTo,
         monImages,
         userId: collection.userId,
+      });
+      await trxUserRepository.update(user.id, {
+        colPoint: user.colPoint + monEvolveTo.colPoint,
       });
       const savedCollection = await trxCollectionRepository.save(newCollection);
       const foundCollection = await trxCollectionRepository.findOne(
