@@ -96,6 +96,7 @@ export class UsersService {
         contributionBaseDate,
         lastRewardedDate: contributionBaseDate,
         lastContributions: 0,
+        colPoint: 0,
         githubUser,
         accessToken,
       });

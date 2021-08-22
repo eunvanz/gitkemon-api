@@ -14,6 +14,7 @@ const baseUser: User = {
   contributionBaseDate: new Date('2021-07-01'),
   pokeBall: Promise.resolve(mockPokeBall.basePokeBall),
   pokeBallId: 1,
+  colPoint: 0,
   githubUser: {
     login: 'eunvanz',
     id: 17351661,
