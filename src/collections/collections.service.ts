@@ -162,7 +162,7 @@ export class CollectionsService {
   }
 
   @Transaction()
-  async evolute(
+  async evolve(
     collectionId: number,
     monId: number, // 진화할 포켓몬 아이디
     @TransactionRepository(Collection)
