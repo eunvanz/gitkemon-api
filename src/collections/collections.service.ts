@@ -177,6 +177,7 @@ export class CollectionsService {
     const user = await trxUserRepository.findOne({ accessToken });
     const collection = await trxCollectionRepository.findOne(collectionId);
 
+    let updatedColPoint = 0;
     if (collection.evolutionLevel > collection.level) {
       throw new BadRequestException(
         'Collection is not required level to evolve.',
@@ -204,9 +205,7 @@ export class CollectionsService {
       // 기존 콜렉션 삭제
       trxCollectionRepository.delete(collection.id);
       const mon = await collection.mon;
-      await trxUserRepository.update(user.id, {
-        colPoint: user.colPoint - mon.colPoint,
-      });
+      updatedColPoint -= mon.colPoint;
     }
     const monEvolveTo = monsEvolveTo.find((mon) => mon.id === monId);
 
@@ -254,9 +253,7 @@ export class CollectionsService {
         monImages,
         userId: collection.userId,
       });
-      await trxUserRepository.update(user.id, {
-        colPoint: user.colPoint + monEvolveTo.colPoint,
-      });
+      updatedColPoint += monEvolveTo.colPoint;
       const savedCollection = await trxCollectionRepository.save(newCollection);
       const foundCollection = await trxCollectionRepository.findOne(
         savedCollection.id,
@@ -266,6 +263,9 @@ export class CollectionsService {
       result.oldCollection = null;
       result.newCollection = foundCollection;
     }
+    await trxUserRepository.update(user.id, {
+      colPoint: user.colPoint + updatedColPoint,
+    });
 
     return result;
   }
