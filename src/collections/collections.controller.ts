@@ -1,6 +1,7 @@
 import { Body, Controller, Post, Headers, Get, Param } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { CollectionsService } from './collections.service';
+import { EvolveDto } from './dto/evolve.dto';
 import { HuntDto } from './dto/hunt.dto';
 
 @Controller('collections')
@@ -27,5 +28,17 @@ export class CollectionsController {
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return await this.collectionService.findOne(id);
+  }
+
+  @Post('evolve')
+  async evolve(
+    @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
+    @Body() evolveDto: EvolveDto,
+  ) {
+    return await this.collectionService.evolve(
+      accessToken,
+      evolveDto.collectionId,
+      evolveDto.monId,
+    );
   }
 }
