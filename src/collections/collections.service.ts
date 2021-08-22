@@ -76,18 +76,10 @@ export class CollectionsService {
         break;
     }
 
-    let isMyth = false;
-    if (pokeBallType === 'basic') {
-      const luckyNumber = random(0, 1200);
-      if (luckyNumber === 1200) {
-        isMyth = true;
-      }
-    }
-
-    const candidateMons = await this.monRepository
+    let candidateMons = await this.monRepository
       .createQueryBuilder('mon')
       .innerJoin('mon.monImages', 'monImage')
-      .where('mon.tier IN (:...tiers)', { tiers: isMyth ? ['myth'] : tiers })
+      .where('mon.tier IN (:...tiers)', { tiers: tiers })
       .getMany();
 
     if (!candidateMons.length) {
@@ -103,6 +95,17 @@ export class CollectionsService {
 
     await Array.from({ length: amount }).reduce(async (prev: Promise<void>) => {
       await prev;
+
+      if (pokeBallType === 'basic') {
+        const luckyNumber = random(0, 1200);
+        if (luckyNumber === 1200) {
+          candidateMons = await this.monRepository
+            .createQueryBuilder('mon')
+            .innerJoin('mon.monImages', 'monImage')
+            .where('mon.tier IN (:...tiers)', { tiers: ['myth'] })
+            .getMany();
+        }
+      }
 
       const adoptedMonIndex = random(0, candidateMons.length - 1);
       const adoptedMon = candidateMons[adoptedMonIndex];
