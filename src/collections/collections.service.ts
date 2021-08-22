@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { random } from 'lodash';
 import {
   getCollectionFromMon,
+  getLevelDownCollection,
   getLevelUpCollection,
 } from 'src/lib/project-utils';
 import { Mon } from 'src/mons/mon.entity';
@@ -162,8 +163,92 @@ export class CollectionsService {
 
   @Transaction()
   async evolute(
-    id: number,
+    collectionId: number,
+    monId: number, // 진화할 포켓몬 아이디
     @TransactionRepository(Collection)
-    trxCollectionRepository: Repository<Collection>,
-  ) {}
+    trxCollectionRepository?: Repository<Collection>,
+  ) {
+    const collection = await trxCollectionRepository.findOne(collectionId);
+
+    if (collection.evolutionLevel < collection.level) {
+      throw new BadRequestException(
+        'Collection is not required level to evolve.',
+      );
+    }
+
+    const mon = await collection.mon;
+    const monsEvolveTo = await this.monRepository.find({
+      evolveFromId: mon.id,
+    });
+
+    if (!monsEvolveTo.length) {
+      throw new BadRequestException('Collection can not evolve.');
+    }
+
+    if (collection.level > collection.evolutionLevel) {
+      // 기존 콜렉션의 레벨 -1
+      const updatedCollection = getLevelDownCollection(collection, mon);
+      await trxCollectionRepository.update(collection.id, updatedCollection);
+    } else {
+      // 기존 콜렉션 삭제
+      trxCollectionRepository.delete(collection.id);
+    }
+    const monEvolveTo = monsEvolveTo.find((mon) => mon.id === monId);
+
+    if (!monsEvolveTo) {
+      throw new BadRequestException(
+        'Collection can not evolve to the Pokemon.',
+      );
+    }
+
+    const collectionEvolveTo = await trxCollectionRepository.findOne({
+      monId: monEvolveTo.id,
+    });
+
+    const result: {
+      oldCollection: Collection | null;
+      newCollection: Collection | null;
+    } = {
+      oldCollection: null,
+      newCollection: null,
+    };
+
+    if (collectionEvolveTo) {
+      // 레벨업
+      const updatedCollection = getLevelUpCollection(
+        collectionEvolveTo,
+        monEvolveTo,
+      );
+      await trxCollectionRepository.update(
+        collectionEvolveTo.id,
+        updatedCollection,
+      );
+      await collectionEvolveTo.mon;
+      await collectionEvolveTo.monImage;
+      const newCollection = {
+        ...collectionEvolveTo,
+        ...updatedCollection,
+      };
+      result.oldCollection = collectionEvolveTo;
+      result.newCollection = newCollection;
+    } else {
+      // 생성
+      const monImages = await monEvolveTo.monImages;
+      const newCollection = getCollectionFromMon({
+        mon: monEvolveTo,
+        monImages,
+        userId: collection.userId,
+      });
+      const savedCollection = await trxCollectionRepository.save(newCollection);
+      const foundCollection = await trxCollectionRepository.findOne(
+        savedCollection.id,
+      );
+      await foundCollection.mon;
+      await foundCollection.monImage;
+      result.oldCollection = null;
+      result.newCollection = foundCollection;
+    }
+
+    return result;
+  }
 }
