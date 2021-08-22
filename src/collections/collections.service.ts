@@ -75,10 +75,19 @@ export class CollectionsService {
         tiers.push('legend');
         break;
     }
+
+    let isMyth = false;
+    if (pokeBallType === 'basic') {
+      const luckyNumber = random(0, 1200);
+      if (luckyNumber === 1200) {
+        isMyth = true;
+      }
+    }
+
     const candidateMons = await this.monRepository
       .createQueryBuilder('mon')
       .innerJoin('mon.monImages', 'monImage')
-      .where('mon.tier IN (:...tiers)', { tiers })
+      .where('mon.tier IN (:...tiers)', { tiers: isMyth ? ['myth'] : tiers })
       .getMany();
 
     if (!candidateMons.length) {
