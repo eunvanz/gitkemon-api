@@ -4,7 +4,8 @@ export type MonTier =
   | 'rare'
   | 's.rare'
   | 'elite'
-  | 'legend';
+  | 'legend'
+  | 'myth';
 
 export interface GithubUser {
   login: string;
