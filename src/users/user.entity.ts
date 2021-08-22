@@ -145,6 +145,6 @@ export class User extends TimeRecord {
   @Column({ nullable: true })
   pokeBallId: number;
 
-  @Column()
+  @Column({ default: 0 })
   colPoint: number;
 }
