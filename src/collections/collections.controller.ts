@@ -1,6 +1,7 @@
 import { Body, Controller, Post, Headers, Get, Param } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { CollectionsService } from './collections.service';
+import { BlendDto } from './dto/blend.dto';
 import { EvolveDto } from './dto/evolve.dto';
 import { HuntDto } from './dto/hunt.dto';
 
@@ -39,6 +40,17 @@ export class CollectionsController {
       accessToken,
       evolveDto.collectionId,
       evolveDto.monId,
+    );
+  }
+
+  @Post('blend')
+  async blend(
+    @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
+    @Body() blendDto: BlendDto,
+  ) {
+    return await this.collectionService.blend(
+      accessToken,
+      blendDto.collectionIds,
     );
   }
 }
