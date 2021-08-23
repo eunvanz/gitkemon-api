@@ -356,7 +356,7 @@ async function getHuntResultFromExistCollection({
     const newCollection = getCollectionFromMon({
       mon: mon,
       monImages,
-      userId: existCollection.userId,
+      userId: user.id,
     });
     colPointToUpdate += mon.colPoint;
     const savedCollection = await collectionRepository.save(newCollection);
