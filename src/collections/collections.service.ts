@@ -12,6 +12,7 @@ import {
   getCollectionFromMon,
   getLevelDownCollection,
   getLevelUpCollection,
+  getSpecialBlendResult,
 } from 'src/lib/project-utils';
 import { Mon } from 'src/mons/mon.entity';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
@@ -205,7 +206,7 @@ export class CollectionsService {
       monId: monEvolveTo.id,
     });
 
-    const result = getHuntResultFromExistCollection({
+    const result = await getHuntResultFromExistCollection({
       colPointToUpdate: updatedColPoint,
       collectionRepository: trxCollectionRepository,
       userRepository: trxUserRepository,
@@ -213,6 +214,22 @@ export class CollectionsService {
       existCollection: collectionEvolveTo,
       user,
     });
+
+    if (monEvolveTo.id === 291) {
+      // 아이스크로 진화하는 경우 토중몬 추가
+      const existCollection = await trxCollectionRepository.findOne({
+        monId: 292,
+      });
+      const mon = await this.monRepository.findOne(292);
+      getHuntResultFromExistCollection({
+        colPointToUpdate: result.updatedColPoint,
+        collectionRepository: trxCollectionRepository,
+        userRepository: trxUserRepository,
+        mon,
+        existCollection,
+        user,
+      });
+    }
 
     return result;
   }
@@ -241,11 +258,20 @@ export class CollectionsService {
       collectionsToBlend.map((collection) => collection.tier),
     );
 
-    const candidateMons = await this.monRepository
-      .createQueryBuilder('mon')
-      .innerJoin('mon.monImages', 'monImage')
-      .where('mon.tier IN (:...tiers)', { tiers: resultTiers })
-      .getMany();
+    const specialBlendResult = getSpecialBlendResult(collectionsToBlend);
+
+    let candidateMons: Mon[];
+    if (specialBlendResult) {
+      candidateMons = await this.monRepository.find({
+        where: specialBlendResult.map((monId) => ({ id: monId })),
+      });
+    } else {
+      candidateMons = await this.monRepository
+        .createQueryBuilder('mon')
+        .innerJoin('mon.monImages', 'monImage')
+        .where('mon.tier IN (:...tiers)', { tiers: resultTiers })
+        .getMany();
+    }
 
     if (!candidateMons.length) {
       throw new InternalServerErrorException({
@@ -305,9 +331,11 @@ async function getHuntResultFromExistCollection({
   const result: {
     oldCollection: Collection | null;
     newCollection: Collection | null;
+    updatedColPoint: number;
   } = {
     oldCollection: null,
     newCollection: null,
+    updatedColPoint: 0,
   };
 
   if (existCollection) {
@@ -340,6 +368,8 @@ async function getHuntResultFromExistCollection({
     result.oldCollection = null;
     result.newCollection = foundCollection;
   }
+  result.updatedColPoint = colPointToUpdate;
+
   await userRepository.update(user.id, {
     colPoint: user.colPoint + colPointToUpdate,
   });

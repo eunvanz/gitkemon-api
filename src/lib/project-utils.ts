@@ -1,4 +1,4 @@
-import { capitalize, isEqual, random, round } from 'lodash';
+import { capitalize, includes, isEqual, random, round } from 'lodash';
 import { Collection } from 'src/collections/collection.entity';
 import { RANK_RULE } from 'src/constants/rules';
 import { MonImage } from 'src/mon-images/mon-image.entity';
@@ -196,5 +196,22 @@ export const getBlendResultTier: (tiers: MonTier[]) => MonTier[] = (tiers) => {
     return ['legend', 'myth'];
   } else {
     return ['basic', 'rare'];
+  }
+};
+
+export const getSpecialBlendResult: (
+  collections: Collection[],
+) => number[] | undefined = (collections) => {
+  if (
+    includes(
+      collections.map((collection) => collection.monId),
+      90,
+      79,
+    )
+  ) {
+    // 셀러 & 야돈
+    return [80, 199];
+  } else {
+    return undefined;
   }
 };
