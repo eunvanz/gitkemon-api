@@ -221,7 +221,7 @@ export class CollectionsService {
         monId: 292,
       });
       const mon = await this.monRepository.findOne(292);
-      getHuntResultFromExistCollection({
+      await getHuntResultFromExistCollection({
         colPointToUpdate: result.updatedColPoint,
         collectionRepository: trxCollectionRepository,
         userRepository: trxUserRepository,
