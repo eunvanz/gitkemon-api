@@ -1,9 +1,9 @@
-import { capitalize, random, round } from 'lodash';
+import { capitalize, isEqual, random, round } from 'lodash';
 import { Collection } from 'src/collections/collection.entity';
 import { RANK_RULE } from 'src/constants/rules';
 import { MonImage } from 'src/mon-images/mon-image.entity';
 import { Mon } from 'src/mons/mon.entity';
-import { MonPotential } from 'src/types';
+import { MonPotential, MonTier } from 'src/types';
 
 export const statNames = [
   'hp',
@@ -185,4 +185,16 @@ export const getPotentialFromTotal: (
   else if (ratio >= RANK_RULE.D.RANGE.MIN) return 'D';
   else if (ratio >= RANK_RULE.E.RANGE.MIN) return 'E';
   else if (ratio >= RANK_RULE.F.RANGE.MIN) return 'F';
+};
+
+export const getBlendResultTier: (tiers: MonTier[]) => MonTier[] = (tiers) => {
+  if (isEqual(tiers, ['rare', 'rare'])) {
+    return ['rare', 'elite'];
+  } else if (isEqual(tiers, ['elite', 'elite'])) {
+    return ['elite', 'legend'];
+  } else if (isEqual(tiers, ['legend', 'legend'])) {
+    return ['legend', 'myth'];
+  } else {
+    return ['basic', 'rare'];
+  }
 };

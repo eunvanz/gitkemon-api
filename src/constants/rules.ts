@@ -1,5 +1,7 @@
 const RANK_UNIT = 0.06;
 
+export const MYTH_CHANCE = 1200;
+
 export const RANK_RULE = {
   SS: {
     CHANCE: 7,
