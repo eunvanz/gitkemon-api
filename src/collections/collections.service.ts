@@ -216,7 +216,7 @@ export class CollectionsService {
     });
 
     if (monEvolveTo.id === 291) {
-      // 아이스크로 진화하는 경우 토중몬 추가
+      // 아이스크로 진화하는 경우 껍질몬 추가
       const existCollection = await trxCollectionRepository.findOne({
         monId: 292,
       });
