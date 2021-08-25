@@ -1,4 +1,4 @@
-import { capitalize, includes, isEqual, random, round } from 'lodash';
+import { capitalize, isEqual, random, round, xor } from 'lodash';
 import { Collection } from 'src/collections/collection.entity';
 import { RANK_RULE } from 'src/constants/rules';
 import { MonImage } from 'src/mon-images/mon-image.entity';
@@ -203,11 +203,10 @@ export const getSpecialBlendResult: (
   collections: Collection[],
 ) => number[] | undefined = (collections) => {
   if (
-    includes(
+    xor(
       collections.map((collection) => collection.monId),
-      90,
-      79,
-    )
+      [90, 79],
+    ).length === 0
   ) {
     // 셀러 & 야돈
     return [80, 199];
