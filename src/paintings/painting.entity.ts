@@ -36,4 +36,7 @@ export class Painting extends TimeRecord {
 
   @OneToMany(() => PaintingLike, (paintingLike) => paintingLike.painting)
   likes: Promise<Painting[]>;
+
+  @Column()
+  isRegistered: boolean;
 }
