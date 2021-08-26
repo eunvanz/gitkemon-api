@@ -11,6 +11,7 @@ import { MonImagesModule } from './mon-images/mon-images.module';
 import { MonsModule } from './mons/mons.module';
 import { PaybacksModule } from './paybacks/paybacks.module';
 import { UsersModule } from './users/users.module';
+import { PaintingsModule } from './paintings/paintings.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module';
     MonImagesModule,
     PaybacksModule,
     CollectionModule,
+    PaintingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
