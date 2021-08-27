@@ -9,9 +9,9 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
 import { RequireMiddleware } from './middlewares/require-user.middleware';
 import { MonImagesModule } from './mon-images/mon-images.module';
 import { MonsModule } from './mons/mons.module';
+import { PaintingsModule } from './paintings/paintings.module';
 import { PaybacksModule } from './paybacks/paybacks.module';
 import { UsersModule } from './users/users.module';
-import { PaintingsModule } from './paintings/paintings.module';
 
 @Module({
   imports: [
