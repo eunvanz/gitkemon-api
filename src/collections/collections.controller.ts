@@ -53,4 +53,9 @@ export class CollectionsController {
       blendDto.collectionIds,
     );
   }
+
+  @Post('sync-name-with-mon')
+  async syncNameWithMon() {
+    return await this.collectionService.syncNameWithMon();
+  }
 }

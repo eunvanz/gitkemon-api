@@ -108,4 +108,16 @@ export class Collection extends TimeRecord {
 
   @Column({ nullable: true })
   evolutionLevel?: number;
+
+  @Column()
+  name: string;
+
+  @Column({ nullable: true })
+  nameKo?: string;
+
+  @Column({ nullable: true })
+  nameJa?: string;
+
+  @Column({ nullable: true })
+  nameZh?: string;
 }

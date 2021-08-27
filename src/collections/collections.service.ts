@@ -118,7 +118,7 @@ export class CollectionsService {
         where: [{ userId: user.id, monId: adoptedMon.id }],
       });
 
-      const unitResult = await getHuntResultFromExistCollection({
+      const unitResult = await this.getHuntResultFromExistCollection({
         colPointToUpdate: 0,
         collectionRepository: trxCollectionRepository,
         userRepository: trxUserRepository,
@@ -206,7 +206,7 @@ export class CollectionsService {
       monId: monEvolveTo.id,
     });
 
-    const result = await getHuntResultFromExistCollection({
+    const result = await this.getHuntResultFromExistCollection({
       colPointToUpdate: updatedColPoint,
       collectionRepository: trxCollectionRepository,
       userRepository: trxUserRepository,
@@ -221,7 +221,7 @@ export class CollectionsService {
         monId: 292,
       });
       const mon = await this.monRepository.findOne(292);
-      await getHuntResultFromExistCollection({
+      await this.getHuntResultFromExistCollection({
         colPointToUpdate: result.updatedColPoint,
         collectionRepository: trxCollectionRepository,
         userRepository: trxUserRepository,
@@ -232,6 +232,26 @@ export class CollectionsService {
     }
 
     return result;
+  }
+
+  async syncNameWithMon() {
+    const allCollections = await this.collectionRepository.find();
+    allCollections.forEach(async (collection) => {
+      const mon = await this.monRepository.findOne(collection.monId);
+      if (mon) {
+        const updatedCollection = {
+          ...collection,
+          name: mon.name,
+          nameKo: mon.nameKo,
+          nameJa: mon.nameJa,
+          nameZh: mon.nameZh,
+        };
+        await this.collectionRepository.update(
+          collection.id,
+          updatedCollection,
+        );
+      }
+    });
   }
 
   @Transaction()
@@ -300,7 +320,7 @@ export class CollectionsService {
       monId: adoptedMon.id,
     });
 
-    const result = await getHuntResultFromExistCollection({
+    const result = await this.getHuntResultFromExistCollection({
       collectionRepository: trxCollectionRepository,
       userRepository: trxUserRepository,
       colPointToUpdate: updatedColPoint,
@@ -311,67 +331,67 @@ export class CollectionsService {
 
     return result;
   }
-}
 
-async function getHuntResultFromExistCollection({
-  collectionRepository,
-  userRepository,
-  colPointToUpdate,
-  mon,
-  user,
-  existCollection,
-}: {
-  collectionRepository: Repository<Collection>;
-  userRepository: Repository<User>;
-  colPointToUpdate: number;
-  mon: Mon;
-  user: User;
-  existCollection?: Collection;
-}) {
-  const result: {
-    oldCollection: Collection | null;
-    newCollection: Collection | null;
-    updatedColPoint: number;
-  } = {
-    oldCollection: null,
-    newCollection: null,
-    updatedColPoint: 0,
-  };
-
-  if (existCollection) {
-    // 레벨업
-    const updatedCollection = getLevelUpCollection(existCollection, mon);
-    await collectionRepository.update(existCollection.id, updatedCollection);
-    await existCollection.mon;
-    await existCollection.monImage;
-    const newCollection = {
-      ...existCollection,
-      ...updatedCollection,
+  async getHuntResultFromExistCollection({
+    collectionRepository,
+    userRepository,
+    colPointToUpdate,
+    mon,
+    user,
+    existCollection,
+  }: {
+    collectionRepository: Repository<Collection>;
+    userRepository: Repository<User>;
+    colPointToUpdate: number;
+    mon: Mon;
+    user: User;
+    existCollection?: Collection;
+  }) {
+    const result: {
+      oldCollection: Collection | null;
+      newCollection: Collection | null;
+      updatedColPoint: number;
+    } = {
+      oldCollection: null,
+      newCollection: null,
+      updatedColPoint: 0,
     };
-    result.oldCollection = existCollection;
-    result.newCollection = newCollection;
-  } else {
-    // 생성
-    const monImages = await mon.monImages;
-    const newCollection = getCollectionFromMon({
-      mon: mon,
-      monImages,
-      userId: user.id,
-    });
-    colPointToUpdate += mon.colPoint;
-    const savedCollection = await collectionRepository.save(newCollection);
-    const foundCollection = await collectionRepository.findOne(
-      savedCollection.id,
-    );
-    await foundCollection.mon;
-    await foundCollection.monImage;
-    result.oldCollection = null;
-    result.newCollection = foundCollection;
-  }
-  result.updatedColPoint = colPointToUpdate;
 
-  await userRepository.update(user.id, {
-    colPoint: user.colPoint + colPointToUpdate,
-  });
-  return result;
+    if (existCollection) {
+      // 레벨업
+      const updatedCollection = getLevelUpCollection(existCollection, mon);
+      await collectionRepository.update(existCollection.id, updatedCollection);
+      await existCollection.mon;
+      await existCollection.monImage;
+      const newCollection = {
+        ...existCollection,
+        ...updatedCollection,
+      };
+      result.oldCollection = existCollection;
+      result.newCollection = newCollection;
+    } else {
+      // 생성
+      const monImages = await mon.monImages;
+      const newCollection = getCollectionFromMon({
+        mon: mon,
+        monImages,
+        userId: user.id,
+      });
+      colPointToUpdate += mon.colPoint;
+      const savedCollection = await collectionRepository.save(newCollection);
+      const foundCollection = await collectionRepository.findOne(
+        savedCollection.id,
+      );
+      await foundCollection.mon;
+      await foundCollection.monImage;
+      result.oldCollection = null;
+      result.newCollection = foundCollection;
+    }
+    result.updatedColPoint = colPointToUpdate;
+
+    await userRepository.update(user.id, {
+      colPoint: user.colPoint + colPointToUpdate,
+    });
+    return result;
+  }
 }
