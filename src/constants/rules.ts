@@ -36,3 +36,16 @@ export const RANK_RULE = {
     RANGE: { MIN: 1.01 - RANK_UNIT * 4, MAX: 1 - RANK_UNIT * 3 },
   },
 };
+
+export const DAYS_IN_A_ROW_PAYBACK = {
+  RARE: 3,
+  ELITE: 15,
+  LEGEND: 30,
+};
+
+export const EVERY_CONTRIBUTION_PAYBACK = {
+  BASIC_RARE: 3,
+  RARE: 20,
+  ELITE: 500,
+  LEGEND: 1000,
+};

@@ -1,6 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
+import {
+  DAYS_IN_A_ROW_PAYBACK,
+  EVERY_CONTRIBUTION_PAYBACK,
+} from 'src/constants/rules';
 import { getMultiplesCountBetween } from 'src/lib/utils';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
 import { User } from 'src/users/user.entity';
@@ -96,17 +100,17 @@ export class PaybacksService {
     if (!todayPaybacks.length) {
       // 오늘 첫번째 출석 보상인 경우
       switch (daysInARow) {
-        case 3:
+        case DAYS_IN_A_ROW_PAYBACK.RARE:
           rarePokeBalls++;
           result.rarePokeBalls++;
           result.hasDaysInARowReward = true;
           break;
-        case 15:
+        case DAYS_IN_A_ROW_PAYBACK.ELITE:
           elitePokeBalls++;
           result.elitePokeBalls++;
           result.hasDaysInARowReward = true;
           break;
-        case 50:
+        case DAYS_IN_A_ROW_PAYBACK.LEGEND:
           legendPokeBalls++;
           result.legendPokeBalls++;
           result.hasDaysInARowReward = true;
@@ -116,7 +120,7 @@ export class PaybacksService {
 
     // 컨트리뷰션횟수 보상 처리
     const basicRareAmount = getMultiplesCountBetween(
-      3,
+      EVERY_CONTRIBUTION_PAYBACK.BASIC_RARE,
       user.lastContributions + 1,
       totalContributions,
     );
@@ -124,7 +128,7 @@ export class PaybacksService {
     result.basicRarePokeBalls += basicRareAmount;
 
     const rareAmount = getMultiplesCountBetween(
-      20,
+      EVERY_CONTRIBUTION_PAYBACK.RARE,
       user.lastContributions + 1,
       totalContributions,
     );
@@ -132,7 +136,7 @@ export class PaybacksService {
     result.rarePokeBalls += rareAmount;
 
     const eliteAmount = getMultiplesCountBetween(
-      500,
+      EVERY_CONTRIBUTION_PAYBACK.ELITE,
       user.lastContributions + 1,
       totalContributions,
     );
@@ -140,7 +144,7 @@ export class PaybacksService {
     result.elitePokeBalls += eliteAmount;
 
     const legendAmount = getMultiplesCountBetween(
-      1000,
+      EVERY_CONTRIBUTION_PAYBACK.LEGEND,
       user.lastContributions + 1,
       totalContributions,
     );
