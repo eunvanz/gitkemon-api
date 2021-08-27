@@ -110,6 +110,10 @@ export const getCollectionFromMon = ({
     firstType: mon.firstType,
     secondType: mon.secondType,
     evolutionLevel: mon.evolutionLevel,
+    name: mon.name,
+    nameKo: mon.nameKo,
+    nameJa: mon.nameJa,
+    nameZh: mon.nameZh,
   };
   return collection;
 };
