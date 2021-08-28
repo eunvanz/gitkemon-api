@@ -5,11 +5,8 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { PaintingComment } from './painting-comment.entity';
-import { PaintingLike } from './painting-like.entity';
 
 @Entity()
 export class Painting extends TimeRecord {
@@ -35,18 +32,9 @@ export class Painting extends TimeRecord {
   @Column()
   likesCnt: number;
 
-  @OneToMany(() => PaintingLike, (paintingLike) => paintingLike.painting)
-  likes: Promise<Painting[]>;
-
   @Column()
   isRegistered: boolean;
 
   @Column()
   commentsCnt: number;
-
-  @OneToMany(
-    () => PaintingComment,
-    (paintingComment) => paintingComment.painting,
-  )
-  comments: Promise<PaintingComment[]>;
 }
