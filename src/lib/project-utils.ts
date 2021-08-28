@@ -1,9 +1,10 @@
-import { capitalize, isEqual, random, round, xor } from 'lodash';
+import { isEqual, random, round, xor } from 'lodash';
 import { Collection } from 'src/collections/collection.entity';
 import { RANK_RULE } from 'src/constants/rules';
 import { MonImage } from 'src/mon-images/mon-image.entity';
 import { Mon } from 'src/mons/mon.entity';
 import { MonPotential, MonTier } from 'src/types';
+import { capitalize } from './utils';
 
 export const statNames = [
   'hp',
@@ -41,12 +42,24 @@ export const getLevelDownCollection = (
   const updatedCollection: Partial<Collection> = {
     level: collection.level - amount,
     total: collection.total - colPoint * amount,
+    hp: collection.hp,
+    attack: collection.attack,
+    defense: collection.defense,
+    specialAttack: collection.specialAttack,
+    specialDefense: collection.specialDefense,
+    speed: collection.speed,
   };
   const getStatName = () => {
     const statIndex = random(0, 5);
     const statName = statNames[statIndex];
+    console.log('===== statName', statName);
+    console.log('===== collection[statName]', collection[statName]);
+    console.log(
+      `===== collection[base${capitalize(statName)}]`,
+      collection[`base${capitalize(statName)}` as keyof Collection],
+    );
     if (
-      collection[statName] - 1 <=
+      updatedCollection[statName] - 1 <
       collection[`base${capitalize(statName)}` as keyof Collection]
     ) {
       return getStatName();
