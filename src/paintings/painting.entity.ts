@@ -29,12 +29,12 @@ export class Painting extends TimeRecord {
   @JoinColumn({ name: 'mon_id' })
   mon: Promise<Mon>;
 
-  @Column()
+  @Column({ default: 0 })
   likesCnt: number;
 
-  @Column()
+  @Column({ default: false })
   isRegistered: boolean;
 
-  @Column()
+  @Column({ default: 0 })
   commentsCnt: number;
 }

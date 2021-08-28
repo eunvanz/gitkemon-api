@@ -45,3 +45,5 @@ export interface GithubUser {
 export type MonPotential = 'SS' | 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 
 export type PokeBallType = 'basic' | 'basicRare' | 'rare' | 'elite' | 'legend';
+
+export type ContentType = 'painting';

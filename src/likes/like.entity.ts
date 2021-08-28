@@ -1,4 +1,5 @@
 import { TimeRecord } from 'src/entities/time-record.entity';
+import { ContentType } from 'src/types';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -10,7 +11,7 @@ export class Like extends TimeRecord {
   userId: string;
 
   @Column()
-  contentType: string;
+  contentType: ContentType;
 
   @Column()
   contentId: string;

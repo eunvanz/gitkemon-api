@@ -1,4 +1,5 @@
 import { TimeRecord } from 'src/entities/time-record.entity';
+import { ContentType } from 'src/types';
 import { User } from 'src/users/user.entity';
 import {
   Column,
@@ -35,7 +36,7 @@ export class Comment extends TimeRecord {
   replies?: Promise<Comment[]>;
 
   @Column()
-  contentType: string;
+  contentType: ContentType;
 
   @Column()
   contentId: number;
