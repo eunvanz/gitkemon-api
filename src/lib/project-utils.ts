@@ -52,12 +52,6 @@ export const getLevelDownCollection = (
   const getStatName = () => {
     const statIndex = random(0, 5);
     const statName = statNames[statIndex];
-    console.log('===== statName', statName);
-    console.log('===== collection[statName]', collection[statName]);
-    console.log(
-      `===== collection[base${capitalize(statName)}]`,
-      collection[`base${capitalize(statName)}` as keyof Collection],
-    );
     if (
       updatedCollection[statName] - 1 <
       collection[`base${capitalize(statName)}` as keyof Collection]
