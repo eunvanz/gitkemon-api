@@ -46,7 +46,7 @@ export const getLevelDownCollection = (
     const statIndex = random(0, 5);
     const statName = statNames[statIndex];
     if (
-      collection[statName] - 1 <
+      collection[statName] - 1 <=
       collection[`base${capitalize(statName)}` as keyof Collection]
     ) {
       return getStatName();
