@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { uploadFile } from 'src/lib/file-uploader';
 import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
@@ -32,8 +33,8 @@ export class PaintingsService {
     await this.paintingRepository.save(painting);
   }
 
-  async findAll() {
-    return await this.paintingRepository.find();
+  async findAll(options: IPaginationOptions) {
+    return await paginate<Painting>(this.paintingRepository, options);
   }
 
   async uploadImage(

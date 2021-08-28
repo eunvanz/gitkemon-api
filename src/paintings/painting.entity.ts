@@ -25,9 +25,9 @@ export class Painting extends TimeRecord {
   @Column()
   monId: number;
 
-  @ManyToOne(() => Mon, { lazy: true })
+  @ManyToOne(() => Mon, { eager: true })
   @JoinColumn({ name: 'mon_id' })
-  mon: Promise<Mon>;
+  mon: Mon;
 
   @Column({ default: 0 })
   likesCnt: number;

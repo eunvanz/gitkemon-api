@@ -6,6 +6,9 @@ import {
   UploadedFile,
   UseInterceptors,
   Get,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
@@ -31,7 +34,13 @@ export class PaintingsController {
   }
 
   @Get()
-  async findAll() {
-    return await this.paintingService.findAll();
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(32), ParseIntPipe) limit = 32,
+  ) {
+    return await this.paintingService.findAll({
+      page,
+      limit,
+    });
   }
 }
