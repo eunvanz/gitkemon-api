@@ -4,7 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CollectionModule } from './collections/collections.module';
+import { CommentsModule } from './comments/comments.module';
 import { typeOrmConfigAsync } from './config/typeorm.config';
+import { LikesModule } from './likes/likes.module';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { RequireMiddleware } from './middlewares/require-user.middleware';
 import { MonImagesModule } from './mon-images/mon-images.module';
@@ -12,8 +14,6 @@ import { MonsModule } from './mons/mons.module';
 import { PaintingsModule } from './paintings/paintings.module';
 import { PaybacksModule } from './paybacks/paybacks.module';
 import { UsersModule } from './users/users.module';
-import { CommentsModule } from './comments/comments.module';
-import { LikesModule } from './likes/likes.module';
 
 @Module({
   imports: [

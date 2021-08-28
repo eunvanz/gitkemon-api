@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { uploadFile } from 'src/lib/file-uploader';
+import { Like } from 'src/likes/like.entity';
 import { User } from 'src/users/user.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreatePaintingDto } from './dto/create-painting.dto';
 import { Painting } from './painting.entity';
 
@@ -14,6 +15,8 @@ export class PaintingsService {
     private readonly paintingRepository: Repository<Painting>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Like)
+    private readonly likeRepository: Repository<Like>,
   ) {}
 
   async save(
@@ -34,7 +37,26 @@ export class PaintingsService {
   }
 
   async findAll(options: IPaginationOptions) {
-    return await paginate<Painting>(this.paintingRepository, options);
+    const queryBuilder = this.paintingRepository
+      .createQueryBuilder('painting')
+      .orderBy('painting.createdAt', 'DESC');
+    const result = await paginate<Painting>(queryBuilder, options);
+    const itemIds = result.items.map((item) => item.id);
+    const likes = await this.likeRepository.find({
+      where: [
+        {
+          contentType: 'painting',
+          contentId: In(itemIds),
+        },
+      ],
+    });
+    return {
+      ...result,
+      items: result.items.map((item) => ({
+        ...item,
+        isLiked: likes.some((like) => like.contentId === item.id) || false,
+      })),
+    };
   }
 
   async uploadImage(

@@ -14,5 +14,5 @@ export class Like extends TimeRecord {
   contentType: ContentType;
 
   @Column()
-  contentId: string;
+  contentId: number;
 }
