@@ -32,6 +32,10 @@ export class PaintingsService {
     await this.paintingRepository.save(painting);
   }
 
+  async findAll() {
+    return await this.paintingRepository.find();
+  }
+
   async uploadImage(
     file: Express.Multer.File,
     monId: number,
