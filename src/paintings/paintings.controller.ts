@@ -9,10 +9,14 @@ import {
   Query,
   DefaultValuePipe,
   ParseIntPipe,
+  Patch,
+  Param,
+  Delete,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { CreatePaintingDto } from './dto/create-painting.dto';
+import { UpdatePaintingDto } from './dto/update-painting.dto';
 import { PaintingsService } from './paintings.service';
 
 @Controller('paintings')
@@ -42,5 +46,29 @@ export class PaintingsController {
       page,
       limit,
     });
+  }
+
+  @Patch('/:paintingId')
+  @UseInterceptors(FileInterceptor('file'))
+  async update(
+    @Param('paintingId') paintingId: number,
+    @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
+    @Body() updatePaintingDto: UpdatePaintingDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return await this.paintingService.update(
+      accessToken,
+      paintingId,
+      updatePaintingDto,
+      file,
+    );
+  }
+
+  @Delete('/:paintingId')
+  async delete(
+    @Param('paintingId') paintingId: number,
+    @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
+  ) {
+    return await this.paintingService.delete(accessToken, paintingId);
   }
 }
