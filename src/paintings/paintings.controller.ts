@@ -37,6 +37,11 @@ export class PaintingsController {
     );
   }
 
+  @Get('/:paintingId')
+  async findOne(@Param('paintingId') paintingId: number) {
+    return await this.paintingService.findOne(paintingId);
+  }
+
   @Get()
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,

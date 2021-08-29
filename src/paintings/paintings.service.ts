@@ -94,6 +94,10 @@ export class PaintingsService {
     await this.paintingRepository.delete(paintingId);
   }
 
+  async findOne(paintingId: number) {
+    return await this.paintingRepository.findOne(paintingId);
+  }
+
   async uploadImage(
     file: Express.Multer.File,
     monId: number,
