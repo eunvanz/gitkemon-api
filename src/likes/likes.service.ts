@@ -1,6 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ERROR_CODE } from 'src/constants/errors';
 import { Painting } from 'src/paintings/painting.entity';
 import { User } from 'src/users/user.entity';
 import { Repository, Transaction, TransactionRepository } from 'typeorm';
@@ -44,7 +43,7 @@ export class LikesService {
         await trxPaintingRepository
           .createQueryBuilder('painting')
           .update()
-          .set({ likesCnt: () => 'painting.likesCnt + 1' })
+          .set({ likesCnt: () => 'painting.likes_cnt + 1' })
           .where('painting.id = :id', { id: contentId })
           .execute();
         break;
@@ -84,7 +83,7 @@ export class LikesService {
         await trxPaintingRepository
           .createQueryBuilder('painting')
           .update()
-          .set({ likesCnt: () => 'painting.likesCnt - 1' })
+          .set({ likesCnt: () => 'painting.likes_cnt - 1' })
           .where('painting.id = :id', { id: contentId })
           .execute();
         break;

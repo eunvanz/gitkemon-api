@@ -8,19 +8,19 @@ import { LikesService } from './likes.service';
 export class LikesController {
   constructor(private readonly likeService: LikesService) {}
 
-  @Post()
-  async save(
-    @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
-    @Body() createLikeDto: CreateLikeDto,
-  ) {
-    await this.likeService.save(accessToken, createLikeDto);
-  }
-
   @Post('/unlike')
   async delete(
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
     @Body() deleteLikeDto: DeleteLikeDto,
   ) {
     await this.likeService.delete(accessToken, deleteLikeDto);
+  }
+
+  @Post()
+  async save(
+    @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
+    @Body() createLikeDto: CreateLikeDto,
+  ) {
+    await this.likeService.save(accessToken, createLikeDto);
   }
 }
