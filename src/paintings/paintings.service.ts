@@ -40,6 +40,7 @@ export class PaintingsService {
   async findAll(options: IPaginationOptions) {
     const queryBuilder = this.paintingRepository
       .createQueryBuilder('painting')
+      .leftJoinAndSelect('painting.mon', 'mon')
       .orderBy('painting.createdAt', 'DESC');
     const result = await paginate<Painting>(queryBuilder, options);
     const itemIds = result.items.map((item) => item.id);
