@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Headers, Param, Post } from '@nestjs/common';
+import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { CreateLikeDto } from './dto/create-like.dto';
+import { DeleteLikeDto } from './dto/delete-like.dto';
 import { LikesService } from './likes.service';
 
 @Controller('likes')
@@ -15,11 +16,11 @@ export class LikesController {
     await this.likeService.save(accessToken, createLikeDto);
   }
 
-  @Delete('/:likeId')
+  @Post('/unlike')
   async delete(
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
-    @Param('likeId') likeId: number,
+    @Body() deleteLikeDto: DeleteLikeDto,
   ) {
-    await this.likeService.delete(accessToken, likeId);
+    await this.likeService.delete(accessToken, deleteLikeDto);
   }
 }

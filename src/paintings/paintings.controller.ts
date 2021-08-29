@@ -40,7 +40,7 @@ export class PaintingsController {
   @Get()
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
-    @Query('limit', new DefaultValuePipe(32), ParseIntPipe) limit = 32,
+    @Query('limit', new DefaultValuePipe(32), ParseIntPipe) limit = 24,
   ) {
     return await this.paintingService.findAll({
       page,
