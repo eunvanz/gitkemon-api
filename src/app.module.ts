@@ -39,6 +39,12 @@ export class AppModule implements NestModule {
     consumer.apply(AuthMiddleware).forRoutes('*');
     consumer
       .apply(RequireMiddleware)
-      .forRoutes('users/available-contributions', 'collections/hunt');
+      .forRoutes(
+        'users/available-contributions',
+        'collections/hunt',
+        'collections/blend',
+        'collections/evolve',
+        'like',
+      );
   }
 }
