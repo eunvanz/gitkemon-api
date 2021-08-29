@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { uploadFile } from 'src/lib/file-uploader';
@@ -6,6 +6,7 @@ import { Like } from 'src/likes/like.entity';
 import { User } from 'src/users/user.entity';
 import { In, Repository } from 'typeorm';
 import { CreatePaintingDto } from './dto/create-painting.dto';
+import { UpdatePaintingDto } from './dto/update-painting.dto';
 import { Painting } from './painting.entity';
 
 @Injectable()
@@ -57,6 +58,39 @@ export class PaintingsService {
         isLiked: likes.some((like) => like.contentId === item.id) || false,
       })),
     };
+  }
+
+  async update(
+    accessToken: string,
+    paintingId: number,
+    updatePaintingDto: UpdatePaintingDto,
+    file?: Express.Multer.File,
+  ) {
+    const user = await this.userRepository.findOne({ accessToken });
+    const painting = await this.paintingRepository.findOne(paintingId);
+    if (user.id !== painting.designerId) {
+      throw new ForbiddenException();
+    }
+    const updatedPainting: Partial<Painting> = {
+      ...updatePaintingDto,
+    };
+    if (file) {
+      updatedPainting.imageUrl = await this.uploadImage(
+        file,
+        updatePaintingDto.monId || painting.monId,
+        updatePaintingDto.designerName || painting.designerName,
+      );
+    }
+    await this.paintingRepository.update(paintingId, updatedPainting);
+  }
+
+  async delete(accessToken: string, paintingId: number) {
+    const user = await this.userRepository.findOne({ accessToken });
+    const painting = await this.paintingRepository.findOne(paintingId);
+    if (user.id !== painting.designerId) {
+      throw new ForbiddenException();
+    }
+    await this.paintingRepository.delete(paintingId);
   }
 
   async uploadImage(
