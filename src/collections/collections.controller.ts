@@ -31,6 +31,14 @@ export class CollectionsController {
     );
   }
 
+  @Get('rank')
+  async getRanking(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit = 20,
+  ) {
+    return await this.collectionService.getRanking({ page, limit });
+  }
+
   @Get('user/:userId')
   async findAllByUser(@Param('userId') userId: string) {
     return await this.collectionService.findAllByUser(userId);
@@ -67,13 +75,5 @@ export class CollectionsController {
   @Post('sync-name-with-mon')
   async syncNameWithMon() {
     return await this.collectionService.syncNameWithMon();
-  }
-
-  @Get('rank')
-  async getRanking(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
-    @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit = 20,
-  ) {
-    return await this.collectionService.getRanking({ page, limit });
   }
 }

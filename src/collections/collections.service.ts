@@ -399,7 +399,7 @@ export class CollectionsService {
   async getRanking(options: IPaginationOptions) {
     const queryBuilder = this.collectionRepository
       .createQueryBuilder('collection')
-      .leftJoinAndSelect('collection.user', 'user')
+      .leftJoinAndSelect('collection.user', 'member')
       .orderBy('collection.total', 'DESC');
     const result = await paginate<Collection>(queryBuilder, options);
     return result;
