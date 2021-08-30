@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { random } from 'lodash';
+import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { MYTH_CHANCE } from 'src/constants/rules';
 import {
   getBlendResultTier,
@@ -392,6 +393,15 @@ export class CollectionsService {
     await userRepository.update(user.id, {
       colPoint: user.colPoint + colPointToUpdate,
     });
+    return result;
+  }
+
+  async getRanking(options: IPaginationOptions) {
+    const queryBuilder = this.collectionRepository
+      .createQueryBuilder('collection')
+      .leftJoinAndSelect('collection.user', 'user')
+      .orderBy('collection.total', 'DESC');
+    const result = await paginate<Collection>(queryBuilder, options);
     return result;
   }
 }
