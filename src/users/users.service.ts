@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
+import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { lastValueFrom, map } from 'rxjs';
 import Rules from 'src/config/rules.config';
 import { ERROR_CODE } from 'src/constants/errors';
@@ -259,6 +260,22 @@ export class UsersService {
       throw new NotFoundException('Github user is not found.');
     }
 
+    return result;
+  }
+
+  async getCollectionRanking(options: IPaginationOptions) {
+    const queryBuilder = this.userRepository
+      .createQueryBuilder('user')
+      .orderBy('user.colPoint', 'DESC');
+    const result = await paginate<User>(queryBuilder, options);
+    return result;
+  }
+
+  async getContributionRanking(options: IPaginationOptions) {
+    const queryBuilder = this.userRepository
+      .createQueryBuilder('user')
+      .orderBy('user.lastContributions', 'DESC');
+    const result = await paginate<User>(queryBuilder, options);
     return result;
   }
 }
