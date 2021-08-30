@@ -9,6 +9,8 @@ import {
   Req,
   Res,
   Headers,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { Request, Response } from 'express';
@@ -100,5 +102,21 @@ export class UsersController {
   async logout(@Res() res: Response) {
     res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
     res.send();
+  }
+
+  @Get('rank/collection')
+  async getCollectionRanking(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit = 20,
+  ) {
+    return await this.userService.getCollectionRanking({ page, limit });
+  }
+
+  @Get('rank/contributions')
+  async getContributionRanking(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit = 20,
+  ) {
+    return await this.userService.getContributionRanking({ page, limit });
   }
 }

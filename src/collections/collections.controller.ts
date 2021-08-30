@@ -69,7 +69,7 @@ export class CollectionsController {
     return await this.collectionService.syncNameWithMon();
   }
 
-  @Get('/rank')
+  @Get('rank')
   async getRanking(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit = 20,
