@@ -1,4 +1,14 @@
-import { Body, Controller, Post, Headers, Get, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Headers,
+  Get,
+  Param,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { CollectionsService } from './collections.service';
 import { BlendDto } from './dto/blend.dto';
@@ -57,5 +67,13 @@ export class CollectionsController {
   @Post('sync-name-with-mon')
   async syncNameWithMon() {
     return await this.collectionService.syncNameWithMon();
+  }
+
+  @Get('/rank')
+  async getRanking(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit = 20,
+  ) {
+    return await this.collectionService.getRanking({ page, limit });
   }
 }
