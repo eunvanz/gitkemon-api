@@ -200,7 +200,7 @@ export const getPotentialFromTotal: (
 
 export const getBlendResultTier: (tiers: MonTier[]) => MonTier[] = (tiers) => {
   if (isEqual(tiers, ['rare', 'rare'])) {
-    return ['rare', 'elite'];
+    return ['basic', 'rare', 'elite'];
   } else if (isEqual(tiers, ['elite', 'elite'])) {
     return ['elite', 'legend'];
   } else if (isEqual(tiers, ['legend', 'legend'])) {

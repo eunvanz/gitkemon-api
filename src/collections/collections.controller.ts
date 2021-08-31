@@ -33,10 +33,13 @@ export class CollectionsController {
 
   @Get('rank')
   async getRanking(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
-    @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit = 20,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit,
   ) {
-    return await this.collectionService.getRanking({ page, limit });
+    return await this.collectionService.getRanking({
+      page,
+      limit,
+    });
   }
 
   @Get('user/:userId')
