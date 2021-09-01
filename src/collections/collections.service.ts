@@ -408,7 +408,9 @@ export class CollectionsService {
         ? getTrainerClass(user.colPoint + colPointToUpdate)
         : 0;
 
-    result.trainerClass = updatedTrainerClass;
+    if (user.trainerClass < updatedTrainerClass) {
+      result.trainerClass = updatedTrainerClass;
+    }
 
     const updatedUser = new User();
 
