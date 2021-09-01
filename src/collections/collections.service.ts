@@ -14,6 +14,7 @@ import {
   getLevelDownCollection,
   getLevelUpCollection,
   getSpecialBlendResult,
+  getTrainerClass,
 } from 'src/lib/project-utils';
 import { Mon } from 'src/mons/mon.entity';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
@@ -352,10 +353,12 @@ export class CollectionsService {
       oldCollection: Collection | null;
       newCollection: Collection | null;
       updatedColPoint: number;
+      trainerClass: number;
     } = {
       oldCollection: null,
       newCollection: null,
       updatedColPoint: 0,
+      trainerClass: 0,
     };
 
     if (existCollection) {
@@ -392,6 +395,10 @@ export class CollectionsService {
 
     await userRepository.update(user.id, {
       colPoint: user.colPoint + colPointToUpdate,
+      trainerClass:
+        colPointToUpdate > 0
+          ? getTrainerClass(user.colPoint + colPointToUpdate)
+          : user.trainerClass,
     });
     return result;
   }
