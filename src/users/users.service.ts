@@ -268,6 +268,7 @@ export class UsersService {
   async getCollectionRanking(options: IPaginationOptions) {
     const queryBuilder = this.userRepository
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.githubUser', 'githubUser')
       .orderBy('user.colPoint', 'DESC');
     const result = await paginate<User>(queryBuilder, options);
     return result;
@@ -276,6 +277,7 @@ export class UsersService {
   async getContributionRanking(options: IPaginationOptions) {
     const queryBuilder = this.userRepository
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.githubUser', 'githubUser')
       .orderBy('user.lastContributions', 'DESC');
     const result = await paginate<User>(queryBuilder, options);
     return result;
