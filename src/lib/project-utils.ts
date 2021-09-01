@@ -242,8 +242,7 @@ export const getSpecialBlendResult: (
   ) {
     // 딱정곤 & 쪼마리
     return [589, 617];
-  }
-  {
+  } else {
     return undefined;
   }
 };
