@@ -75,8 +75,8 @@ export class CollectionsController {
     );
   }
 
-  @Post('sync-name-with-mon')
-  async syncNameWithMon() {
-    return await this.collectionService.syncNameWithMon();
+  @Post('sync-with-mon')
+  async syncWithMon() {
+    return await this.collectionService.syncWithMon();
   }
 }

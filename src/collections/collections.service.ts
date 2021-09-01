@@ -236,7 +236,7 @@ export class CollectionsService {
     return result;
   }
 
-  async syncNameWithMon() {
+  async syncWithMon() {
     const allCollections = await this.collectionRepository.find();
     allCollections.forEach(async (collection) => {
       const mon = await this.monRepository.findOne(collection.monId);
@@ -247,6 +247,12 @@ export class CollectionsService {
           nameKo: mon.nameKo,
           nameJa: mon.nameJa,
           nameZh: mon.nameZh,
+          colPoint: mon.colPoint,
+          stars: mon.stars,
+          tier: mon.tier,
+          firstType: mon.firstType,
+          secondType: mon.secondType,
+          evolutionLevel: mon.evolutionLevel,
         };
         await this.collectionRepository.update(
           collection.id,

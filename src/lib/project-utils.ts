@@ -133,6 +133,7 @@ export const getCollectionFromMon = ({
     nameKo: mon.nameKo,
     nameJa: mon.nameJa,
     nameZh: mon.nameZh,
+    colPoint: mon.colPoint,
   };
   return collection;
 };

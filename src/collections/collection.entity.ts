@@ -120,4 +120,7 @@ export class Collection extends TimeRecord {
 
   @Column({ nullable: true })
   nameZh?: string;
+
+  @Column()
+  colPoint: number;
 }

@@ -74,6 +74,7 @@ export class MonsService {
         firstType: updateMonDto.firstType,
         secondType: updateMonDto.secondType,
         evolutionLevel: updateMonDto.evolutionLevel,
+        colPoint: updateMonDto.colPoint,
       }),
     );
 
