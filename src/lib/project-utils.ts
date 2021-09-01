@@ -4,6 +4,7 @@ import { RANK_RULE, TRAINER_CLASS } from 'src/constants/rules';
 import { MonImage } from 'src/mon-images/mon-image.entity';
 import { Mon } from 'src/mons/mon.entity';
 import { MonPotential, MonTier } from 'src/types';
+import { User } from 'src/users/user.entity';
 import { capitalize } from './utils';
 
 export const statNames = [
@@ -15,7 +16,18 @@ export const statNames = [
   'speed',
 ];
 
-export const getLevelUpCollection = (collection: Collection, mon: Mon) => {
+export const getLevelUpCollection = (
+  collection: Collection,
+  mon: Mon,
+  user: User,
+) => {
+  if (
+    collection.total - collection.baseTotal + mon.colPoint >
+    user.trainerClass * 60
+  ) {
+    // level up is not available due to trainer class limit
+    return collection;
+  }
   const { colPoint } = mon;
   const updatedCollection: Partial<Collection> = {
     level: collection.level + 1,

@@ -363,7 +363,11 @@ export class CollectionsService {
 
     if (existCollection) {
       // 레벨업
-      const updatedCollection = getLevelUpCollection(existCollection, mon);
+      const updatedCollection = getLevelUpCollection(
+        existCollection,
+        mon,
+        user,
+      );
       await collectionRepository.update(existCollection.id, updatedCollection);
       await existCollection.mon;
       await existCollection.monImage;
