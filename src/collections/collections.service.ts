@@ -400,10 +400,14 @@ export class CollectionsService {
 
     result.trainerClass = updatedTrainerClass;
 
-    await userRepository.update(user.id, {
-      colPoint: user.colPoint + colPointToUpdate,
-      trainerClass: updatedTrainerClass || user.trainerClass,
-    });
+    const updatedUser = new User();
+
+    updatedUser.colPoint = user.colPoint + colPointToUpdate;
+    if (result.trainerClass) {
+      updatedUser.trainerClass = result.trainerClass;
+    }
+
+    await userRepository.update(user.id, updatedUser);
     return result;
   }
 

@@ -227,5 +227,10 @@ export const getSpecialBlendResult: (
 };
 
 export const getTrainerClass = (colPoint: number) => {
-  return TRAINER_CLASS.findIndex((number) => colPoint >= number) + 1;
+  return (
+    TRAINER_CLASS.findIndex(
+      (number, index) =>
+        colPoint >= number && TRAINER_CLASS[index + 1] > colPoint,
+    ) + 1
+  );
 };
