@@ -234,7 +234,16 @@ export const getSpecialBlendResult: (
   ) {
     // 셀러 & 야돈
     return [80, 199];
-  } else {
+  } else if (
+    xor(
+      collections.map((collection) => collection.monId),
+      [588, 616],
+    )
+  ) {
+    // 딱정곤 & 쪼마리
+    return [589, 617];
+  }
+  {
     return undefined;
   }
 };
