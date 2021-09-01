@@ -1,6 +1,6 @@
 import { isEqual, random, round, xor } from 'lodash';
 import { Collection } from 'src/collections/collection.entity';
-import { RANK_RULE } from 'src/constants/rules';
+import { RANK_RULE, TRAINER_CLASS } from 'src/constants/rules';
 import { MonImage } from 'src/mon-images/mon-image.entity';
 import { Mon } from 'src/mons/mon.entity';
 import { MonPotential, MonTier } from 'src/types';
@@ -224,4 +224,8 @@ export const getSpecialBlendResult: (
   } else {
     return undefined;
   }
+};
+
+export const getTrainerClass = (colPoint: number) => {
+  return TRAINER_CLASS.findIndex((number) => colPoint >= number) + 1;
 };
