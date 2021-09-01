@@ -393,12 +393,16 @@ export class CollectionsService {
     }
     result.updatedColPoint = colPointToUpdate;
 
+    const updatedTrainerClass =
+      colPointToUpdate > 0
+        ? getTrainerClass(user.colPoint + colPointToUpdate)
+        : 0;
+
+    result.trainerClass = updatedTrainerClass;
+
     await userRepository.update(user.id, {
       colPoint: user.colPoint + colPointToUpdate,
-      trainerClass:
-        colPointToUpdate > 0
-          ? getTrainerClass(user.colPoint + colPointToUpdate)
-          : user.trainerClass,
+      trainerClass: updatedTrainerClass || user.trainerClass,
     });
     return result;
   }
