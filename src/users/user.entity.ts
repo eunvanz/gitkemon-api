@@ -147,4 +147,10 @@ export class User extends TimeRecord {
 
   @Column({ default: 0 })
   colPoint: number;
+
+  @Column()
+  githubLogin: string;
+
+  @Column({ default: 1 })
+  trainerClass: number;
 }

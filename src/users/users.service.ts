@@ -100,6 +100,7 @@ export class UsersService {
         colPoint: 0,
         githubUser,
         accessToken,
+        githubLogin: githubUser.login,
       });
 
       user = await this.userRepository.findOne({ githubUser });
@@ -139,6 +140,7 @@ export class UsersService {
     await this.userRepository.update(user.id, {
       githubUser,
       accessToken,
+      githubLogin: githubUser.login,
     });
 
     await user.pokeBall;

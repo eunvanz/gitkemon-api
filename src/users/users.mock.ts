@@ -15,6 +15,8 @@ const baseUser: User = {
   pokeBall: Promise.resolve(mockPokeBall.basePokeBall),
   pokeBallId: 1,
   colPoint: 0,
+  githubLogin: 'eunvanz',
+  trainerClass: 1,
   githubUser: {
     login: 'eunvanz',
     id: 17351661,
