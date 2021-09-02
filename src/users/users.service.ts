@@ -93,7 +93,7 @@ export class UsersService {
       await trxGithubUserRepository.save(githubUser);
 
       trxUserRepository.save({
-        nickname: githubUser.name,
+        nickname: githubUser.name.slice(0, 20),
         contributionBaseDate,
         lastRewardedDate: contributionBaseDate,
         lastContributions: 0,
