@@ -367,6 +367,7 @@ export class CollectionsService {
       trainerClass: 0,
     };
 
+    const recentUser = await userRepository.findOne(user.id);
     if (existCollection) {
       // 레벨업
       const updatedCollection = getLevelUpCollection(
@@ -405,16 +406,16 @@ export class CollectionsService {
 
     const updatedTrainerClass =
       colPointToUpdate > 0
-        ? getTrainerClass(user.colPoint + colPointToUpdate)
+        ? getTrainerClass(recentUser.colPoint + colPointToUpdate)
         : 0;
 
-    if (user.trainerClass < updatedTrainerClass) {
+    if (recentUser.trainerClass < updatedTrainerClass) {
       result.trainerClass = updatedTrainerClass;
     }
 
     const updatedUser = new User();
 
-    updatedUser.colPoint = user.colPoint + colPointToUpdate;
+    updatedUser.colPoint = recentUser.colPoint + colPointToUpdate;
     if (result.trainerClass) {
       updatedUser.trainerClass = result.trainerClass;
     }
