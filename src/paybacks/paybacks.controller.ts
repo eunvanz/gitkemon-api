@@ -1,6 +1,7 @@
 import {
   Controller,
   ForbiddenException,
+  Get,
   Headers,
   Param,
   Post,
@@ -18,6 +19,11 @@ export class PaybacksController {
       throw new ForbiddenException();
     }
     return await this.paybackService.save(accessToken as string);
+  }
+
+  @Get('history/:userId')
+  async getDailyHistory(@Param('userId') userId: string) {
+    return await this.paybackService.getDailyHistory(userId);
   }
 
   // TODO: 실제 배포시 주석처리

@@ -188,4 +188,14 @@ export class PaybacksService {
     });
     await this.paybackRepository.delete({ userId: user.id });
   }
+
+  async getDailyHistory(userId: string) {
+    const result = await this.paybackRepository.query(`
+      SELECT payback_date_string as date, MAX(total_contributions) totalContributions
+      FROM gitkemon.payback
+      WHERE user_id = '${userId}'
+      GROUP BY payback_date_string
+    `);
+    return result;
+  }
 }
