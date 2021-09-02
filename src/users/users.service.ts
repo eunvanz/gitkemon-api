@@ -282,4 +282,24 @@ export class UsersService {
     const result = await paginate<User>(queryBuilder, options);
     return result;
   }
+
+  async getUserProfile(userId: string) {
+    const user = await this.userRepository.findOne(userId);
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return {
+      id: user.id,
+      nickname: user.nickname,
+      introduce: user.introduce,
+      githubLogin: user.githubLogin,
+      colPoint: user.colPoint,
+      lastContributions: user.lastContributions,
+      lastPaybackDate: user.lastPaybackDate,
+      avatarUrl: user.githubUser.avatar_url,
+      githubUrl: user.githubUser.html_url,
+    };
+  }
 }

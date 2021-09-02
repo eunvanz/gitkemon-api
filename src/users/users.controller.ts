@@ -119,4 +119,9 @@ export class UsersController {
   ) {
     return await this.userService.getContributionRanking({ page, limit });
   }
+
+  @Get('profile/:userId')
+  async getUserProfile(@Param('userId') userId: string) {
+    return await this.userService.getUserProfile(userId);
+  }
 }

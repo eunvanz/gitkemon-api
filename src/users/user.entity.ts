@@ -116,7 +116,7 @@ export class User extends TimeRecord {
   @Column({ length: 20 })
   nickname: string;
 
-  @Column({ nullable: true, length: 200 })
+  @Column({ nullable: true, length: 80 })
   introduce: string;
 
   @Column()
