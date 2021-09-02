@@ -7,5 +7,5 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsString()
-  introduce: string;
+  introduce?: string;
 }

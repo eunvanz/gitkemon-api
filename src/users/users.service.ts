@@ -302,4 +302,9 @@ export class UsersService {
       githubUrl: user.githubUser.html_url,
     };
   }
+
+  async updateProfile(accessToken: string, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.findOne({ accessToken });
+    await this.userRepository.update(user.id, updateUserDto);
+  }
 }
