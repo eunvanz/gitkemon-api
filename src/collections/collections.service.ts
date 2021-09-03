@@ -457,7 +457,7 @@ export class CollectionsService {
 
     const recentMons = await this.collectionRepository.find({
       order: {
-        updatedAt: 'DESC',
+        createdAt: 'DESC',
       },
       where: [
         {
