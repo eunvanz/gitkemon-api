@@ -113,6 +113,7 @@ export class UsersService {
       });
     }
 
+    user.accessToken = accessToken;
     return user;
   }
 
@@ -300,6 +301,7 @@ export class UsersService {
       lastPaybackDate: user.lastPaybackDate,
       avatarUrl: user.githubUser.avatar_url,
       githubUrl: user.githubUser.html_url,
+      trainerClass: user.trainerClass,
     };
   }
 

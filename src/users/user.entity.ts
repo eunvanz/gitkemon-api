@@ -128,7 +128,7 @@ export class User extends TimeRecord {
   @Column({ nullable: true })
   contributionBaseDate: Date;
 
-  @Column()
+  @Column({ select: false })
   accessToken: string;
 
   @Column({ default: true })

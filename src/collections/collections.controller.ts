@@ -79,4 +79,9 @@ export class CollectionsController {
   async syncWithMon() {
     return await this.collectionService.syncWithMon();
   }
+
+  @Get('profile/:userId')
+  async getProfileMons(@Param('userId') userId: string) {
+    return await this.collectionService.getProfileMons(userId);
+  }
 }

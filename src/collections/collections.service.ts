@@ -429,7 +429,48 @@ export class CollectionsService {
       .createQueryBuilder('collection')
       .leftJoinAndSelect('collection.user', 'member')
       .orderBy('collection.total', 'DESC');
-    const result = await paginate<Collection>(queryBuilder, options);
+    const result = await paginate(queryBuilder, options);
     return result;
+  }
+
+  async getProfileMons(userId: string) {
+    const topMons = await this.collectionRepository.find({
+      order: {
+        total: 'DESC',
+      },
+      where: [
+        {
+          userId,
+        },
+      ],
+      take: 3,
+    });
+
+    const topMonsRank = await this.collectionRepository.query(`
+        SELECT *
+        FROM (
+          SELECT id, RANK() OVER(ORDER BY total DESC) AS ranking
+          FROM gitkemon.collection
+        ) AS collection
+        WHERE id IN (${topMons.map((mon) => mon.id).join(',')});
+      `);
+
+    const recentMons = await this.collectionRepository.find({
+      order: {
+        updatedAt: 'DESC',
+      },
+      where: [
+        {
+          userId,
+        },
+      ],
+      take: 3,
+    });
+
+    return {
+      topMons,
+      topMonsRank,
+      recentMons,
+    };
   }
 }
