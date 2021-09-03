@@ -446,11 +446,11 @@ export class CollectionsService {
       take: 3,
     });
 
-    const topMonsRank = await this.collectionRepository.query(`
+    const topMonRanks = await this.collectionRepository.query(`
         SELECT *
         FROM (
           SELECT id, RANK() OVER(ORDER BY total DESC) AS ranking
-          FROM gitkemon.collection
+          FROM collection
         ) AS collection
         WHERE id IN (${topMons.map((mon) => mon.id).join(',')});
       `);
@@ -469,7 +469,7 @@ export class CollectionsService {
 
     return {
       topMons,
-      topMonsRank,
+      topMonRanks: topMonRanks.map((item) => Number(item.ranking)),
       recentMons,
     };
   }

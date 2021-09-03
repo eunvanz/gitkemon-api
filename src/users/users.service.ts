@@ -291,6 +291,24 @@ export class UsersService {
       throw new NotFoundException();
     }
 
+    const collectionRank = await this.userRepository.query(`
+      SELECT ranking
+      FROM (
+        SELECT id, RANK() OVER(ORDER BY col_point DESC) AS ranking
+        FROM member
+      ) AS user
+      WHERE id = '${user.id}'
+    `);
+
+    const contributionsRank = await this.userRepository.query(`
+      SELECT ranking
+      FROM (
+        SELECT id, RANK() OVER(ORDER BY last_contributions DESC) AS ranking
+        FROM member
+      ) AS user
+      WHERE id = '${user.id}'
+    `);
+
     return {
       id: user.id,
       nickname: user.nickname,
@@ -302,6 +320,8 @@ export class UsersService {
       avatarUrl: user.githubUser.avatar_url,
       githubUrl: user.githubUser.html_url,
       trainerClass: user.trainerClass,
+      collectionRank: Number(collectionRank[0].ranking),
+      contributionsRank: Number(contributionsRank[0].ranking),
     };
   }
 

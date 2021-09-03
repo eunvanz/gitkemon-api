@@ -192,8 +192,9 @@ export class PaybacksService {
   async getDailyHistory(userId: string) {
     const result = await this.paybackRepository.query(`
       SELECT payback_date_string as date, MAX(total_contributions) totalContributions
-      FROM gitkemon.payback
+      FROM payback
       WHERE user_id = '${userId}'
+      AND payback.created_at > '${dayjs().subtract(1, 'year').toISOString()}'
       GROUP BY payback_date_string
     `);
     return result;
