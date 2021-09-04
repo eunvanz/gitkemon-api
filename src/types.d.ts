@@ -49,3 +49,5 @@ export type PokeBallType = 'basic' | 'basicRare' | 'rare' | 'elite' | 'legend';
 export type ContentType = 'painting';
 
 export type Role = 'user' | 'admin';
+
+export type HuntMethod = 'hunt' | 'blend' | 'evolve';

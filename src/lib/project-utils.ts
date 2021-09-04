@@ -259,3 +259,12 @@ export const getTrainerClass = (colPoint: number) => {
     ) + 1
   );
 };
+
+export const checkIsRareCaseCollection = (collection: Collection) => {
+  return (
+    collection.tier === 'myth' ||
+    collection.tier === 'legend' ||
+    collection.potential === 'SS' ||
+    collection.potential === 'S'
+  );
+};

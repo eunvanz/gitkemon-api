@@ -9,6 +9,7 @@ import { random } from 'lodash';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { MYTH_CHANCE } from 'src/constants/rules';
 import {
+  checkIsRareCaseCollection,
   getBlendResultTier,
   getCollectionFromMon,
   getLevelDownCollection,
@@ -18,7 +19,8 @@ import {
 } from 'src/lib/project-utils';
 import { Mon } from 'src/mons/mon.entity';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
-import { MonTier, PokeBallType } from 'src/types';
+import { RareNews } from 'src/rare-news/rare-news.entity';
+import { HuntMethod, MonTier, PokeBallType } from 'src/types';
 import { User } from 'src/users/user.entity';
 import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { Collection } from './collection.entity';
@@ -34,6 +36,8 @@ export class CollectionsService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(PokeBall)
     private readonly pokeBallRepository: Repository<PokeBall>,
+    @InjectRepository(RareNews)
+    private readonly rareNewsRepository: Repository<RareNews>,
   ) {}
 
   @Transaction()
@@ -46,6 +50,8 @@ export class CollectionsService {
     trxPokeBallRepository?: Repository<PokeBall>,
     @TransactionRepository(Collection)
     trxCollectionRepository?: Repository<Collection>,
+    @TransactionRepository(RareNews)
+    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
     const pokeBall = await user.pokeBall;
@@ -127,6 +133,8 @@ export class CollectionsService {
         user,
         mon: adoptedMon,
         existCollection,
+        rareNewsRepository: trxRareNewsRepository,
+        method: 'hunt',
       });
 
       result.push(unitResult);
@@ -162,6 +170,8 @@ export class CollectionsService {
     trxCollectionRepository?: Repository<Collection>,
     @TransactionRepository(User)
     trxUserRepository?: Repository<User>,
+    @TransactionRepository(RareNews)
+    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
     const collection = await trxCollectionRepository.findOne(collectionId);
@@ -215,6 +225,8 @@ export class CollectionsService {
       mon: monEvolveTo,
       existCollection: collectionEvolveTo,
       user,
+      rareNewsRepository: trxRareNewsRepository,
+      method: 'evolve',
     });
 
     if (monEvolveTo.id === 291) {
@@ -230,6 +242,8 @@ export class CollectionsService {
         mon,
         existCollection,
         user,
+        rareNewsRepository: trxRareNewsRepository,
+        method: 'evolve',
       });
     }
 
@@ -270,6 +284,8 @@ export class CollectionsService {
     trxCollectionRepository?: Repository<Collection>,
     @TransactionRepository(User)
     trxUserRepository?: Repository<User>,
+    @TransactionRepository(RareNews)
+    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
     const collection1 = await trxCollectionRepository.findOne(collectionIds[0]);
@@ -335,6 +351,8 @@ export class CollectionsService {
       mon: adoptedMon,
       existCollection,
       user,
+      rareNewsRepository: trxRareNewsRepository,
+      method: 'blend',
     });
 
     return result;
@@ -347,6 +365,8 @@ export class CollectionsService {
     mon,
     user,
     existCollection,
+    rareNewsRepository,
+    method,
   }: {
     collectionRepository: Repository<Collection>;
     userRepository: Repository<User>;
@@ -354,6 +374,8 @@ export class CollectionsService {
     mon: Mon;
     user: User;
     existCollection?: Collection;
+    rareNewsRepository: Repository<RareNews>;
+    method: HuntMethod;
   }) {
     const result: {
       oldCollection: Collection | null;
@@ -394,6 +416,15 @@ export class CollectionsService {
       });
       colPointToUpdate += mon.colPoint;
       const savedCollection = await collectionRepository.save(newCollection);
+
+      if (checkIsRareCaseCollection(savedCollection)) {
+        await rareNewsRepository.save({
+          userId: user.id,
+          collectionId: savedCollection.id,
+          method,
+        });
+      }
+
       const foundCollection = await collectionRepository.findOne(
         savedCollection.id,
       );

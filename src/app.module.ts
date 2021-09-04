@@ -20,6 +20,7 @@ import { MonImagesModule } from './mon-images/mon-images.module';
 import { MonsModule } from './mons/mons.module';
 import { PaintingsModule } from './paintings/paintings.module';
 import { PaybacksModule } from './paybacks/paybacks.module';
+import { RareNewsModule } from './rare-news/rare-news.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -37,6 +38,7 @@ import { UsersModule } from './users/users.module';
     PaintingsModule,
     CommentsModule,
     LikesModule,
+    RareNewsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: RolesGuard }],
