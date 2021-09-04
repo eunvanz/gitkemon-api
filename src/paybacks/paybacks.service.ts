@@ -42,6 +42,7 @@ export class PaybacksService {
     const currentContributions = await this.userService.getUserContributions(
       user.githubUser.login,
       user.contributionBaseDate,
+      accessToken,
     );
 
     const contributions = currentContributions - user.lastContributions;

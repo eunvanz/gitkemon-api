@@ -194,6 +194,7 @@ export class UsersService {
     const currentContributions = await this.getUserContributions(
       user.githubUser.login,
       user.contributionBaseDate,
+      accessToken,
     );
     return currentContributions - user.lastContributions;
   }
@@ -204,7 +205,11 @@ export class UsersService {
    * @param fromDate from date
    * @returns contributions
    */
-  async getUserContributions(githubUsername: string, fromDate: Date) {
+  async getUserContributions(
+    githubUsername: string,
+    fromDate: Date,
+    accessToken?: string,
+  ) {
     const now = new Date();
 
     const diff = dayjs().diff(fromDate, 'days');
@@ -252,7 +257,9 @@ export class UsersService {
               },
               {
                 headers: {
-                  Authorization: `Bearer ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`,
+                  Authorization: `Bearer ${
+                    accessToken || process.env.GITHUB_PERSONAL_ACCESS_TOKEN
+                  }`,
                 },
               },
             )
