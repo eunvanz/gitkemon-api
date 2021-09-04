@@ -1,6 +1,6 @@
 import { Role } from 'src/types';
 
-const RANK_UNIT = 0.06;
+const RANK_UNIT = 0.1;
 
 export const MYTH_CHANCE = 1200;
 

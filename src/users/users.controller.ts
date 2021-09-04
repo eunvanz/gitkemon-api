@@ -12,6 +12,7 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Patch,
+  ForbiddenException,
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { Request, Response } from 'express';
