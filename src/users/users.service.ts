@@ -48,6 +48,16 @@ export class UsersService {
     return user;
   }
 
+  async findOneByAccessToken(accessToken: string) {
+    const user = await this.userRepository.findOne({ accessToken });
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return user;
+  }
+
   @Transaction()
   async getAccessToken(
     code: string,

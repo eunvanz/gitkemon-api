@@ -1,5 +1,6 @@
 import { TimeRecord } from 'src/entities/time-record.entity';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
+import { Role } from 'src/types';
 import {
   Column,
   Entity,
@@ -153,4 +154,7 @@ export class User extends TimeRecord {
 
   @Column({ default: 1 })
   trainerClass: number;
+
+  @Column({ default: 'user' })
+  role: Role;
 }

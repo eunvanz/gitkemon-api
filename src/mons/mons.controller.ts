@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { Roles } from 'src/decorators/roles.decorators';
 import { CreateMonDto } from './dto/create-mon.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
 import { MonsService } from './mons.service';

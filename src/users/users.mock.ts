@@ -17,6 +17,7 @@ const baseUser: User = {
   colPoint: 0,
   githubLogin: 'eunvanz',
   trainerClass: 1,
+  role: 'user',
   githubUser: {
     login: 'eunvanz',
     id: 17351661,

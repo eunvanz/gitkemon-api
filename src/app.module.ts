@@ -1,11 +1,13 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CollectionModule } from './collections/collections.module';
 import { CommentsModule } from './comments/comments.module';
 import { typeOrmConfigAsync } from './config/typeorm.config';
+import { RolesGuard } from './guards/roles.guards';
 import { LikesModule } from './likes/likes.module';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { RequireMiddleware } from './middlewares/require-user.middleware';
@@ -32,7 +34,7 @@ import { UsersModule } from './users/users.module';
     LikesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: RolesGuard }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
