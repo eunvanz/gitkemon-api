@@ -99,4 +99,7 @@ export class Mon extends TimeRecord {
 
   @OneToMany(() => MonImage, (monImage) => monImage.mon)
   monImages?: Promise<MonImage[]>;
+
+  @Column({ type: 'timestamp' })
+  registeredAt: Date;
 }

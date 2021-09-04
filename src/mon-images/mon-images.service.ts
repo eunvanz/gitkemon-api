@@ -44,6 +44,12 @@ export class MonImagesService {
     monImage.designerName = designerName;
     monImage.imageUrl = imageUrl || uploadedImageUrl;
 
+    const existingMonImages = await mon.monImages;
+
+    if (!existingMonImages.length) {
+      await this.monRepository.update(mon.id, { registeredAt: new Date() });
+    }
+
     return await this.monImageRepository.save(monImage);
   }
 
