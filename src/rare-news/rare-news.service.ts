@@ -9,4 +9,11 @@ export class RareNewsService {
     @InjectRepository(RareNews)
     private readonly rareNewsRepository: Repository<RareNews>,
   ) {}
+
+  async findRecentRareNews() {
+    return await this.rareNewsRepository.find({
+      order: { createdAt: 'DESC' },
+      take: 5,
+    });
+  }
 }
