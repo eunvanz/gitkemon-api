@@ -48,7 +48,6 @@ export class AppModule implements NestModule {
       .apply(RequireMiddleware)
       .forRoutes(
         'users/logout',
-        'users/refresh',
         'users/available-contributions',
         'collections/hunt',
         'collections/blend',

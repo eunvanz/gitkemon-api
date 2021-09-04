@@ -242,7 +242,7 @@ export const getSpecialBlendResult: (
     xor(
       collections.map((collection) => collection.monId),
       [588, 616],
-    )
+    ).length === 0
   ) {
     // 딱정곤 & 쪼마리
     return [589, 617];
