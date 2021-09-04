@@ -107,6 +107,13 @@ export class MonsService {
     return await this.monRepository.find({ evolveFromId: id });
   }
 
+  async findRecentlyRegisteredMons() {
+    return await this.monRepository.find({
+      order: { registeredAt: 'DESC' },
+      take: 3,
+    });
+  }
+
   async initializeMons() {
     Array.from({ length: 898 }).forEach((_, index) => {
       this.httpService

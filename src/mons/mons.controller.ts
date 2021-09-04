@@ -36,6 +36,11 @@ export class MonsController {
     return await this.monService.findAll({ isWithImages: true });
   }
 
+  @Get('recent')
+  async findRecentlyRegisteredMons() {
+    return await this.monService.findRecentlyRegisteredMons();
+  }
+
   @Get()
   async findAll() {
     return await this.monService.findAll();
