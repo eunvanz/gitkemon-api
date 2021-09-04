@@ -1,3 +1,5 @@
+import { Role } from 'src/types';
+
 const RANK_UNIT = 0.06;
 
 export const MYTH_CHANCE = 1200;
@@ -56,3 +58,8 @@ export const TRAINER_CLASS = [
 ];
 
 export const TRAINER_CLASS_LIMIT_UNIT = 30;
+
+export const ROLES_HIERARCHY: Record<Role, number> = {
+  user: 0,
+  admin: 1,
+};

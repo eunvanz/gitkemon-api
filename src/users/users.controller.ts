@@ -18,7 +18,6 @@ import { Request, Response } from 'express';
 import { ACCESS_TOKEN_COOKIE_NAME } from 'src/constants/cookies';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { UpdateUserDto } from './dto/update-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')

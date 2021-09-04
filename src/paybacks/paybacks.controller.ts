@@ -1,12 +1,6 @@
-import {
-  Controller,
-  ForbiddenException,
-  Get,
-  Headers,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { Controller, Get, Headers, Param, Post } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
+import { Roles } from 'src/decorators/roles.decorators';
 import { PaybacksService } from './paybacks.service';
 
 @Controller('paybacks')
@@ -15,9 +9,6 @@ export class PaybacksController {
 
   @Post()
   async save(@Headers(ACCESS_TOKEN_HEADER_NAME) accessToken?: string) {
-    if (!accessToken) {
-      throw new ForbiddenException();
-    }
     return await this.paybackService.save(accessToken as string);
   }
 
@@ -28,6 +19,7 @@ export class PaybacksController {
 
   // TODO: 실제 배포시 주석처리
   @Post('reset/:userId')
+  @Roles('admin')
   async reset(@Param('userId') userId: string) {
     return await this.paybackService.reset(userId);
   }

@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
+import { Roles } from 'src/decorators/roles.decorators';
 import { CollectionsService } from './collections.service';
 import { BlendDto } from './dto/blend.dto';
 import { EvolveDto } from './dto/evolve.dto';
@@ -76,6 +77,7 @@ export class CollectionsController {
   }
 
   @Post('sync-with-mon')
+  @Roles('admin')
   async syncWithMon() {
     return await this.collectionService.syncWithMon();
   }

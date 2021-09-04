@@ -1,6 +1,14 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { ERROR_CODE } from 'src/constants/errors';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
+import { ROLES_HIERARCHY } from 'src/constants/rules';
+import { Role } from 'src/types';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -11,7 +19,7 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const roles = this.reflector.get<string[]>('roles', context.getHandler());
+    const roles = this.reflector.get<Role[]>('roles', context.getHandler());
     if (!roles) {
       return true;
     }
@@ -19,8 +27,14 @@ export class RolesGuard implements CanActivate {
     const accessToken = request.headers[ACCESS_TOKEN_HEADER_NAME];
     if (typeof accessToken === 'string') {
       const user = await this.userService.findOneByAccessToken(accessToken);
-      return roles.includes(user.role);
+      return roles.every(
+        (role) => ROLES_HIERARCHY[role] <= ROLES_HIERARCHY[user.role],
+      );
+    } else {
+      throw new ForbiddenException({
+        errorCode: ERROR_CODE.LOGIN_REQUIRED,
+        errorMessage: 'Login is required.',
+      });
     }
-    return false;
   }
 }

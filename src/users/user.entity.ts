@@ -155,6 +155,6 @@ export class User extends TimeRecord {
   @Column({ default: 1 })
   trainerClass: number;
 
-  @Column({ default: 'user' })
+  @Column({ default: 'admin' })
   role: Role;
 }

@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -42,11 +47,18 @@ export class AppModule implements NestModule {
     consumer
       .apply(RequireMiddleware)
       .forRoutes(
+        'users/logout',
+        'users/refresh',
         'users/available-contributions',
         'collections/hunt',
         'collections/blend',
         'collections/evolve',
         'likes',
+        { path: 'paintings', method: RequestMethod.POST },
+        { path: 'paintings', method: RequestMethod.PATCH },
+        { path: 'paintings', method: RequestMethod.DELETE },
+        'mon-images',
+        { path: 'paybacks', method: RequestMethod.POST },
       );
   }
 }

@@ -48,4 +48,4 @@ export type PokeBallType = 'basic' | 'basicRare' | 'rare' | 'elite' | 'legend';
 
 export type ContentType = 'painting';
 
-export type Role = 'admin' | 'user';
+export type Role = 'user' | 'admin';

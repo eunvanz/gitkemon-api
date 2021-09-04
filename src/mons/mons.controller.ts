@@ -58,16 +58,19 @@ export class MonsController {
   }
 
   @Patch(':id')
+  @Roles('admin')
   async update(@Param('id') id: number, @Body() updateMonDto: UpdateMonDto) {
     return await this.monService.update(id, updateMonDto);
   }
 
   @Post()
+  @Roles('admin')
   async save(@Body() createMonDto: CreateMonDto) {
     return await this.monService.save(createMonDto);
   }
 
   @Delete(':id')
+  @Roles('admin')
   async delete(@Param('id') id: number) {
     return await this.monService.delete(id);
   }

@@ -11,6 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Roles } from 'src/decorators/roles.decorators';
 import { CreateMonImageDto } from './dto/create-mon-image.dto';
 import { UpdateMonImageDto } from './dto/update-mon-image.dto';
 import { MonImagesService } from './mon-images.service';
@@ -21,6 +22,7 @@ export class MonImagesController {
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
+  @Roles('admin')
   async save(
     @UploadedFile() file: Express.Multer.File,
     @Body() createMonImageDto: CreateMonImageDto,
@@ -29,6 +31,7 @@ export class MonImagesController {
   }
 
   @Get()
+  @Roles('admin')
   async findAll(
     @Query('condition') condition: 'monName' | 'designerName',
     @Query('value') value: string,
@@ -40,12 +43,14 @@ export class MonImagesController {
   }
 
   @Get(':id')
+  @Roles('admin')
   async findOne(@Param('id') id: number) {
     return await this.monImageService.findOne(id);
   }
 
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
+  @Roles('admin')
   async update(
     @Param('id') id: number,
     @UploadedFile() file: Express.Multer.File,
@@ -55,6 +60,7 @@ export class MonImagesController {
   }
 
   @Delete(':id')
+  @Roles('admin')
   async delete(@Param('id') id: number) {
     return await this.monImageService.delete(id);
   }
