@@ -44,7 +44,7 @@ export class AppModule implements NestModule {
         'collections/hunt',
         'collections/blend',
         'collections/evolve',
-        'like',
+        'likes',
       );
   }
 }

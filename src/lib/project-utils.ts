@@ -1,6 +1,10 @@
 import { isEqual, random, round, xor } from 'lodash';
 import { Collection } from 'src/collections/collection.entity';
-import { RANK_RULE, TRAINER_CLASS } from 'src/constants/rules';
+import {
+  RANK_RULE,
+  TRAINER_CLASS,
+  TRAINER_CLASS_LIMIT_UNIT,
+} from 'src/constants/rules';
 import { MonImage } from 'src/mon-images/mon-image.entity';
 import { Mon } from 'src/mons/mon.entity';
 import { MonPotential, MonTier } from 'src/types';
@@ -23,7 +27,7 @@ export const getLevelUpCollection = (
 ) => {
   if (
     collection.total - collection.baseTotal + mon.colPoint >
-    user.trainerClass * 60
+    user.trainerClass * TRAINER_CLASS_LIMIT_UNIT
   ) {
     // level up is not available due to trainer class limit
     return collection;
