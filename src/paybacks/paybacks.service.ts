@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 import {
@@ -198,5 +202,17 @@ export class PaybacksService {
       GROUP BY payback_date_string
     `);
     return result;
+  }
+
+  async findLastPayback(accessToken: string) {
+    const user = await this.userRepository.findOne({ accessToken });
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return await this.paybackRepository.findOne({
+      order: { createdAt: 'DESC' },
+    });
   }
 }

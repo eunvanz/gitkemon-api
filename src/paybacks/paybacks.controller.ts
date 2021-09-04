@@ -8,13 +8,20 @@ export class PaybacksController {
   constructor(private readonly paybackService: PaybacksService) {}
 
   @Post()
-  async save(@Headers(ACCESS_TOKEN_HEADER_NAME) accessToken?: string) {
+  async save(@Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string) {
     return await this.paybackService.save(accessToken as string);
   }
 
   @Get('history/:userId')
   async getDailyHistory(@Param('userId') userId: string) {
     return await this.paybackService.getDailyHistory(userId);
+  }
+
+  @Get('last')
+  async findLastPayback(
+    @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
+  ) {
+    return await this.paybackService.findLastPayback(accessToken);
   }
 
   // TODO: 실제 배포시 주석처리

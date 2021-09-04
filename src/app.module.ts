@@ -60,6 +60,7 @@ export class AppModule implements NestModule {
         { path: 'paintings', method: RequestMethod.DELETE },
         'mon-images',
         { path: 'paybacks', method: RequestMethod.POST },
+        'paybacks/last',
       );
   }
 }
