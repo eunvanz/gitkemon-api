@@ -127,6 +127,8 @@ export class UsersService {
       });
     }
 
+    user.accessToken = accessToken;
+
     return user;
   }
 
@@ -260,17 +262,12 @@ export class UsersService {
 
           const { user } = await lastValueFrom(observer$);
 
-          if (!user.name) {
-            throw new Error();
-          }
-
           result +=
             user.contributionsCollection.contributionCalendar
               .totalContributions;
         }),
       );
     } catch (error) {
-      console.log('===== error', error);
       throw new NotFoundException('Github user is not found.');
     }
 
