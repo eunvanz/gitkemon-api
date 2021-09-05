@@ -10,10 +10,6 @@ const isDev = process.env.NODE_ENV === 'development';
 
 export default class TypeOrmConfig {
   static getOrmConfig(configService: ConfigService): TypeOrmModuleOptions {
-    console.log(
-      '===== configService.get<string>',
-      configService.get<string>('DATABASE_HOST'),
-    );
     return {
       type: 'mysql',
       host: configService.get<string>('DATABASE_HOST') || '',

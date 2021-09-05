@@ -123,7 +123,7 @@ export class User extends TimeRecord {
   @Column()
   lastContributions: number;
 
-  @Column()
+  @Column({ nullable: true })
   lastPaybackDate: Date;
 
   @Column({ nullable: true })

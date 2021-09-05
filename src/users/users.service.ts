@@ -102,8 +102,8 @@ export class UsersService {
 
       await trxGithubUserRepository.save(githubUser);
 
-      await trxUserRepository.save({
-        nickname: githubUser.name.slice(0, 20),
+      user = await trxUserRepository.save({
+        nickname: githubUser.name?.slice(0, 20) || githubUser.login,
         contributionBaseDate,
         lastRewardedDate: contributionBaseDate,
         lastContributions: 0,
@@ -112,8 +112,6 @@ export class UsersService {
         accessToken,
         githubLogin: githubUser.login,
       });
-
-      user = await this.userRepository.findOne({ githubUser });
     } else {
       // update user
       await trxGithubUserRepository.update(githubUser.id, githubUser);
@@ -123,7 +121,6 @@ export class UsersService {
       });
     }
 
-    user.accessToken = accessToken;
     return user;
   }
 
@@ -277,6 +274,7 @@ export class UsersService {
         }),
       );
     } catch (error) {
+      console.log('===== error', error);
       throw new NotFoundException('Github user is not found.');
     }
 
