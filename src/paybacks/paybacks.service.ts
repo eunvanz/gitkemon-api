@@ -214,6 +214,7 @@ export class PaybacksService {
 
     return await this.paybackRepository.findOne({
       order: { createdAt: 'DESC' },
+      where: { userId: user.id },
     });
   }
 }
