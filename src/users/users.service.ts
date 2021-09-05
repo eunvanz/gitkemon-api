@@ -128,6 +128,7 @@ export class UsersService {
     }
 
     user.accessToken = accessToken;
+    await user.pokeBall;
 
     return user;
   }
