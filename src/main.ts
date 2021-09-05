@@ -24,6 +24,6 @@ async function bootstrap() {
     }),
   );
   app.use(cookieParser());
-  await app.listen(3000);
+  await app.listen(process.env.NODE_ENV === 'development' ? 3000 : 8080);
 }
 bootstrap();
