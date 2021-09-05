@@ -14,7 +14,7 @@ const isDev = process.env.NODE_ENV === 'development';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: isDev ? 'http://localhost:4000' : 'https://gitkemon.com',
+      origin: isDev ? 'http://localhost:4000' : 'https://www.gitkemon.com',
       credentials: true,
     },
   });
