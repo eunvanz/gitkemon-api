@@ -64,6 +64,8 @@ export class UsersService {
     @TransactionRepository(User) trxUserRepository?: Repository<User>,
     @TransactionRepository(GithubUser)
     trxGithubUserRepository?: Repository<GithubUser>,
+    @TransactionRepository(PokeBall)
+    trxPokeBallRepository?: Repository<PokeBall>,
   ) {
     let accessToken: string;
     try {
@@ -102,6 +104,9 @@ export class UsersService {
 
       await trxGithubUserRepository.save(githubUser);
 
+      const newPokeBall = new PokeBall();
+      const { id: pokeBallId } = await trxPokeBallRepository.save(newPokeBall);
+
       user = await trxUserRepository.save({
         nickname: githubUser.name?.slice(0, 20) || githubUser.login,
         contributionBaseDate,
@@ -111,6 +116,7 @@ export class UsersService {
         githubUser,
         accessToken,
         githubLogin: githubUser.login,
+        pokeBallId,
       });
     } else {
       // update user
@@ -127,16 +133,6 @@ export class UsersService {
   async loginWithToken(accessToken: string) {
     const githubUser = await this.getGithubUserWithAccessToken(accessToken);
     const user = await this.userRepository.findOne({ githubUser });
-
-    const pokeBall = await user.pokeBall;
-
-    if (!pokeBall) {
-      const newPokeBall = new PokeBall();
-      const { id } = await this.pokeBallRepository.save(newPokeBall);
-      await this.userRepository.update(user.id, {
-        pokeBallId: id,
-      });
-    }
 
     if (!user) {
       throw new InternalServerErrorException({
