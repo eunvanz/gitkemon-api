@@ -21,61 +21,61 @@ export class GithubUser {
   @Column()
   node_id: string;
 
-  @Column()
+  @Column({ nullable: true })
   avatar_url: string;
 
-  @Column()
+  @Column({ nullable: true })
   gravatar_id: string;
 
-  @Column()
+  @Column({ nullable: true })
   url: string;
 
-  @Column()
+  @Column({ nullable: true })
   html_url: string;
 
-  @Column()
+  @Column({ nullable: true })
   followers_url: string;
 
-  @Column()
+  @Column({ nullable: true })
   following_url: string;
 
-  @Column()
+  @Column({ nullable: true })
   gists_url: string;
 
-  @Column()
+  @Column({ nullable: true })
   starred_url: string;
 
-  @Column()
+  @Column({ nullable: true })
   subscriptions_url: string;
 
-  @Column()
+  @Column({ nullable: true })
   organizations_url: string;
 
-  @Column()
+  @Column({ nullable: true })
   repos_url: string;
 
-  @Column()
+  @Column({ nullable: true })
   events_url: string;
 
-  @Column()
+  @Column({ nullable: true })
   received_events_url: string;
 
-  @Column()
+  @Column({ nullable: true })
   type: string;
 
-  @Column()
+  @Column({ nullable: true })
   site_admin: boolean;
 
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   company: string;
 
-  @Column()
+  @Column({ nullable: true })
   blog: string;
 
-  @Column()
+  @Column({ nullable: true })
   location: string;
 
   @Column({ nullable: true })
@@ -90,16 +90,16 @@ export class GithubUser {
   @Column({ nullable: true })
   twitter_username: string;
 
-  @Column()
+  @Column({ nullable: true })
   public_repos: number;
 
-  @Column()
+  @Column({ nullable: true })
   public_gists: number;
 
-  @Column()
+  @Column({ nullable: true })
   followers: number;
 
-  @Column()
+  @Column({ nullable: true })
   following: number;
 
   @Column()
