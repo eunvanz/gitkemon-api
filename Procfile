@@ -1,1 +1,1 @@
-web: npm run deploy:eb
+web: npm run deploy
