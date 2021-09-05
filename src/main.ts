@@ -9,10 +9,12 @@ admin.initializeApp({
   storageBucket: 'gitkemon.appspot.com',
 });
 
+const isDev = process.env.NODE_ENV === 'development';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: 'http://localhost:4000',
+      origin: isDev ? 'http://localhost:4000' : 'http://gitkemon.com',
       credentials: true,
     },
   });
@@ -24,6 +26,6 @@ async function bootstrap() {
     }),
   );
   app.use(cookieParser());
-  await app.listen(process.env.NODE_ENV === 'development' ? 3000 : 8080);
+  await app.listen(isDev ? 3000 : 8080);
 }
 bootstrap();
