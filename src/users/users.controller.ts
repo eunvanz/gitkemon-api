@@ -78,12 +78,21 @@ export class UsersController {
   ) {
     const user = await this.userService.getAccessToken(code);
     const isProd = process.env.NODE_ENV === 'production';
-    response.cookie(ACCESS_TOKEN_COOKIE_NAME, user.accessToken, {
-      expires: dayjs().add(30, 'days').toDate(),
-      httpOnly: true,
-      secure: isProd,
-      domain: isProd ? '.gitkemon.com' : 'localhost',
-    });
+    response.cookie(
+      ACCESS_TOKEN_COOKIE_NAME,
+      user.accessToken,
+      isProd
+        ? {
+            expires: dayjs().add(30, 'days').toDate(),
+            httpOnly: true,
+            secure: true,
+            domain: '.gitkemon.com',
+          }
+        : {
+            expires: dayjs().add(30, 'days').toDate(),
+            httpOnly: true,
+          },
+    );
     response.send(user);
   }
 

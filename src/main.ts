@@ -1,5 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import * as Sentry from '@sentry/node';
+import '@sentry/tracing';
 import * as cookieParser from 'cookie-parser';
 import * as admin from 'firebase-admin';
 import { AppModule } from './app.module';
@@ -18,6 +20,14 @@ async function bootstrap() {
       credentials: true,
     },
     logger: ['error', 'warn'],
+  });
+  Sentry.init({
+    dsn: 'https://5fd6718a87794f0fa9122311e376d9bd@o554586.ingest.sentry.io/5947413',
+
+    // Set tracesSampleRate to 1.0 to capture 100%
+    // of transactions for performance monitoring.
+    // We recommend adjusting this value in production
+    tracesSampleRate: 1.0,
   });
   app.useGlobalPipes(
     new ValidationPipe({
