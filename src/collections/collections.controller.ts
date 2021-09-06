@@ -8,6 +8,7 @@ import {
   Query,
   DefaultValuePipe,
   ParseIntPipe,
+  Delete,
 } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { Roles } from 'src/decorators/roles.decorators';
@@ -85,5 +86,11 @@ export class CollectionsController {
   @Get('profile/:userId')
   async getProfileMons(@Param('userId') userId: string) {
     return await this.collectionService.getProfileMons(userId);
+  }
+
+  @Delete(':collectionId')
+  @Roles('admin')
+  async deleteCollection(@Param('collectionId') collectionId: number) {
+    return await this.collectionService.deleteCollection(collectionId);
   }
 }

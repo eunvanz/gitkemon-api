@@ -510,4 +510,21 @@ export class CollectionsService {
       recentMons,
     };
   }
+
+  async deleteCollection(
+    collectionId: number,
+    @TransactionRepository(User) trxUserRepository?: Repository<User>,
+    @TransactionRepository(Collection)
+    trxCollectionRepository?: Repository<Collection>,
+  ) {
+    const targetCollection = await trxCollectionRepository.findOne(
+      collectionId,
+    );
+    const mon = await targetCollection.mon;
+    await trxCollectionRepository.delete(collectionId);
+    const user = await trxUserRepository.findOne(targetCollection.userId);
+    await trxUserRepository.update(user.id, {
+      colPoint: user.colPoint - mon.colPoint,
+    });
+  }
 }
