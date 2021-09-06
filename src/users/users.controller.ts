@@ -77,9 +77,12 @@ export class UsersController {
     @Res({ passthrough: true }) response: Response,
   ) {
     const user = await this.userService.getAccessToken(code);
+    const isProd = process.env.NODE_ENV === 'production';
     response.cookie(ACCESS_TOKEN_COOKIE_NAME, user.accessToken, {
       expires: dayjs().add(30, 'days').toDate(),
       httpOnly: true,
+      secure: isProd,
+      domain: isProd ? '.gitkemon.com' : 'localhost',
     });
     response.send(user);
   }
@@ -88,6 +91,7 @@ export class UsersController {
   async loginWithToken(@Req() req: Request, @Res() res: Response) {
     const accessToken =
       req.body.token || req.cookies?.[ACCESS_TOKEN_COOKIE_NAME];
+    console.log('===== accessToken @refresh', accessToken);
     if (!accessToken) {
       return res.send(undefined);
     }
@@ -95,6 +99,7 @@ export class UsersController {
       const user = await this.userService.loginWithToken(accessToken);
       return res.send(user);
     } catch (error) {
+      console.log('===== cleared cookie @refresh');
       res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
       return res.send(undefined);
     }

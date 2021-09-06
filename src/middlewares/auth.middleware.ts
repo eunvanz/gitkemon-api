@@ -15,12 +15,14 @@ export class AuthMiddleware implements NestMiddleware {
     const token =
       req.cookies?.[ACCESS_TOKEN_COOKIE_NAME] ||
       req.headers[ACCESS_TOKEN_HEADER_NAME];
+    console.log('===== token', token);
     if (token) {
       try {
         await axios.get(`${process.env.GITHUB_API_BASE_URL}/user`, {
           headers: { Authorization: `token ${token}` },
         });
       } catch (error) {
+        console.log('===== clearCookie @AuthMiddleware');
         res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
         throw new UnauthorizedException({
           errorCode: ERROR_CODE.INVALID_TOKEN,

@@ -187,6 +187,9 @@ export class UsersService {
    */
   async getAvailableContributions(accessToken: string) {
     const user = await this.userRepository.findOne({ accessToken });
+    if (!user) {
+      throw new NotFoundException();
+    }
     const currentContributions = await this.getUserContributions(
       user.githubUser.login,
       user.contributionBaseDate,
