@@ -114,7 +114,7 @@ export class UsersController {
   @Get('rank/collection')
   async getCollectionRanking(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
-    @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit = 20,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
   ) {
     return await this.userService.getCollectionRanking({ page, limit });
   }
@@ -122,7 +122,7 @@ export class UsersController {
   @Get('rank/contributions')
   async getContributionRanking(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
-    @Query('limit', new DefaultValuePipe(1), ParseIntPipe) limit = 20,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
   ) {
     return await this.userService.getContributionRanking({ page, limit });
   }
