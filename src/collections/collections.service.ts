@@ -511,6 +511,7 @@ export class CollectionsService {
     };
   }
 
+  @Transaction()
   async deleteCollection(
     collectionId: number,
     @TransactionRepository(User) trxUserRepository?: Repository<User>,
