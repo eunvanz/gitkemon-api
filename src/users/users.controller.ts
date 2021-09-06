@@ -12,15 +12,17 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Patch,
-  ForbiddenException,
+  UseInterceptors,
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { Request, Response } from 'express';
 import { ACCESS_TOKEN_COOKIE_NAME } from 'src/constants/cookies';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
+import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}

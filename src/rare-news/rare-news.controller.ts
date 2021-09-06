@@ -1,6 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseInterceptors } from '@nestjs/common';
+import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { RareNewsService } from './rare-news.service';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('rare-news')
 export class RareNewsController {
   constructor(private readonly rareNewsService: RareNewsService) {}

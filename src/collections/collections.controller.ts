@@ -9,14 +9,17 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { Roles } from 'src/decorators/roles.decorators';
+import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { CollectionsService } from './collections.service';
 import { BlendDto } from './dto/blend.dto';
 import { EvolveDto } from './dto/evolve.dto';
 import { HuntDto } from './dto/hunt.dto';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('collections')
 export class CollectionsController {
   constructor(private readonly collectionService: CollectionsService) {}

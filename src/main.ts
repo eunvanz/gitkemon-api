@@ -19,7 +19,7 @@ async function bootstrap() {
       origin: isDev ? 'http://localhost:4000' : 'https://www.gitkemon.com',
       credentials: true,
     },
-    logger: ['error', 'warn'],
+    logger: ['error', 'warn', 'log'],
   });
   Sentry.init({
     dsn: 'https://5fd6718a87794f0fa9122311e376d9bd@o554586.ingest.sentry.io/5947413',
