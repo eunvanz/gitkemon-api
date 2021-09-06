@@ -17,6 +17,7 @@ async function bootstrap() {
       origin: isDev ? 'http://localhost:4000' : 'https://www.gitkemon.com',
       credentials: true,
     },
+    logger: ['error', 'warn'],
   });
   app.useGlobalPipes(
     new ValidationPipe({
