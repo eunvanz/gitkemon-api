@@ -87,7 +87,7 @@ export class CollectionsService {
         break;
     }
 
-    let candidateMons = await this.monRepository
+    const candidateMons = await this.monRepository
       .createQueryBuilder('mon')
       .innerJoin('mon.monImages', 'monImage')
       .where('mon.tier IN (:...tiers)', { tiers: tiers })
@@ -107,10 +107,13 @@ export class CollectionsService {
     await Array.from({ length: amount }).reduce(async (prev: Promise<void>) => {
       await prev;
 
+      let luckyCandidateMons = [];
+      let isLucky = false;
       if (pokeBallType === 'basic') {
         const luckyNumber = random(0, MYTH_CHANCE);
-        if (luckyNumber === MYTH_CHANCE) {
-          candidateMons = await this.monRepository
+        isLucky = luckyNumber === MYTH_CHANCE;
+        if (isLucky) {
+          luckyCandidateMons = await this.monRepository
             .createQueryBuilder('mon')
             .innerJoin('mon.monImages', 'monImage')
             .where('mon.tier IN (:...tiers)', { tiers: ['myth'] })
@@ -118,7 +121,10 @@ export class CollectionsService {
         }
       }
 
-      const adoptedMonIndex = random(0, candidateMons.length - 1);
+      const adoptedMonIndex = random(
+        0,
+        (isLucky ? luckyCandidateMons : candidateMons).length - 1,
+      );
       const adoptedMon = candidateMons[adoptedMonIndex];
 
       // 콜렉션
