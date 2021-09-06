@@ -91,7 +91,6 @@ export class UsersController {
   async loginWithToken(@Req() req: Request, @Res() res: Response) {
     const accessToken =
       req.body.token || req.cookies?.[ACCESS_TOKEN_COOKIE_NAME];
-    console.log('===== accessToken @refresh', accessToken);
     if (!accessToken) {
       return res.send(undefined);
     }
@@ -99,7 +98,6 @@ export class UsersController {
       const user = await this.userService.loginWithToken(accessToken);
       return res.send(user);
     } catch (error) {
-      console.log('===== cleared cookie @refresh');
       res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
       return res.send(undefined);
     }
