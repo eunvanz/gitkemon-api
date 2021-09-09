@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { random } from 'lodash';
@@ -49,10 +50,13 @@ export class CollectionsService {
     trxPokeBallRepository?: Repository<PokeBall>,
     @TransactionRepository(Collection)
     trxCollectionRepository?: Repository<Collection>,
-    @TransactionRepository(RareNews)
-    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
     const pokeBall = await user.pokeBall;
 
     // user pokeBall 차감
@@ -130,7 +134,7 @@ export class CollectionsService {
       user,
       mon: adoptedMon,
       existCollection,
-      rareNewsRepository: trxRareNewsRepository,
+      rareNewsRepository: this.rareNewsRepository,
       method: 'hunt',
     });
 
@@ -164,8 +168,6 @@ export class CollectionsService {
     trxCollectionRepository?: Repository<Collection>,
     @TransactionRepository(User)
     trxUserRepository?: Repository<User>,
-    @TransactionRepository(RareNews)
-    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
     const collection = await trxCollectionRepository.findOne(collectionId);
@@ -219,7 +221,7 @@ export class CollectionsService {
       mon: monEvolveTo,
       existCollection: collectionEvolveTo,
       user,
-      rareNewsRepository: trxRareNewsRepository,
+      rareNewsRepository: this.rareNewsRepository,
       method: 'evolve',
     });
 
@@ -236,7 +238,7 @@ export class CollectionsService {
         mon,
         existCollection,
         user,
-        rareNewsRepository: trxRareNewsRepository,
+        rareNewsRepository: this.rareNewsRepository,
         method: 'evolve',
       });
     }
@@ -278,8 +280,6 @@ export class CollectionsService {
     trxCollectionRepository?: Repository<Collection>,
     @TransactionRepository(User)
     trxUserRepository?: Repository<User>,
-    @TransactionRepository(RareNews)
-    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
     const collection1 = await trxCollectionRepository.findOne(collectionIds[0]);
@@ -345,7 +345,7 @@ export class CollectionsService {
       mon: adoptedMon,
       existCollection,
       user,
-      rareNewsRepository: trxRareNewsRepository,
+      rareNewsRepository: this.rareNewsRepository,
       method: 'blend',
     });
 
