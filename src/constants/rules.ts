@@ -1,4 +1,4 @@
-import { Role } from 'src/types';
+import { MonTier, Role } from 'src/types';
 
 const RANK_UNIT = 0.8;
 

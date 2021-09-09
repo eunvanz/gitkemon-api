@@ -292,7 +292,7 @@ export class CollectionsService {
 
     let updatedColPoint = 0;
 
-    const resultTiers = getBlendResultTier(
+    const resultTier = getBlendResultTier(
       collectionsToBlend.map((collection) => collection.tier),
     );
 
@@ -307,7 +307,7 @@ export class CollectionsService {
       candidateMons = await this.monRepository
         .createQueryBuilder('mon')
         .innerJoin('mon.monImages', 'monImage')
-        .where('mon.tier IN (:...tiers)', { tiers: resultTiers })
+        .where('mon.tier = :tier', { tier: resultTier })
         .getMany();
     }
 
