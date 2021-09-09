@@ -29,11 +29,19 @@ export class CollectionsController {
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
     @Body() huntDto: HuntDto,
   ) {
-    return await this.collectionService.hunt(
-      accessToken,
-      huntDto.pokeBallType,
-      huntDto.amount,
+    const result = [];
+    await Array.from({ length: huntDto.amount }).reduce(
+      async (prev: Promise<void>) => {
+        await prev;
+        const resultItem = await this.collectionService.hunt(
+          accessToken,
+          huntDto.pokeBallType,
+        );
+        result.push(resultItem);
+      },
+      Promise.resolve(),
     );
+    return result;
   }
 
   @Get('rank')

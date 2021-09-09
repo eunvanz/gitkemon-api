@@ -44,7 +44,6 @@ export class CollectionsService {
   async hunt(
     accessToken: string,
     pokeBallType: PokeBallType,
-    amount: number,
     @TransactionRepository(User) trxUserRepository?: Repository<User>,
     @TransactionRepository(PokeBall)
     trxPokeBallRepository?: Repository<PokeBall>,
@@ -58,7 +57,7 @@ export class CollectionsService {
 
     // user pokeBall 차감
     const key = `${pokeBallType}PokeBalls`;
-    const updatedAmount = pokeBall[key] - amount;
+    const updatedAmount = pokeBall[key] - 1;
     if (updatedAmount < 0) {
       throw new BadRequestException({
         errorMessage: 'Pokeball amount is not enough.',
@@ -99,52 +98,41 @@ export class CollectionsService {
       });
     }
 
-    const result: {
-      oldCollection: Collection | null;
-      newCollection: Collection;
-    }[] = [];
-
-    await Array.from({ length: amount }).reduce(async (prev: Promise<void>) => {
-      await prev;
-
-      let luckyCandidateMons = [];
-      let isLucky = false;
-      if (pokeBallType === 'basic') {
-        const luckyNumber = random(0, MYTH_CHANCE);
-        isLucky = luckyNumber === MYTH_CHANCE;
-        if (isLucky) {
-          luckyCandidateMons = await this.monRepository
-            .createQueryBuilder('mon')
-            .innerJoin('mon.monImages', 'monImage')
-            .where('mon.tier IN (:...tiers)', { tiers: ['myth'] })
-            .getMany();
-        }
+    let luckyCandidateMons = [];
+    let isLucky = false;
+    if (pokeBallType === 'basic') {
+      const luckyNumber = random(0, MYTH_CHANCE);
+      isLucky = luckyNumber === MYTH_CHANCE;
+      if (isLucky) {
+        luckyCandidateMons = await this.monRepository
+          .createQueryBuilder('mon')
+          .innerJoin('mon.monImages', 'monImage')
+          .where('mon.tier IN (:...tiers)', { tiers: ['myth'] })
+          .getMany();
       }
+    }
 
-      const adoptedMonIndex = random(
-        0,
-        (isLucky ? luckyCandidateMons : candidateMons).length - 1,
-      );
-      const adoptedMon = candidateMons[adoptedMonIndex];
+    const adoptedMonIndex = random(
+      0,
+      (isLucky ? luckyCandidateMons : candidateMons).length - 1,
+    );
+    const adoptedMon = candidateMons[adoptedMonIndex];
 
-      // 콜렉션
-      const existCollection = await trxCollectionRepository.findOne({
-        where: [{ userId: user.id, monId: adoptedMon.id }],
-      });
+    // 콜렉션
+    const existCollection = await trxCollectionRepository.findOne({
+      where: [{ userId: user.id, monId: adoptedMon.id }],
+    });
 
-      const unitResult = await this.getHuntResultFromExistCollection({
-        colPointToUpdate: 0,
-        collectionRepository: trxCollectionRepository,
-        userRepository: trxUserRepository,
-        user,
-        mon: adoptedMon,
-        existCollection,
-        rareNewsRepository: trxRareNewsRepository,
-        method: 'hunt',
-      });
-
-      result.push(unitResult);
-    }, Promise.resolve());
+    const result = await this.getHuntResultFromExistCollection({
+      colPointToUpdate: 0,
+      collectionRepository: trxCollectionRepository,
+      userRepository: trxUserRepository,
+      user,
+      mon: adoptedMon,
+      existCollection,
+      rareNewsRepository: trxRareNewsRepository,
+      method: 'hunt',
+    });
 
     return result;
   }
