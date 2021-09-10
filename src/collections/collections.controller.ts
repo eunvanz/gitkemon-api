@@ -46,8 +46,8 @@ export class CollectionsController {
 
   @Get('rank')
   async getRanking(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
-    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   ) {
     return await this.collectionService.getRanking({
       page,
