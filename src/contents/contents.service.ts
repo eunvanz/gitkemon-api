@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { ContentType } from 'src/types';
 import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
@@ -57,6 +58,15 @@ export class ContentsService {
     if (content.userId !== user.id) {
       throw new ForbiddenException();
     }
-    await this.contentRepository.delete(id);
+    await this.contentRepository.update(id, { isVisible: false });
+  }
+
+  async findByType(type: ContentType, options: IPaginationOptions) {
+    const queryBuilder = this.contentRepository
+      .createQueryBuilder('content')
+      .where('content.type = :type', { type })
+      .orderBy('content.createdAt', 'DESC');
+    const result = await paginate<Content>(queryBuilder, options);
+    return result;
   }
 }

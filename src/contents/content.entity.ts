@@ -32,4 +32,7 @@ export class Content extends TimeRecord {
 
   @Column({ default: 0 })
   likesCnt: number;
+
+  @Column({ default: true })
+  isVisible: boolean;
 }

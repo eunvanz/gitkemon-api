@@ -1,9 +1,12 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
+  Get,
   Headers,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -52,5 +55,14 @@ export class ContentsController {
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
   ) {
     await this.contentService.delete(accessToken, id);
+  }
+
+  @Get(':type')
+  async findByType(
+    @Param('type') type: ContentType,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
+  ) {
+    return await this.contentService.findByType(type, { page, limit });
   }
 }
