@@ -18,9 +18,9 @@ export class Comment extends TimeRecord {
   @Column()
   userId: string;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { eager: true })
   @JoinColumn({ name: 'user_id' })
-  user: Promise<User>;
+  user: User;
 
   @Column()
   body: string;
