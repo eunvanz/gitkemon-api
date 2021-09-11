@@ -70,6 +70,20 @@ export class ContentsService {
     const queryBuilder = this.contentRepository
       .createQueryBuilder('content')
       .where('content.type = :type', { type })
+      .andWhere('content.isVisible = :isVisible', { isVisible: true })
+      .select([
+        'content.id',
+        'content.title',
+        'content.userId',
+        'content.likesCnt',
+        'content.commentsCnt',
+        'content.createdAt',
+        'content.updatedAt',
+        'content.user',
+        'user.nickname',
+        'user.githubLogin',
+      ])
+      .leftJoin('content.user', 'user')
       .orderBy('content.createdAt', 'DESC');
     const result = await paginate<Content>(queryBuilder, options);
     return result;
