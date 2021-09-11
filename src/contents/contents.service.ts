@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -72,5 +73,13 @@ export class ContentsService {
       .orderBy('content.createdAt', 'DESC');
     const result = await paginate<Content>(queryBuilder, options);
     return result;
+  }
+
+  async findOne(id: number) {
+    const content = await this.contentRepository.findOne(id);
+    if (!content) {
+      throw new NotFoundException();
+    }
+    return content;
   }
 }

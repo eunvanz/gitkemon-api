@@ -57,9 +57,14 @@ export class ContentsController {
     await this.contentService.delete(accessToken, id);
   }
 
-  @Get(':type')
+  @Get(':id')
+  async findOne(@Param('id') id: number) {
+    return await this.contentService.findOne(id);
+  }
+
+  @Get()
   async findByType(
-    @Param('type') type: ContentType,
+    @Query('type') type: ContentType,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
   ) {
