@@ -30,7 +30,11 @@ export class ContentsService {
     if (!user) {
       throw new UnauthorizedException();
     }
-    return await this.contentRepository.save({ type, ...createContentDto });
+    return await this.contentRepository.save({
+      type,
+      userId: user.id,
+      ...createContentDto,
+    });
   }
 
   async update(

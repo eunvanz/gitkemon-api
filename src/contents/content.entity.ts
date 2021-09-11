@@ -35,4 +35,7 @@ export class Content extends TimeRecord {
 
   @Column({ default: true })
   isVisible: boolean;
+
+  @Column()
+  title: string;
 }
