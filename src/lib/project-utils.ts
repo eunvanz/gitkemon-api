@@ -255,6 +255,14 @@ export const getSpecialBlendResult: (
   ) {
     // 딱정곤 & 쪼마리
     return [589, 617];
+  } else if (
+    xor(
+      collections.map((collection) => collection.monId),
+      [223, 458],
+    ).length === 0
+  ) {
+    // 총어 & 타만타
+    return [226];
   } else {
     return undefined;
   }
