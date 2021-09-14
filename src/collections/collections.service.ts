@@ -115,12 +115,16 @@ export class CollectionsService {
           .getMany();
       }
     }
+    console.log('===== candidateMons', candidateMons);
 
     const adoptedMonIndex = random(
       0,
       (isLucky ? luckyCandidateMons : candidateMons).length - 1,
     );
     const adoptedMon = candidateMons[adoptedMonIndex];
+
+    console.log('===== adoptedMonIndex', adoptedMonIndex);
+    console.log('===== adoptedMon', adoptedMon);
 
     // 콜렉션
     const existCollection = await trxCollectionRepository.findOne({
@@ -134,7 +138,6 @@ export class CollectionsService {
       user,
       mon: adoptedMon,
       existCollection,
-      rareNewsRepository: this.rareNewsRepository,
       method: 'hunt',
     });
 
@@ -221,7 +224,6 @@ export class CollectionsService {
       mon: monEvolveTo,
       existCollection: collectionEvolveTo,
       user,
-      rareNewsRepository: this.rareNewsRepository,
       method: 'evolve',
     });
 
@@ -238,7 +240,6 @@ export class CollectionsService {
         mon,
         existCollection,
         user,
-        rareNewsRepository: this.rareNewsRepository,
         method: 'evolve',
       });
     }
@@ -345,7 +346,6 @@ export class CollectionsService {
       mon: adoptedMon,
       existCollection,
       user,
-      rareNewsRepository: this.rareNewsRepository,
       method: 'blend',
     });
 
@@ -359,7 +359,6 @@ export class CollectionsService {
     mon,
     user,
     existCollection,
-    rareNewsRepository,
     method,
   }: {
     collectionRepository: Repository<Collection>;
@@ -368,7 +367,6 @@ export class CollectionsService {
     mon: Mon;
     user: User;
     existCollection?: Collection;
-    rareNewsRepository: Repository<RareNews>;
     method: HuntMethod;
   }) {
     const result: {
@@ -410,9 +408,10 @@ export class CollectionsService {
       });
       colPointToUpdate += mon.colPoint;
       const savedCollection = await collectionRepository.save(newCollection);
+      console.log('===== savedCollection', savedCollection);
 
       if (checkIsRareCaseCollection(savedCollection)) {
-        await rareNewsRepository.save({
+        await this.rareNewsRepository.save({
           userId: user.id,
           collectionId: savedCollection.id,
           method,
