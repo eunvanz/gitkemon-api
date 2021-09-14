@@ -87,7 +87,7 @@ export class UsersController {
         ? {
             expires: dayjs().add(30, 'days').toDate(),
             httpOnly: true,
-            secure: true,
+            secure: process.env.SERVICE_BASE_URL.startsWith('https://'),
             domain: process.env.SERVICE_BASE_URL.replace(/https?:\/\//, ''),
           }
         : {
