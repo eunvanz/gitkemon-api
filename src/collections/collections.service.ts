@@ -50,6 +50,8 @@ export class CollectionsService {
     trxPokeBallRepository?: Repository<PokeBall>,
     @TransactionRepository(Collection)
     trxCollectionRepository?: Repository<Collection>,
+    @TransactionRepository(RareNews)
+    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
 
@@ -134,7 +136,7 @@ export class CollectionsService {
       user,
       mon: adoptedMon,
       existCollection,
-      rareNewsRepository: this.rareNewsRepository,
+      rareNewsRepository: trxRareNewsRepository,
       method: 'hunt',
     });
 
@@ -168,6 +170,8 @@ export class CollectionsService {
     trxCollectionRepository?: Repository<Collection>,
     @TransactionRepository(User)
     trxUserRepository?: Repository<User>,
+    @TransactionRepository(RareNews)
+    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
     const collection = await trxCollectionRepository.findOne(collectionId);
@@ -238,7 +242,7 @@ export class CollectionsService {
         mon,
         existCollection,
         user,
-        rareNewsRepository: this.rareNewsRepository,
+        rareNewsRepository: trxRareNewsRepository,
         method: 'evolve',
       });
     }
@@ -280,6 +284,8 @@ export class CollectionsService {
     trxCollectionRepository?: Repository<Collection>,
     @TransactionRepository(User)
     trxUserRepository?: Repository<User>,
+    @TransactionRepository(RareNews)
+    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
     const collection1 = await trxCollectionRepository.findOne(collectionIds[0]);
@@ -345,7 +351,7 @@ export class CollectionsService {
       mon: adoptedMon,
       existCollection,
       user,
-      rareNewsRepository: this.rareNewsRepository,
+      rareNewsRepository: trxRareNewsRepository,
       method: 'blend',
     });
 
