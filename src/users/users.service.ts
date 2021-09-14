@@ -214,8 +214,8 @@ export class UsersService {
     const diff = dayjs().diff(fromDate, 'days');
 
     let iteration = 1;
-    if (diff > 365) {
-      iteration += Math.floor(diff / 365);
+    if (diff > Rules.contributionBaseDays) {
+      iteration += Math.floor(diff / Rules.contributionBaseDays);
     }
 
     let result = 0;
@@ -227,14 +227,14 @@ export class UsersService {
           const from = isLastIteration
             ? fromDate.toISOString()
             : dayjs(now)
-                .subtract(365 * (index + 1), 'days')
+                .subtract(Rules.contributionBaseDays * (index + 1), 'days')
                 .toISOString();
 
           const to =
             index === 0
               ? now.toISOString()
               : dayjs(now)
-                  .subtract(365 * index, 'days')
+                  .subtract(Rules.contributionBaseDays * index, 'days')
                   .toISOString();
 
           const observer$ = this.httpService
