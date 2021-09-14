@@ -206,7 +206,9 @@ export class CollectionsService {
       const mon = await collection.mon;
       updatedColPoint -= mon.colPoint;
     }
-    const monEvolveTo = monsEvolveTo.find((mon) => mon.id === monId);
+    const monEvolveTo = monsEvolveTo.find(
+      (mon) => mon.id === monId && !!mon.registeredAt,
+    );
 
     if (!monsEvolveTo) {
       throw new BadRequestException(
