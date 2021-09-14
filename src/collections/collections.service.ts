@@ -115,16 +115,12 @@ export class CollectionsService {
           .getMany();
       }
     }
-    console.log('===== candidateMons', candidateMons);
 
     const adoptedMonIndex = random(
       0,
       (isLucky ? luckyCandidateMons : candidateMons).length - 1,
     );
     const adoptedMon = candidateMons[adoptedMonIndex];
-
-    console.log('===== adoptedMonIndex', adoptedMonIndex);
-    console.log('===== adoptedMon', adoptedMon);
 
     // 콜렉션
     const existCollection = await trxCollectionRepository.findOne({
@@ -408,26 +404,18 @@ export class CollectionsService {
       });
       colPointToUpdate += mon.colPoint;
       const savedCollection = await collectionRepository.save(newCollection);
-      console.log('===== savedCollection', savedCollection);
 
       if (checkIsRareCaseCollection(savedCollection)) {
-        console.log('===== save rare news', {
-          userId: user.id,
-          collectionId: savedCollection.id,
-          method,
-        });
         await this.rareNewsRepository.save({
           userId: user.id,
           collectionId: savedCollection.id,
           method,
         });
-        console.log('===== saved');
       }
 
       const foundCollection = await collectionRepository.findOne(
         savedCollection.id,
       );
-      console.log('===== foundCollection', foundCollection);
       await foundCollection.mon;
       await foundCollection.monImage;
       result.oldCollection = null;
@@ -452,7 +440,6 @@ export class CollectionsService {
     }
 
     await userRepository.update(user.id, updatedUser);
-    console.log('===== updatedUser', updatedUser);
     return result;
   }
 
