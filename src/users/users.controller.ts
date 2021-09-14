@@ -12,15 +12,17 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Patch,
-  ForbiddenException,
+  UseInterceptors,
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { Request, Response } from 'express';
 import { ACCESS_TOKEN_COOKIE_NAME } from 'src/constants/cookies';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
+import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
@@ -78,12 +80,21 @@ export class UsersController {
   ) {
     const user = await this.userService.getAccessToken(code);
     const isProd = process.env.NODE_ENV === 'production';
-    response.cookie(ACCESS_TOKEN_COOKIE_NAME, user.accessToken, {
-      expires: dayjs().add(30, 'days').toDate(),
-      httpOnly: true,
-      secure: isProd,
-      domain: isProd ? '.gitkemon.com' : 'localhost',
-    });
+    response.cookie(
+      ACCESS_TOKEN_COOKIE_NAME,
+      user.accessToken,
+      isProd
+        ? {
+            expires: dayjs().add(30, 'days').toDate(),
+            httpOnly: true,
+            secure: true,
+            domain: '.gitkemon.com',
+          }
+        : {
+            expires: dayjs().add(30, 'days').toDate(),
+            httpOnly: true,
+          },
+    );
     response.send(user);
   }
 
@@ -91,7 +102,6 @@ export class UsersController {
   async loginWithToken(@Req() req: Request, @Res() res: Response) {
     const accessToken =
       req.body.token || req.cookies?.[ACCESS_TOKEN_COOKIE_NAME];
-    console.log('===== accessToken @refresh', accessToken);
     if (!accessToken) {
       return res.send(undefined);
     }
@@ -99,7 +109,6 @@ export class UsersController {
       const user = await this.userService.loginWithToken(accessToken);
       return res.send(user);
     } catch (error) {
-      console.log('===== cleared cookie @refresh');
       res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
       return res.send(undefined);
     }

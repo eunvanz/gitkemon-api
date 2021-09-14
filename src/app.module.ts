@@ -12,6 +12,7 @@ import { AppService } from './app.service';
 import { CollectionModule } from './collections/collections.module';
 import { CommentsModule } from './comments/comments.module';
 import { typeOrmConfigAsync } from './config/typeorm.config';
+import { ContentsModule } from './contents/contents.module';
 import { RolesGuard } from './guards/roles.guards';
 import { LikesModule } from './likes/likes.module';
 import { AuthMiddleware } from './middlewares/auth.middleware';
@@ -39,6 +40,7 @@ import { UsersModule } from './users/users.module';
     CommentsModule,
     LikesModule,
     RareNewsModule,
+    ContentsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: RolesGuard }],
@@ -61,6 +63,9 @@ export class AppModule implements NestModule {
         'mon-images',
         { path: 'paybacks', method: RequestMethod.POST },
         'paybacks/last',
+        { path: 'contents', method: RequestMethod.POST },
+        { path: 'contents', method: RequestMethod.PATCH },
+        { path: 'contents', method: RequestMethod.DELETE },
       );
   }
 }

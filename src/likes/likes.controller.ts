@@ -1,9 +1,17 @@
-import { Body, Controller, Headers, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Headers,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
+import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { DeleteLikeDto } from './dto/delete-like.dto';
 import { LikesService } from './likes.service';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('likes')
 export class LikesController {
   constructor(private readonly likeService: LikesService) {}

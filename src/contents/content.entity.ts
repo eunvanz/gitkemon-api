@@ -6,14 +6,16 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity()
-export class Comment extends TimeRecord {
+export class Content extends TimeRecord {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  type: ContentType;
 
   @Column()
   userId: string;
@@ -22,22 +24,18 @@ export class Comment extends TimeRecord {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column()
+  @Column({ type: 'longtext' })
   body: string;
 
-  @Column({ nullable: true })
-  parentId?: number;
+  @Column({ default: 0 })
+  commentsCnt: number;
 
-  @ManyToOne(() => Comment, (comment) => comment.replies, { nullable: true })
-  @JoinColumn({ name: 'parent_id' })
-  parent?: Promise<Comment>;
+  @Column({ default: 0 })
+  likesCnt: number;
 
-  @OneToMany(() => Comment, (comment) => comment.parent, { nullable: true })
-  replies?: Promise<Comment[]>;
-
-  @Column()
-  contentType: ContentType;
+  @Column({ default: true })
+  isVisible: boolean;
 
   @Column()
-  contentId: number;
+  title: string;
 }

@@ -2,7 +2,7 @@ import * as admin from 'firebase-admin';
 
 export interface UploadFileOptions {
   path: string;
-  fileName: string;
+  fileName?: string;
 }
 
 export const uploadFile: (

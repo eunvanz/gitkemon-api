@@ -6,12 +6,15 @@ import {
   Param,
   Patch,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Roles } from 'src/decorators/roles.decorators';
+import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { CreateMonDto } from './dto/create-mon.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
 import { MonsService } from './mons.service';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('mons')
 export class MonsController {
   constructor(private readonly monService: MonsService) {}

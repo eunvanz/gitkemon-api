@@ -12,10 +12,12 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/decorators/roles.decorators';
+import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { CreateMonImageDto } from './dto/create-mon-image.dto';
 import { UpdateMonImageDto } from './dto/update-mon-image.dto';
 import { MonImagesService } from './mon-images.service';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('mon-images')
 export class MonImagesController {
   constructor(private readonly monImageService: MonImagesService) {}
