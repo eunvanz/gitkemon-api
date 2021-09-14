@@ -411,6 +411,7 @@ export class CollectionsService {
       console.log('===== savedCollection', savedCollection);
 
       if (checkIsRareCaseCollection(savedCollection)) {
+        console.log('===== save rare news');
         await this.rareNewsRepository.save({
           userId: user.id,
           collectionId: savedCollection.id,
@@ -424,6 +425,7 @@ export class CollectionsService {
       await foundCollection.mon;
       await foundCollection.monImage;
       result.oldCollection = null;
+      console.log('===== foundCollection', foundCollection);
       result.newCollection = foundCollection;
     }
     result.updatedColPoint = colPointToUpdate;
@@ -445,6 +447,7 @@ export class CollectionsService {
     }
 
     await userRepository.update(user.id, updatedUser);
+    console.log('===== updatedUser', updatedUser);
     return result;
   }
 
