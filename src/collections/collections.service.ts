@@ -411,7 +411,11 @@ export class CollectionsService {
       console.log('===== savedCollection', savedCollection);
 
       if (checkIsRareCaseCollection(savedCollection)) {
-        console.log('===== save rare news');
+        console.log('===== save rare news', {
+          userId: user.id,
+          collectionId: savedCollection.id,
+          method,
+        });
         await this.rareNewsRepository.save({
           userId: user.id,
           collectionId: savedCollection.id,
