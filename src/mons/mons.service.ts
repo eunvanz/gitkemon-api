@@ -4,7 +4,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { map } from 'rxjs';
 import { Collection } from 'src/collections/collection.entity';
 import { getCleanObject } from 'src/lib/utils';
-import { Repository, Transaction, TransactionRepository } from 'typeorm';
+import {
+  IsNull,
+  Not,
+  Repository,
+  Transaction,
+  TransactionRepository,
+} from 'typeorm';
 import { CreateMonDto } from './dto/create-mon.dto';
 import { UpdateMonDto } from './dto/update-mon.dto';
 import { Mon } from './mon.entity';
@@ -104,7 +110,10 @@ export class MonsService {
   }
 
   async findNextMons(id: number) {
-    return await this.monRepository.find({ evolveFromId: id });
+    return await this.monRepository.find({
+      evolveFromId: id,
+      registeredAt: Not(IsNull()),
+    });
   }
 
   async findRecentlyRegisteredMons() {
