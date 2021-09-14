@@ -48,8 +48,8 @@ export const DAYS_IN_A_ROW_PAYBACK = {
 export const EVERY_CONTRIBUTION_PAYBACK = {
   BASIC_RARE: 3,
   RARE: 20,
-  ELITE: 500,
-  LEGEND: 1000,
+  ELITE: 200,
+  LEGEND: 500,
 };
 
 export const TRAINER_CLASS = [

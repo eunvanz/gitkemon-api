@@ -1,5 +1,5 @@
 const Rules = {
-  contributionBaseDays: 365,
+  contributionBaseDays: 180,
 };
 
 export default Rules;
