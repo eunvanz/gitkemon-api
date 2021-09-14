@@ -50,6 +50,8 @@ export class CollectionsService {
     trxPokeBallRepository?: Repository<PokeBall>,
     @TransactionRepository(Collection)
     trxCollectionRepository?: Repository<Collection>,
+    @TransactionRepository(RareNews)
+    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
 
@@ -134,6 +136,7 @@ export class CollectionsService {
       user,
       mon: adoptedMon,
       existCollection,
+      rareNewsRepository: trxRareNewsRepository,
       method: 'hunt',
     });
 
@@ -167,6 +170,8 @@ export class CollectionsService {
     trxCollectionRepository?: Repository<Collection>,
     @TransactionRepository(User)
     trxUserRepository?: Repository<User>,
+    @TransactionRepository(RareNews)
+    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
     const collection = await trxCollectionRepository.findOne(collectionId);
@@ -219,6 +224,7 @@ export class CollectionsService {
       userRepository: trxUserRepository,
       mon: monEvolveTo,
       existCollection: collectionEvolveTo,
+      rareNewsRepository: trxRareNewsRepository,
       user,
       method: 'evolve',
     });
@@ -236,6 +242,7 @@ export class CollectionsService {
         mon,
         existCollection,
         user,
+        rareNewsRepository: trxRareNewsRepository,
         method: 'evolve',
       });
     }
@@ -277,6 +284,8 @@ export class CollectionsService {
     trxCollectionRepository?: Repository<Collection>,
     @TransactionRepository(User)
     trxUserRepository?: Repository<User>,
+    @TransactionRepository(RareNews)
+    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
     const collection1 = await trxCollectionRepository.findOne(collectionIds[0]);
@@ -342,6 +351,7 @@ export class CollectionsService {
       mon: adoptedMon,
       existCollection,
       user,
+      rareNewsRepository: trxRareNewsRepository,
       method: 'blend',
     });
 
@@ -355,6 +365,7 @@ export class CollectionsService {
     mon,
     user,
     existCollection,
+    rareNewsRepository,
     method,
   }: {
     collectionRepository: Repository<Collection>;
@@ -363,6 +374,7 @@ export class CollectionsService {
     mon: Mon;
     user: User;
     existCollection?: Collection;
+    rareNewsRepository: Repository<RareNews>;
     method: HuntMethod;
   }) {
     const result: {
@@ -406,7 +418,7 @@ export class CollectionsService {
       const savedCollection = await collectionRepository.save(newCollection);
 
       if (checkIsRareCaseCollection(savedCollection)) {
-        await this.rareNewsRepository.save({
+        await rareNewsRepository.save({
           userId: user.id,
           collectionId: savedCollection.id,
           method,
