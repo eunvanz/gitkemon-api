@@ -15,10 +15,12 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
+import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { CreatePaintingDto } from './dto/create-painting.dto';
 import { UpdatePaintingDto } from './dto/update-painting.dto';
 import { PaintingsService } from './paintings.service';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('paintings')
 export class PaintingsController {
   constructor(private readonly paintingService: PaintingsService) {}

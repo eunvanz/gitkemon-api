@@ -9,14 +9,17 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { Roles } from 'src/decorators/roles.decorators';
+import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { CollectionsService } from './collections.service';
 import { BlendDto } from './dto/blend.dto';
 import { EvolveDto } from './dto/evolve.dto';
 import { HuntDto } from './dto/hunt.dto';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('collections')
 export class CollectionsController {
   constructor(private readonly collectionService: CollectionsService) {}
@@ -26,17 +29,25 @@ export class CollectionsController {
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
     @Body() huntDto: HuntDto,
   ) {
-    return await this.collectionService.hunt(
-      accessToken,
-      huntDto.pokeBallType,
-      huntDto.amount,
+    const result = [];
+    await Array.from({ length: huntDto.amount }).reduce(
+      async (prev: Promise<void>) => {
+        await prev;
+        const resultItem = await this.collectionService.hunt(
+          accessToken,
+          huntDto.pokeBallType,
+        );
+        result.push(resultItem);
+      },
+      Promise.resolve(),
     );
+    return result;
   }
 
   @Get('rank')
   async getRanking(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
-    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   ) {
     return await this.collectionService.getRanking({
       page,

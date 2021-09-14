@@ -215,18 +215,24 @@ export const getPotentialFromTotal: (
   else if (ratio >= RANK_RULE.F.RANGE.MIN) return 'F';
 };
 
-export const getBlendResultTier: (tiers: MonTier[]) => MonTier[] = (tiers) => {
+export const getBlendResultTier: (tiers: MonTier[]) => MonTier = (tiers) => {
+  const number = random(0, 100);
   if (
     isEqual(tiers, ['rare', 'rare']) ||
     isEqual(tiers, ['s.rare', 's.rare'])
   ) {
-    return ['basic', 'rare', 'elite'];
+    if (number < 15) return 'elite';
+    if (number < 50) return 'rare';
+    else return 'basic';
   } else if (isEqual(tiers, ['elite', 'elite'])) {
-    return ['elite', 'legend'];
+    if (number < 20) return 'legend';
+    else return 'elite';
   } else if (isEqual(tiers, ['legend', 'legend'])) {
-    return ['legend', 'myth'];
+    if (number < 20) return 'myth';
+    else return 'legend';
   } else {
-    return ['basic', 'rare'];
+    if (number < 30) return 'rare';
+    else return 'basic';
   }
 };
 
@@ -249,6 +255,14 @@ export const getSpecialBlendResult: (
   ) {
     // 딱정곤 & 쪼마리
     return [589, 617];
+  } else if (
+    xor(
+      collections.map((collection) => collection.monId),
+      [223, 458],
+    ).length === 0
+  ) {
+    // 총어 & 타만타
+    return [226];
   } else {
     return undefined;
   }

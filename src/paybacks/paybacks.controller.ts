@@ -1,8 +1,17 @@
-import { Controller, Get, Headers, Param, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { Roles } from 'src/decorators/roles.decorators';
+import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { PaybacksService } from './paybacks.service';
 
+@UseInterceptors(SentryInterceptor)
 @Controller('paybacks')
 export class PaybacksController {
   constructor(private readonly paybackService: PaybacksService) {}

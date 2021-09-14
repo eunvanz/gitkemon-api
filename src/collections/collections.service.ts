@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { random } from 'lodash';
@@ -44,21 +45,23 @@ export class CollectionsService {
   async hunt(
     accessToken: string,
     pokeBallType: PokeBallType,
-    amount: number,
     @TransactionRepository(User) trxUserRepository?: Repository<User>,
     @TransactionRepository(PokeBall)
     trxPokeBallRepository?: Repository<PokeBall>,
     @TransactionRepository(Collection)
     trxCollectionRepository?: Repository<Collection>,
-    @TransactionRepository(RareNews)
-    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
     const pokeBall = await user.pokeBall;
 
     // user pokeBall 차감
     const key = `${pokeBallType}PokeBalls`;
-    const updatedAmount = pokeBall[key] - amount;
+    const updatedAmount = pokeBall[key] - 1;
     if (updatedAmount < 0) {
       throw new BadRequestException({
         errorMessage: 'Pokeball amount is not enough.',
@@ -99,52 +102,41 @@ export class CollectionsService {
       });
     }
 
-    const result: {
-      oldCollection: Collection | null;
-      newCollection: Collection;
-    }[] = [];
-
-    await Array.from({ length: amount }).reduce(async (prev: Promise<void>) => {
-      await prev;
-
-      let luckyCandidateMons = [];
-      let isLucky = false;
-      if (pokeBallType === 'basic') {
-        const luckyNumber = random(0, MYTH_CHANCE);
-        isLucky = luckyNumber === MYTH_CHANCE;
-        if (isLucky) {
-          luckyCandidateMons = await this.monRepository
-            .createQueryBuilder('mon')
-            .innerJoin('mon.monImages', 'monImage')
-            .where('mon.tier IN (:...tiers)', { tiers: ['myth'] })
-            .getMany();
-        }
+    let luckyCandidateMons = [];
+    let isLucky = false;
+    if (pokeBallType === 'basic') {
+      const luckyNumber = random(0, MYTH_CHANCE);
+      isLucky = luckyNumber === MYTH_CHANCE;
+      if (isLucky) {
+        luckyCandidateMons = await this.monRepository
+          .createQueryBuilder('mon')
+          .innerJoin('mon.monImages', 'monImage')
+          .where('mon.tier IN (:...tiers)', { tiers: ['myth'] })
+          .getMany();
       }
+    }
 
-      const adoptedMonIndex = random(
-        0,
-        (isLucky ? luckyCandidateMons : candidateMons).length - 1,
-      );
-      const adoptedMon = candidateMons[adoptedMonIndex];
+    const adoptedMonIndex = random(
+      0,
+      (isLucky ? luckyCandidateMons : candidateMons).length - 1,
+    );
+    const adoptedMon = candidateMons[adoptedMonIndex];
 
-      // 콜렉션
-      const existCollection = await trxCollectionRepository.findOne({
-        where: [{ userId: user.id, monId: adoptedMon.id }],
-      });
+    // 콜렉션
+    const existCollection = await trxCollectionRepository.findOne({
+      where: [{ userId: user.id, monId: adoptedMon.id }],
+    });
 
-      const unitResult = await this.getHuntResultFromExistCollection({
-        colPointToUpdate: 0,
-        collectionRepository: trxCollectionRepository,
-        userRepository: trxUserRepository,
-        user,
-        mon: adoptedMon,
-        existCollection,
-        rareNewsRepository: trxRareNewsRepository,
-        method: 'hunt',
-      });
-
-      result.push(unitResult);
-    }, Promise.resolve());
+    const result = await this.getHuntResultFromExistCollection({
+      colPointToUpdate: 0,
+      collectionRepository: trxCollectionRepository,
+      userRepository: trxUserRepository,
+      user,
+      mon: adoptedMon,
+      existCollection,
+      rareNewsRepository: this.rareNewsRepository,
+      method: 'hunt',
+    });
 
     return result;
   }
@@ -176,8 +168,6 @@ export class CollectionsService {
     trxCollectionRepository?: Repository<Collection>,
     @TransactionRepository(User)
     trxUserRepository?: Repository<User>,
-    @TransactionRepository(RareNews)
-    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
     const collection = await trxCollectionRepository.findOne(collectionId);
@@ -231,7 +221,7 @@ export class CollectionsService {
       mon: monEvolveTo,
       existCollection: collectionEvolveTo,
       user,
-      rareNewsRepository: trxRareNewsRepository,
+      rareNewsRepository: this.rareNewsRepository,
       method: 'evolve',
     });
 
@@ -248,7 +238,7 @@ export class CollectionsService {
         mon,
         existCollection,
         user,
-        rareNewsRepository: trxRareNewsRepository,
+        rareNewsRepository: this.rareNewsRepository,
         method: 'evolve',
       });
     }
@@ -290,8 +280,6 @@ export class CollectionsService {
     trxCollectionRepository?: Repository<Collection>,
     @TransactionRepository(User)
     trxUserRepository?: Repository<User>,
-    @TransactionRepository(RareNews)
-    trxRareNewsRepository?: Repository<RareNews>,
   ) {
     const user = await trxUserRepository.findOne({ accessToken });
     const collection1 = await trxCollectionRepository.findOne(collectionIds[0]);
@@ -304,7 +292,7 @@ export class CollectionsService {
 
     let updatedColPoint = 0;
 
-    const resultTiers = getBlendResultTier(
+    const resultTier = getBlendResultTier(
       collectionsToBlend.map((collection) => collection.tier),
     );
 
@@ -319,7 +307,7 @@ export class CollectionsService {
       candidateMons = await this.monRepository
         .createQueryBuilder('mon')
         .innerJoin('mon.monImages', 'monImage')
-        .where('mon.tier IN (:...tiers)', { tiers: resultTiers })
+        .where('mon.tier = :tier', { tier: resultTier })
         .getMany();
     }
 
@@ -357,7 +345,7 @@ export class CollectionsService {
       mon: adoptedMon,
       existCollection,
       user,
-      rareNewsRepository: trxRareNewsRepository,
+      rareNewsRepository: this.rareNewsRepository,
       method: 'blend',
     });
 
@@ -511,6 +499,7 @@ export class CollectionsService {
     };
   }
 
+  @Transaction()
   async deleteCollection(
     collectionId: number,
     @TransactionRepository(User) trxUserRepository?: Repository<User>,
