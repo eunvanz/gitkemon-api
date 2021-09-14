@@ -18,14 +18,14 @@ export class RareNews extends TimeRecord {
   @Column()
   userId: string;
 
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
   @Column()
   collectionId: number;
 
-  @ManyToOne(() => Collection, { eager: true })
+  @ManyToOne(() => Collection, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'collection_id' })
   collection: Collection;
 

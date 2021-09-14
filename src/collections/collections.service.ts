@@ -421,15 +421,16 @@ export class CollectionsService {
           collectionId: savedCollection.id,
           method,
         });
+        console.log('===== saved');
       }
 
       const foundCollection = await collectionRepository.findOne(
         savedCollection.id,
       );
+      console.log('===== foundCollection', foundCollection);
       await foundCollection.mon;
       await foundCollection.monImage;
       result.oldCollection = null;
-      console.log('===== foundCollection', foundCollection);
       result.newCollection = foundCollection;
     }
     result.updatedColPoint = colPointToUpdate;
