@@ -52,6 +52,8 @@ const baseUser: User = {
     following: 1,
     created_at: '2016-02-20T08:30:27Z',
     updated_at: '2021-07-24T17:42:24Z',
+    suspended_at: null,
+    ldap_dn: null,
   },
 };
 

@@ -107,6 +107,12 @@ export class GithubUser {
 
   @Column()
   updated_at: string;
+
+  @Column({ nullable: true })
+  suspended_at: string;
+
+  @Column({ nullable: true })
+  ldap_dn: string;
 }
 
 @Entity('member')
