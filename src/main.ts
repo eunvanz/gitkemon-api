@@ -13,13 +13,10 @@ admin.initializeApp({
 
 const isDev = process.env.NODE_ENV === 'development';
 
-console.log('===== process.env.SERVICE_BASE_URL', process.env.SERVICE_BASE_URL);
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: isDev
-        ? 'http://localhost:4000'
-        : process.env.SERVICE_BASE_URL || 'https://www.gitkemon.com',
+      origin: isDev ? 'http://localhost:4000' : process.env.SERVICE_BASE_URL,
       credentials: true,
     },
     logger: ['error', 'warn', 'log'],
