@@ -87,8 +87,12 @@ export class UsersController {
         ? {
             expires: dayjs().add(30, 'days').toDate(),
             httpOnly: true,
-            secure: process.env.SERVICE_BASE_URL.startsWith('https://'),
-            domain: process.env.SERVICE_BASE_URL.replace(/https?:\/\//, ''),
+            secure: process.env.SERVICE_BASE_URL
+              ? process.env.SERVICE_BASE_URL.startsWith('https://')
+              : true,
+            domain: process.env.SERVICE_BASE_URL
+              ? process.env.SERVICE_BASE_URL.replace(/https?:\/\//, '')
+              : '.gitkemon.com',
           }
         : {
             expires: dayjs().add(30, 'days').toDate(),
