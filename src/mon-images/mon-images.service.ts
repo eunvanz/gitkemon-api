@@ -150,7 +150,7 @@ export class MonImagesService {
         monImageId: id,
       },
       getCleanObject({
-        imageUrl: imageUrl || uploadedImageUrl,
+        monImageUrl: imageUrl || uploadedImageUrl,
       }),
     );
   }
