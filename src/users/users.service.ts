@@ -8,12 +8,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { lastValueFrom, map } from 'rxjs';
-import Rules from 'src/config/rules.config';
 import { ERROR_CODE } from 'src/constants/errors';
 import { PokeBall } from 'src/poke-balls/poke-ball.entity';
 import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GithubUser, User } from './user.entity';
+
+const CONTRIBUTION_BASE_DAYS = Number(process.env.CONTRIBUTION_BASE_DAYS);
 
 @Injectable()
 export class UsersService {
@@ -99,7 +100,7 @@ export class UsersService {
     if (!user) {
       // generate user
       const contributionBaseDate = dayjs()
-        .subtract(Rules.contributionBaseDays, 'day')
+        .subtract(CONTRIBUTION_BASE_DAYS, 'day')
         .toDate();
 
       await trxGithubUserRepository.save(githubUser);
@@ -214,8 +215,8 @@ export class UsersService {
     const diff = dayjs().diff(fromDate, 'days');
 
     let iteration = 1;
-    if (diff > Rules.contributionBaseDays) {
-      iteration += Math.floor(diff / Rules.contributionBaseDays);
+    if (diff > CONTRIBUTION_BASE_DAYS) {
+      iteration += Math.floor(diff / CONTRIBUTION_BASE_DAYS);
     }
 
     let result = 0;
@@ -227,14 +228,14 @@ export class UsersService {
           const from = isLastIteration
             ? fromDate.toISOString()
             : dayjs(now)
-                .subtract(Rules.contributionBaseDays * (index + 1), 'days')
+                .subtract(CONTRIBUTION_BASE_DAYS * (index + 1), 'days')
                 .toISOString();
 
           const to =
             index === 0
               ? now.toISOString()
               : dayjs(now)
-                  .subtract(Rules.contributionBaseDays * index, 'days')
+                  .subtract(CONTRIBUTION_BASE_DAYS * index, 'days')
                   .toISOString();
 
           const observer$ = this.httpService
