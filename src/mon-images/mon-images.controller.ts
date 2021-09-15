@@ -32,6 +32,11 @@ export class MonImagesController {
     return await this.monImageService.save(file, createMonImageDto);
   }
 
+  @Get(':id')
+  async findOne(@Param('id') id: number) {
+    return await this.monImageService.findOne(id);
+  }
+
   @Get()
   @Roles('admin')
   async findAll(
@@ -42,12 +47,6 @@ export class MonImagesController {
       return await this.monImageService.findByQuery(condition, value);
     }
     return await this.monImageService.findAll();
-  }
-
-  @Get(':id')
-  @Roles('admin')
-  async findOne(@Param('id') id: number) {
-    return await this.monImageService.findOne(id);
   }
 
   @Patch(':id')
