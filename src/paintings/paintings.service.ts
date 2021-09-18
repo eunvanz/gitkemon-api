@@ -37,21 +37,26 @@ export class PaintingsService {
     await this.paintingRepository.save(painting);
   }
 
-  async findAll(options: IPaginationOptions) {
+  async findAll(options: IPaginationOptions, accessToken?: string) {
     const queryBuilder = this.paintingRepository
       .createQueryBuilder('painting')
       .leftJoinAndSelect('painting.mon', 'mon')
       .orderBy('painting.createdAt', 'DESC');
     const result = await paginate<Painting>(queryBuilder, options);
     const itemIds = result.items.map((item) => item.id);
-    const likes = await this.likeRepository.find({
-      where: [
-        {
-          contentType: 'painting',
-          contentId: In(itemIds),
-        },
-      ],
-    });
+    let likes = [];
+    if (accessToken) {
+      const user = await this.userRepository.findOne({ accessToken });
+      likes = await this.likeRepository.find({
+        where: [
+          {
+            contentType: 'painting',
+            contentId: In(itemIds),
+            userId: user.id,
+          },
+        ],
+      });
+    }
     return {
       ...result,
       items: result.items.map((item) => ({
