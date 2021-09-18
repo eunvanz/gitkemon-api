@@ -32,8 +32,11 @@ export class Comment extends TimeRecord {
   @JoinColumn({ name: 'parent_id' })
   parent?: Promise<Comment>;
 
-  @OneToMany(() => Comment, (comment) => comment.parent, { nullable: true })
-  replies?: Promise<Comment[]>;
+  @OneToMany(() => Comment, (comment) => comment.parent, {
+    nullable: true,
+    eager: true,
+  })
+  replies?: Comment[];
 
   @Column()
   contentType: ContentType;
