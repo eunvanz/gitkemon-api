@@ -58,8 +58,11 @@ export class ContentsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
-    return await this.contentService.findOne(id);
+  async findOne(
+    @Param('id') id: number,
+    @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken?: string,
+  ) {
+    return await this.contentService.findOne(id, accessToken);
   }
 
   @Get()
@@ -67,7 +70,12 @@ export class ContentsController {
     @Query('type') type: ContentType,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
+    @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken?: string,
   ) {
-    return await this.contentService.findByType(type, { page, limit });
+    return await this.contentService.findByType(
+      type,
+      { page, limit },
+      accessToken,
+    );
   }
 }
