@@ -123,11 +123,16 @@ export class UsersService {
         referrerCode,
       });
     } else {
+      let referrerCode = user.referrerCode;
+      if (!referrerCode) {
+        referrerCode = await this.generateReferrerCode();
+      }
       // update user
       await trxGithubUserRepository.update(githubUser.id, githubUser);
       await trxUserRepository.update(user.id, {
         githubUser,
         accessToken,
+        referrerCode,
       });
     }
 
