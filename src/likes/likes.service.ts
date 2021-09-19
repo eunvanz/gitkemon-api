@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Content } from 'src/contents/content.entity';
 import { Painting } from 'src/paintings/painting.entity';
 import { User } from 'src/users/user.entity';
 import { Repository, Transaction, TransactionRepository } from 'typeorm';
@@ -16,6 +17,8 @@ export class LikesService {
     private readonly paintingRepository: Repository<Painting>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Content)
+    private readonly contentRepository: Repository<Content>,
   ) {}
 
   @Transaction()
@@ -25,6 +28,8 @@ export class LikesService {
     @TransactionRepository(Like) trxLikeRepository?: Repository<Like>,
     @TransactionRepository(Painting)
     trxPaintingRepository?: Repository<Painting>,
+    @TransactionRepository(Content)
+    trxContentRepository?: Repository<Content>,
   ) {
     const user = await this.userRepository.findOne({ accessToken });
 
@@ -47,6 +52,13 @@ export class LikesService {
           .where('painting.id = :id', { id: contentId })
           .execute();
         break;
+      default:
+        await trxContentRepository
+          .createQueryBuilder('content')
+          .update()
+          .set({ likesCnt: () => 'content.likes_cnt + 1' })
+          .where('content.id = :id', { id: contentId })
+          .execute();
     }
 
     await trxLikeRepository.save({
@@ -62,6 +74,8 @@ export class LikesService {
     @TransactionRepository(Like) trxLikeRepository?: Repository<Like>,
     @TransactionRepository(Painting)
     trxPaintingRepository?: Repository<Painting>,
+    @TransactionRepository(Content)
+    trxContentRepository?: Repository<Content>,
   ) {
     const user = await this.userRepository.findOne({ accessToken });
 
@@ -87,6 +101,13 @@ export class LikesService {
           .where('painting.id = :id', { id: contentId })
           .execute();
         break;
+      default:
+        await trxContentRepository
+          .createQueryBuilder('content')
+          .update()
+          .set({ likesCnt: () => 'content.likes_cnt - 1' })
+          .where('content.id = :id', { id: contentId })
+          .execute();
     }
 
     await trxLikeRepository.delete(like.id);
