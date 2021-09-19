@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
+import { nanoid } from 'nanoid';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { lastValueFrom, map } from 'rxjs';
 import { ERROR_CODE } from 'src/constants/errors';
@@ -108,6 +109,7 @@ export class UsersService {
       const newPokeBall = new PokeBall();
       const { id: pokeBallId } = await trxPokeBallRepository.save(newPokeBall);
 
+      const referrerCode = await this.generateReferrerCode();
       user = await trxUserRepository.save({
         nickname: githubUser.name?.slice(0, 20) || githubUser.login,
         contributionBaseDate,
@@ -118,6 +120,7 @@ export class UsersService {
         accessToken,
         githubLogin: githubUser.login,
         pokeBallId,
+        referrerCode,
       });
     } else {
       // update user
@@ -341,5 +344,15 @@ export class UsersService {
   async updateProfile(accessToken: string, updateUserDto: UpdateUserDto) {
     const user = await this.userRepository.findOne({ accessToken });
     await this.userRepository.update(user.id, updateUserDto);
+  }
+
+  async generateReferrerCode() {
+    const referrerCode = nanoid(10);
+    const user = await this.userRepository.findOne({ referrerCode });
+    if (!user) {
+      return referrerCode;
+    } else {
+      this.generateReferrerCode();
+    }
   }
 }

@@ -163,4 +163,7 @@ export class User extends TimeRecord {
 
   @Column({ default: 'user' })
   role: Role;
+
+  @Column()
+  referrerCode: string;
 }
