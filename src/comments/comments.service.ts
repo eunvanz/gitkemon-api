@@ -13,6 +13,7 @@ export class CommentsService {
   async findByContentId(contentId: number) {
     return await this.commentRepository.find({
       contentId,
+      isVisible: true,
     });
   }
 }

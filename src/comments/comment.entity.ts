@@ -43,4 +43,7 @@ export class Comment extends TimeRecord {
 
   @Column()
   contentId: number;
+
+  @Column({ default: true })
+  isVisible: boolean;
 }
