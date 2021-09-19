@@ -44,10 +44,8 @@ export class CommentsController {
     @Param('contentId') contentId: number,
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
   ) {
-    await this.commentService.update(
-      contentId,
-      { body: undefined, isVisible: false },
-      accessToken,
-    );
+    const updateCommentDto = new UpdateCommentDto();
+    updateCommentDto.isVisible = false;
+    await this.commentService.update(contentId, updateCommentDto, accessToken);
   }
 }
