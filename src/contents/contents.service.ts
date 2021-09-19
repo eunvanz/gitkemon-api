@@ -87,6 +87,7 @@ export class ContentsService {
         'content.createdAt',
         'content.updatedAt',
         'content.user',
+        'content.type',
         'user.nickname',
         'user.githubLogin',
       ])

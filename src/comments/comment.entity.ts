@@ -34,9 +34,9 @@ export class Comment extends TimeRecord {
 
   @OneToMany(() => Comment, (comment) => comment.parent, {
     nullable: true,
-    eager: true,
+    // eager: true,
   })
-  replies?: Comment[];
+  replies?: Promise<Comment[]>;
 
   @Column()
   contentType: ContentType;
