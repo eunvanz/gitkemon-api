@@ -166,4 +166,7 @@ export class User extends TimeRecord {
 
   @Column()
   referrerCode: string;
+
+  @Column({ nullable: true })
+  referredBy: string;
 }

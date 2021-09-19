@@ -19,6 +19,7 @@ const baseUser: User = {
   trainerClass: 1,
   role: 'user',
   referrerCode: 'abasdfadfgas',
+  referredBy: null,
   githubUser: {
     login: 'eunvanz',
     id: 17351661,
