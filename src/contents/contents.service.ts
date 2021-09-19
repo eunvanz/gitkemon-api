@@ -141,4 +141,13 @@ export class ContentsService {
     }
     return { ...content, isLiked };
   }
+
+  async incrementView(id: number) {
+    await this.contentRepository
+      .createQueryBuilder('content')
+      .update()
+      .set({ viewsCnt: () => 'content.views_cnt + 1' })
+      .where('content.id = :id', { id })
+      .execute();
+  }
 }

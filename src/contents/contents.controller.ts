@@ -40,6 +40,11 @@ export class ContentsController {
     await this.contentService.save(accessToken, contentType, createContentDto);
   }
 
+  @Patch(':id/view')
+  async incrementView(@Param('id') id: number) {
+    await this.contentService.incrementView(id);
+  }
+
   @Patch(':id')
   async update(
     @Param('id') id: number,
