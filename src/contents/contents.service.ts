@@ -84,6 +84,7 @@ export class ContentsService {
         'content.userId',
         'content.likesCnt',
         'content.commentsCnt',
+        'content.viewsCnt',
         'content.createdAt',
         'content.updatedAt',
         'content.user',
