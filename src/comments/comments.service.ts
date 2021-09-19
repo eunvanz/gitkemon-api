@@ -40,7 +40,7 @@ export class CommentsService {
     await trxContentRepository
       .createQueryBuilder('content')
       .update()
-      .set({ likesCnt: () => 'content.comments_cnt + 1' })
+      .set({ commentsCnt: () => 'content.comments_cnt + 1' })
       .where('content.id = :id', { id: createCommentDto.contentId })
       .execute();
   }
@@ -63,7 +63,7 @@ export class CommentsService {
       await trxContentRepository
         .createQueryBuilder('content')
         .update()
-        .set({ likesCnt: () => 'content.comments_cnt - 1' })
+        .set({ commentsCnt: () => 'content.comments_cnt - 1' })
         .where('content.id = :id', { id: comment.contentId })
         .execute();
     }

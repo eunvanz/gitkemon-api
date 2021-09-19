@@ -139,9 +139,6 @@ export class ContentsService {
         isLiked = true;
       }
     }
-    await this.contentRepository.update(id, {
-      viewsCnt: content.viewsCnt + 1,
-    });
-    return { ...content, isLiked, viewsCnt: content.viewsCnt + 1 };
+    return { ...content, isLiked };
   }
 }
