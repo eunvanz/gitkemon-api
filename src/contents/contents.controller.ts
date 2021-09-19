@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
   Query,
   UploadedFile,
   UseInterceptors,
@@ -40,7 +41,7 @@ export class ContentsController {
     await this.contentService.save(accessToken, contentType, createContentDto);
   }
 
-  @Patch(':id/view')
+  @Put('view/:id')
   async incrementView(@Param('id') id: number) {
     await this.contentService.incrementView(id);
   }
