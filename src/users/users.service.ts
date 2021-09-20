@@ -63,12 +63,14 @@ export class UsersService {
   @Transaction()
   async getAccessToken(
     code: string,
+    referrerCode?: string,
     @TransactionRepository(User) trxUserRepository?: Repository<User>,
     @TransactionRepository(GithubUser)
     trxGithubUserRepository?: Repository<GithubUser>,
     @TransactionRepository(PokeBall)
     trxPokeBallRepository?: Repository<PokeBall>,
   ) {
+    const referredBy = referrerCode || null;
     let accessToken: string;
     try {
       const tokenObserver$ = this.httpService
@@ -121,7 +123,34 @@ export class UsersService {
         githubLogin: githubUser.login,
         pokeBallId,
         referrerCode,
+        referredBy,
       });
+
+      if (referredBy) {
+        const referredCount = await trxUserRepository.count({ referredBy });
+        if (referredCount < 50) {
+          const referredUser = await trxUserRepository.findOne({
+            referrerCode: referredBy,
+          });
+          if (referredUser) {
+            let isLegend = false;
+            let isElite = false;
+            if (referredCount + 1 === 25) {
+              isElite = true;
+            } else if (referredCount + 1 === 50) {
+              isLegend = true;
+            }
+            const pokeBall = await trxPokeBallRepository.findOne(
+              referredUser.pokeBallId,
+            );
+            await trxPokeBallRepository.update(pokeBall.id, {
+              rarePokeBalls: pokeBall.rarePokeBalls + 1,
+              elitePokeBalls: pokeBall.elitePokeBalls + (isElite ? 1 : 0),
+              legendPokeBalls: pokeBall.legendPokeBalls + (isLegend ? 1 : 0),
+            });
+          }
+        }
+      }
     } else {
       let referrerCode = user.referrerCode;
       if (!referrerCode) {

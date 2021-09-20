@@ -82,10 +82,10 @@ export class UsersController {
 
   @Post('login')
   async getAccessToken(
-    @Body() { code }: { code: string },
+    @Body() { code, referrerCode }: { code: string; referrerCode?: string },
     @Res({ passthrough: true }) response: Response,
   ) {
-    const user = await this.userService.getAccessToken(code);
+    const user = await this.userService.getAccessToken(code, referrerCode);
     const isProd = process.env.NODE_ENV === 'production';
     response.cookie(
       ACCESS_TOKEN_COOKIE_NAME,
