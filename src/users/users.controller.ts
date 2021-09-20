@@ -120,14 +120,22 @@ export class UsersController {
       const user = await this.userService.loginWithToken(accessToken);
       return res.send(user);
     } catch (error) {
-      res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
+      res.clearCookie(ACCESS_TOKEN_COOKIE_NAME, {
+        domain: process.env.SERVICE_BASE_URL
+          ? process.env.SERVICE_BASE_URL.replace(/https?:\/\//, '')
+          : '.gitkemon.com',
+      });
       return res.send(undefined);
     }
   }
 
   @Post('logout')
   async logout(@Res() res: Response) {
-    res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
+    res.clearCookie(ACCESS_TOKEN_COOKIE_NAME, {
+      domain: process.env.SERVICE_BASE_URL
+        ? process.env.SERVICE_BASE_URL.replace(/https?:\/\//, '')
+        : '.gitkemon.com',
+    });
     res.send();
   }
 
