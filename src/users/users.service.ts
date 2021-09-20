@@ -360,4 +360,13 @@ export class UsersService {
       this.generateReferrerCode();
     }
   }
+
+  async countReferredByUser(accessToken: string) {
+    const user = await this.userRepository.findOneOrFail({ accessToken });
+    const { referrerCode } = user;
+    const [, count] = await this.userRepository.findAndCount({
+      referredBy: referrerCode,
+    });
+    return count;
+  }
 }

@@ -53,6 +53,7 @@ export class AppModule implements NestModule {
       .forRoutes(
         'users/logout',
         'users/available-contributions',
+        'users/referred-count',
         'collections/hunt',
         'collections/blend',
         'collections/evolve',

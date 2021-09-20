@@ -56,6 +56,13 @@ export class UsersController {
     );
   }
 
+  @Get('referred-count')
+  async countReferredByUser(
+    @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
+  ) {
+    return await this.userService.countReferredByUser(accessToken);
+  }
+
   @Get('available-contributions')
   async getAvailableContributions(
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
