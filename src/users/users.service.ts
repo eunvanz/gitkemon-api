@@ -381,7 +381,7 @@ export class UsersService {
   }
 
   async generateReferrerCode() {
-    const referrerCode = nanoid(10);
+    const referrerCode = nanoid(6);
     const user = await this.userRepository.findOne({ referrerCode });
     if (!user) {
       return referrerCode;
