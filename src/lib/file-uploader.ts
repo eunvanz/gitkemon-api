@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin';
+import { nanoid } from 'nanoid';
 
 export interface UploadFileOptions {
   path: string;
@@ -13,7 +14,7 @@ export const uploadFile: (
     const { originalname, mimetype } = file;
     const fileExtension = originalname.split('.').pop();
     const fileName = `${`${options?.path}/` || ''}${
-      options?.fileName || originalname
+      options?.fileName || nanoid(4)
     }_${Date.now()}.${fileExtension}`;
     const bucket = admin.storage().bucket();
     const fileUpload = bucket.file(fileName);
