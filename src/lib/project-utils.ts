@@ -230,6 +230,8 @@ export const getBlendResultTier: (tiers: MonTier[]) => MonTier = (tiers) => {
   } else if (isEqual(tiers, ['legend', 'legend'])) {
     if (number < 20) return 'myth';
     else return 'legend';
+  } else if (isEqual(tiers, ['myth', 'myth'])) {
+    return 'myth';
   } else {
     if (number < 30) return 'rare';
     else return 'basic';
