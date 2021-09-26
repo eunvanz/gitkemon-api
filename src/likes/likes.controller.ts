@@ -3,9 +3,11 @@ import {
   Controller,
   Headers,
   Post,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
+import { ValidateTokenGuard } from 'src/guards/validate-token.guards';
 import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { DeleteLikeDto } from './dto/delete-like.dto';
@@ -17,6 +19,7 @@ export class LikesController {
   constructor(private readonly likeService: LikesService) {}
 
   @Post('/unlike')
+  @UseGuards(ValidateTokenGuard)
   async delete(
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
     @Body() deleteLikeDto: DeleteLikeDto,
@@ -25,6 +28,7 @@ export class LikesController {
   }
 
   @Post()
+  @UseGuards(ValidateTokenGuard)
   async save(
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
     @Body() createLikeDto: CreateLikeDto,

@@ -4,10 +4,12 @@ import {
   Headers,
   Param,
   Post,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { Roles } from 'src/decorators/roles.decorators';
+import { ValidateTokenGuard } from 'src/guards/validate-token.guards';
 import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { PaybacksService } from './paybacks.service';
 
@@ -17,6 +19,7 @@ export class PaybacksController {
   constructor(private readonly paybackService: PaybacksService) {}
 
   @Post()
+  @UseGuards(ValidateTokenGuard)
   async save(@Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string) {
     return await this.paybackService.save(accessToken as string);
   }
@@ -27,6 +30,7 @@ export class PaybacksController {
   }
 
   @Get('last')
+  @UseGuards(ValidateTokenGuard)
   async findLastPayback(
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
   ) {
@@ -34,9 +38,9 @@ export class PaybacksController {
   }
 
   // TODO: 실제 배포시 주석처리
-  @Post('reset/:userId')
-  @Roles('admin')
-  async reset(@Param('userId') userId: string) {
-    return await this.paybackService.reset(userId);
-  }
+  // @Post('reset/:userId')
+  // @Roles('admin')
+  // async reset(@Param('userId') userId: string) {
+  //   return await this.paybackService.reset(userId);
+  // }
 }

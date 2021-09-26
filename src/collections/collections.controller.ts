@@ -10,9 +10,11 @@ import {
   ParseIntPipe,
   Delete,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
 import { Roles } from 'src/decorators/roles.decorators';
+import { ValidateTokenGuard } from 'src/guards/validate-token.guards';
 import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { CollectionsService } from './collections.service';
 import { BlendDto } from './dto/blend.dto';
@@ -25,6 +27,7 @@ export class CollectionsController {
   constructor(private readonly collectionService: CollectionsService) {}
 
   @Post('hunt')
+  @UseGuards(ValidateTokenGuard)
   async hunt(
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
     @Body() huntDto: HuntDto,
@@ -66,6 +69,7 @@ export class CollectionsController {
   }
 
   @Post('evolve')
+  @UseGuards(ValidateTokenGuard)
   async evolve(
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
     @Body() evolveDto: EvolveDto,
@@ -78,6 +82,7 @@ export class CollectionsController {
   }
 
   @Post('blend')
+  @UseGuards(ValidateTokenGuard)
   async blend(
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
     @Body() blendDto: BlendDto,

@@ -13,11 +13,13 @@ import {
   ParseIntPipe,
   Patch,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { Request, Response } from 'express';
 import { ACCESS_TOKEN_COOKIE_NAME } from 'src/constants/cookies';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
+import { ValidateTokenGuard } from 'src/guards/validate-token.guards';
 import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
@@ -57,6 +59,7 @@ export class UsersController {
   }
 
   @Get('referred-count')
+  @UseGuards(ValidateTokenGuard)
   async countReferredByUser(
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
   ) {
@@ -64,6 +67,7 @@ export class UsersController {
   }
 
   @Get('available-contributions')
+  @UseGuards(ValidateTokenGuard)
   async getAvailableContributions(
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
   ) {
@@ -161,6 +165,7 @@ export class UsersController {
   }
 
   @Patch('profile')
+  @UseGuards(ValidateTokenGuard)
   async updateProfile(
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
     @Body() updateUserDto: UpdateUserDto,

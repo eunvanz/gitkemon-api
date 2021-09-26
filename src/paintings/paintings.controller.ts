@@ -12,9 +12,11 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
+import { ValidateTokenGuard } from 'src/guards/validate-token.guards';
 import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { CreatePaintingDto } from './dto/create-painting.dto';
 import { UpdatePaintingDto } from './dto/update-painting.dto';
@@ -27,6 +29,7 @@ export class PaintingsController {
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
+  @UseGuards(ValidateTokenGuard)
   async save(
     @UploadedFile() file: Express.Multer.File,
     @Body() createPaintingDto: CreatePaintingDto,
@@ -61,6 +64,7 @@ export class PaintingsController {
 
   @Patch('/:paintingId')
   @UseInterceptors(FileInterceptor('file'))
+  @UseGuards(ValidateTokenGuard)
   async update(
     @Param('paintingId') paintingId: number,
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
@@ -76,6 +80,7 @@ export class PaintingsController {
   }
 
   @Delete('/:paintingId')
+  @UseGuards(ValidateTokenGuard)
   async delete(
     @Param('paintingId') paintingId: number,
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,

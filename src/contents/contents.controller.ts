@@ -12,10 +12,12 @@ import {
   Put,
   Query,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
+import { ValidateTokenGuard } from 'src/guards/validate-token.guards';
 import { uploadFile } from 'src/lib/file-uploader';
 import { ContentType } from 'src/types';
 import { ContentsService } from './contents.service';
@@ -33,6 +35,7 @@ export class ContentsController {
   }
 
   @Post()
+  @UseGuards(ValidateTokenGuard)
   async save(
     @Query('type') contentType: ContentType,
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
@@ -47,6 +50,7 @@ export class ContentsController {
   }
 
   @Patch(':id')
+  @UseGuards(ValidateTokenGuard)
   async update(
     @Param('id') id: number,
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
@@ -56,6 +60,7 @@ export class ContentsController {
   }
 
   @Delete(':id')
+  @UseGuards(ValidateTokenGuard)
   async delete(
     @Param('id') id: number,
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
@@ -64,6 +69,7 @@ export class ContentsController {
   }
 
   @Get(':id')
+  @UseGuards(ValidateTokenGuard)
   async findOne(
     @Param('id') id: number,
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken?: string,
@@ -72,6 +78,7 @@ export class ContentsController {
   }
 
   @Get()
+  @UseGuards(ValidateTokenGuard)
   async findByType(
     @Query('type') type: ContentType,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,

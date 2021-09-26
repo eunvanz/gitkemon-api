@@ -7,8 +7,10 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
+import { ValidateTokenGuard } from 'src/guards/validate-token.guards';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
@@ -23,6 +25,7 @@ export class CommentsController {
   }
 
   @Post()
+  @UseGuards(ValidateTokenGuard)
   async save(
     @Body() createCommentDto: CreateCommentDto,
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
@@ -31,6 +34,7 @@ export class CommentsController {
   }
 
   @Patch(':contentId')
+  @UseGuards(ValidateTokenGuard)
   async update(
     @Param('contentId') contentId: number,
     @Body() updateCommentDto: UpdateCommentDto,
@@ -40,6 +44,7 @@ export class CommentsController {
   }
 
   @Delete(':contentId')
+  @UseGuards(ValidateTokenGuard)
   async delete(
     @Param('contentId') contentId: number,
     @Headers(ACCESS_TOKEN_HEADER_NAME) accessToken: string,
