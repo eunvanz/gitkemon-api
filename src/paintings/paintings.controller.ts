@@ -48,6 +48,7 @@ export class PaintingsController {
   }
 
   @Get()
+  @UseGuards(ValidateTokenGuard)
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(32), ParseIntPipe) limit = 24,
