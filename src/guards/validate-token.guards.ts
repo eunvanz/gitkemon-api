@@ -1,7 +1,6 @@
 import {
   CanActivate,
   ExecutionContext,
-  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -30,10 +29,7 @@ export class ValidateTokenGuard implements CanActivate {
         return true;
       }
     } else {
-      throw new ForbiddenException({
-        errorCode: ERROR_CODE.LOGIN_REQUIRED,
-        errorMessage: 'Login is required.',
-      });
+      return true;
     }
   }
 }
