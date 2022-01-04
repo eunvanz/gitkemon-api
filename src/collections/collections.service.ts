@@ -479,14 +479,18 @@ export class CollectionsService {
       take: 3,
     });
 
-    const topMonRanks = await this.collectionRepository.query(`
-        SELECT *
-        FROM (
-          SELECT id, RANK() OVER(ORDER BY total DESC) AS ranking
-          FROM collection
-        ) AS collection
-        WHERE id IN (${topMons.map((mon) => mon.id).join(',')});
-      `);
+    let topMonRanks = [];
+
+    if (topMons.length) {
+      topMonRanks = await this.collectionRepository.query(`
+          SELECT *
+          FROM (
+            SELECT id, RANK() OVER(ORDER BY total DESC) AS ranking
+            FROM collection
+          ) AS collection
+          WHERE id IN (${topMons.map((mon) => mon.id).join(',')});
+        `);
+    }
 
     const recentMons = await this.collectionRepository.find({
       order: {
