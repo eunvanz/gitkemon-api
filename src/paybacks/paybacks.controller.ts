@@ -8,7 +8,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ACCESS_TOKEN_HEADER_NAME } from 'src/constants/headers';
-import { Roles } from 'src/decorators/roles.decorators';
 import { ValidateTokenGuard } from 'src/guards/validate-token.guards';
 import { SentryInterceptor } from 'src/interceptors/sentry.interceptor';
 import { PaybacksService } from './paybacks.service';
