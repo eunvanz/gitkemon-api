@@ -270,7 +270,7 @@ export class UsersService {
 
           const to =
             index === 0
-              ? now.toISOString()
+              ? dayjs(now).add(1, 'day').toISOString()
               : dayjs(now)
                   .subtract(this.CONTRIBUTION_BASE_DAYS * index, 'days')
                   .toISOString();
