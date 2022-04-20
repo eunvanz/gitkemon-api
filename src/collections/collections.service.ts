@@ -218,6 +218,7 @@ export class CollectionsService {
 
     const collectionEvolveTo = await trxCollectionRepository.findOne({
       monId: monEvolveTo.id,
+      userId: user.id,
     });
 
     const result = await this.getHuntResultFromExistCollection({
@@ -344,6 +345,7 @@ export class CollectionsService {
 
     const existCollection = await trxCollectionRepository.findOne({
       monId: adoptedMon.id,
+      userId: user.id,
     });
 
     const result = await this.getHuntResultFromExistCollection({
