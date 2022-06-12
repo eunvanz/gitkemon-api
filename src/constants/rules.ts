@@ -2,7 +2,7 @@ import { Role } from 'src/types';
 
 const RANK_UNIT = 0.08;
 
-export const MYTH_CHANCE = 1200;
+export const MYTH_CHANCE = 1500;
 
 export const RANK_RULE = {
   SS: {
