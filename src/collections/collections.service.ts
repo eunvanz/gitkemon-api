@@ -122,7 +122,9 @@ export class CollectionsService {
       0,
       (isLucky ? luckyCandidateMons : candidateMons).length - 1,
     );
-    const adoptedMon = candidateMons[adoptedMonIndex];
+    const adoptedMon = (isLucky ? luckyCandidateMons : candidateMons)[
+      adoptedMonIndex
+    ];
 
     // 콜렉션
     const existCollection = await trxCollectionRepository.findOne({
